@@ -174,7 +174,7 @@ const CRAFT_DATA = {
         resources: [
             { name: 'Взрывчатка', count: 20 },
             { name: 'Ткань', count: 5 },
-            { name: 'Техмусор', count: 2 }
+            { name: 'Микросхемы', count: 2 }
         ]
     },
     rocket: {
