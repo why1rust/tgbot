@@ -9,51 +9,71 @@
 </head>
 <body>
     <div class="app">
+        <!-- Фоновые градиенты -->
+        <div class="bg-glow bg-glow-1"></div>
+        <div class="bg-glow bg-glow-2"></div>
+
         <header class="header">
-            <div class="header-glow"></div>
-            <div class="header-content">
-                <div class="logo-wrap">
-                    <span class="logo">🦀</span>
-                </div>
-                <h1>Rust Toolkit</h1>
-                <p class="subtitle">Steam Checker & Tools</p>
+            <div class="logo-wrap">
+                <span class="logo">🦀</span>
             </div>
+            <h1>Rust Toolkit</h1>
+            <p class="subtitle">Steam Checker & Tools</p>
         </header>
 
         <nav class="tabs">
-            <button class="tab active" data-tab="sulfur">
-                <span class="tab-icon">🧨</span>
-                <span class="tab-label">Сера</span>
-            </button>
-            <button class="tab" data-tab="steam">
+            <button class="tab active" data-tab="steam">
                 <span class="tab-icon">🎮</span>
                 <span class="tab-label">Steam</span>
             </button>
-            <button class="tab" data-tab="free">
-                <span class="tab-icon">🎁</span>
-                <span class="tab-label">Игры</span>
+            <button class="tab" data-tab="sulfur">
+                <span class="tab-icon">🧨</span>
+                <span class="tab-label">Сера</span>
             </button>
             <button class="tab" data-tab="watch">
                 <span class="tab-icon">👁️</span>
                 <span class="tab-label">Watch</span>
             </button>
-            <button class="tab" data-tab="status">
-                <span class="tab-icon">📊</span>
-                <span class="tab-label">Статус</span>
-            </button>
         </nav>
 
-        <!-- Сера -->
-        <section class="panel active" id="panel-sulfur">
+        <!-- Steam -->
+        <section class="panel active" id="panel-steam">
             <div class="card">
-                <div class="card-top">
-                    <h2>Конвертер серы</h2>
-                    <span class="chip">🧨</span>
+                <div class="card-head">
+                    <div>
+                        <h2>Steam Checker</h2>
+                        <p class="desc">Проверка профиля: часы в Rust, баны, риск</p>
+                    </div>
+                    <div class="chip">🎮</div>
                 </div>
-                <p class="desc">Сколько взрывчатки можно скрафтить из ресурсов.</p>
 
                 <div class="field">
-                    <label>Сера</label>
+                    <label>SteamID или ссылка</label>
+                    <input type="text" id="steam-input" placeholder="76561199685927598" inputmode="text">
+                </div>
+
+                <button class="btn primary" onclick="analyzeSteam()">
+                    <span class="btn-icon">🔍</span>
+                    <span>Анализировать профиль</span>
+                </button>
+
+                <div id="steam-result" class="result"></div>
+            </div>
+        </section>
+
+        <!-- Сера -->
+        <section class="panel" id="panel-sulfur">
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <h2>Конвертер серы</h2>
+                        <p class="desc">Сколько взрывчатки можно скрафтить</p>
+                    </div>
+                    <div class="chip">🧨</div>
+                </div>
+
+                <div class="field">
+                    <label>Сера (Sulfur)</label>
                     <input type="number" id="sulfur-input" value="10000" inputmode="numeric">
                 </div>
 
@@ -76,6 +96,7 @@
                 </div>
 
                 <button class="btn primary" onclick="calculateSulfur()">
+                    <span class="btn-icon">🔢</span>
                     <span>Рассчитать</span>
                 </button>
 
@@ -83,81 +104,62 @@
             </div>
 
             <div class="card">
-                <div class="card-top">
-                    <h2>Стоимость крафта</h2>
+                <div class="card-head">
+                    <div>
+                        <h2>Стоимость крафта</h2>
+                        <p class="desc">На 1 единицу взрывчатки</p>
+                    </div>
                 </div>
-                <div class="cost-grid">
+                <div class="cost-list">
                     <div class="cost-row">
                         <span class="cost-emoji">💥</span>
-                        <div><strong>C4</strong><small>2200 серы + 60 LGF</small></div>
+                        <div class="cost-info">
+                            <strong>C4</strong>
+                            <small>2200 серы + 60 LGF</small>
+                        </div>
                     </div>
                     <div class="cost-row">
                         <span class="cost-emoji">🚀</span>
-                        <div><strong>Ракета</strong><small>1400 серы + 30 LGF</small></div>
+                        <div class="cost-info">
+                            <strong>Ракета</strong>
+                            <small>1400 серы + 30 LGF</small>
+                        </div>
                     </div>
                     <div class="cost-row">
                         <span class="cost-emoji">🎒</span>
-                        <div><strong>Satchel</strong><small>480 серы</small></div>
+                        <div class="cost-info">
+                            <strong>Satchel Charge</strong>
+                            <small>480 серы</small>
+                        </div>
                     </div>
                     <div class="cost-row">
                         <span class="cost-emoji">💣</span>
-                        <div><strong>Beancan</strong><small>120 серы</small></div>
+                        <div class="cost-info">
+                            <strong>Beancan Grenade</strong>
+                            <small>120 серы</small>
+                        </div>
                     </div>
                     <div class="cost-row">
                         <span class="cost-emoji">🔫</span>
-                        <div><strong>Explo 5.56</strong><small>25 серы / патрон</small></div>
+                        <div class="cost-info">
+                            <strong>Explosive 5.56</strong>
+                            <small>25 серы / патрон</small>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Steam -->
-        <section class="panel" id="panel-steam">
-            <div class="card">
-                <div class="card-top">
-                    <h2>Steam Checker</h2>
-                    <span class="chip">🎮</span>
-                </div>
-                <p class="desc">Проверка профиля: часы в Rust, баны, риск.</p>
-
-                <div class="field">
-                    <label>SteamID или ссылка</label>
-                    <input type="text" id="steam-input" placeholder="76561199685927598" inputmode="text">
-                </div>
-
-                <button class="btn primary" onclick="analyzeSteam()">
-                    <span>🔍 Анализировать</span>
-                </button>
-
-                <div id="steam-result" class="result"></div>
-            </div>
-        </section>
-
-        <!-- Игры -->
-        <section class="panel" id="panel-free">
-            <div class="card">
-                <div class="card-top">
-                    <h2>Бесплатные игры</h2>
-                    <span class="chip">🎁</span>
-                </div>
-                <p class="desc">Активные раздачи Steam через GamerPower.</p>
-
-                <button class="btn primary" onclick="loadFreeGames()">
-                    <span>🔍 Найти раздачи</span>
-                </button>
-
-                <div id="free-result" class="result"></div>
             </div>
         </section>
 
         <!-- Watch -->
         <section class="panel" id="panel-watch">
             <div class="card">
-                <div class="card-top">
-                    <h2>Добавить в Watchlist</h2>
-                    <span class="chip">👁️</span>
+                <div class="card-head">
+                    <div>
+                        <h2>Добавить в Watchlist</h2>
+                        <p class="desc">Следим за игроком, сообщим о бане</p>
+                    </div>
+                    <div class="chip">👁️</div>
                 </div>
-                <p class="desc">Следим за игроком, сообщим о бане.</p>
 
                 <div class="field">
                     <label>SteamID игрока</label>
@@ -165,58 +167,32 @@
                 </div>
 
                 <button class="btn primary" onclick="addToWatchlist()">
-                    <span>➕ Добавить</span>
+                    <span class="btn-icon">➕</span>
+                    <span>Добавить</span>
                 </button>
 
                 <div id="watch-result" class="result"></div>
             </div>
 
             <div class="card">
-                <div class="card-top">
-                    <h2>Список отслеживания</h2>
+                <div class="card-head">
+                    <div>
+                        <h2>Список отслеживания</h2>
+                        <p class="desc">Игроки, за которыми следит бот</p>
+                    </div>
                 </div>
 
                 <button class="btn secondary" onclick="loadWatchlist()">
-                    <span>📋 Показать список</span>
+                    <span class="btn-icon">📋</span>
+                    <span>Показать список</span>
                 </button>
 
                 <div id="watchlist-result" class="result"></div>
             </div>
         </section>
 
-        <!-- Статус -->
-        <section class="panel" id="panel-status">
-            <div class="card">
-                <div class="card-top">
-                    <h2>Статус системы</h2>
-                    <span class="chip">📊</span>
-                </div>
-
-                <div class="status-grid">
-                    <div class="status-row">
-                        <span class="dot online"></span>
-                        <div><strong>Telegram Bot</strong><small>@rustpluslssus_bot</small></div>
-                    </div>
-                    <div class="status-row">
-                        <span class="dot online"></span>
-                        <div><strong>Cloudflare Workers</strong><small>Работает 24/7</small></div>
-                    </div>
-                    <div class="status-row">
-                        <span class="dot online"></span>
-                        <div><strong>KV Storage</strong><small>RUST_BOT_KV</small></div>
-                    </div>
-                </div>
-
-                <button class="btn primary" onclick="loadStatus()">
-                    <span>🔄 Обновить статистику</span>
-                </button>
-
-                <div id="status-result" class="result"></div>
-            </div>
-        </section>
-
         <footer class="footer">
-            <span>🦀 Rust Toolkit v2.0</span>
+            <span>🦀 Rust Toolkit · v3.0</span>
         </footer>
     </div>
 
