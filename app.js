@@ -196,4 +196,144 @@ const CRAFT_DATA = {
         resources: [
             { name: 'Бобовая граната', count: 4 },
             { name: 'Малый схрон', count: 1 },
-           
+            { name: 'Верёвка', count: 1 }
+        ]
+    },
+    beancan: {
+        name: 'Бобовая граната',
+        emoji: '💣',
+        sulfur: 120,
+        lgf: 0,
+        resources: [
+            { name: 'Порох', count: 60 },
+            { name: 'Металлические фрагменты', count: 20 }
+        ]
+    },
+    explo: {
+        name: 'Патрон 5.56 (взрывной)',
+        emoji: '🔫',
+        sulfur: 25,
+        lgf: 0,
+        resources: [
+            { name: 'Порох', count: 5 },
+            { name: 'Металлические фрагменты', count: 10 }
+        ]
+    }
+};
+
+function updateCraftInfo() {
+    const type = document.getElementById('craft-type').value;
+    const item = CRAFT_DATA[type];
+    const infoDiv = document.getElementById('craft-info');
+
+    let html = `<div class="craft-info-title">${item.emoji} <strong>${item.name}</strong></div>`;
+    html += `<div class="craft-info-list">`;
+    item.resources.forEach(r => {
+        html += `<div class="resource">• ${r.name}: <strong>${r.count}</strong></div>`;
+    });
+    html += `<div class="resource">• Сера: <strong>${item.sulfur}</strong></div>`;
+    if (item.lgf > 0) {
+        html += `<div class="resource">• Топливо низкого качества: <strong>${item.lgf}</strong></div>`;
+    }
+    html += `</div>`;
+
+    infoDiv.innerHTML = html;
+}
+
+function calculateCraft() {
+    const type = document.getElementById('craft-type').value;
+    const count = parseInt(document.getElementById('craft-count').value) || 1;
+    const item = CRAFT_DATA[type];
+    const resultDiv = document.getElementById('craft-result');
+
+    let html = `<strong>${item.emoji} ${item.name} × ${count} шт.</strong><br><br>`;
+    html += `<strong>📦 Нужно ресурсов:</strong><br>`;
+
+    item.resources.forEach(r => {
+        html += `• ${r.name}: <strong>${r.count * count}</strong><br>`;
+    });
+    html += `• Сера: <strong>${item.sulfur * count}</strong><br>`;
+    if (item.lgf > 0) {
+        html += `• Топливо низкого качества: <strong>${item.lgf * count}</strong><br>`;
+    }
+
+    resultDiv.innerHTML = html;
+    resultDiv.classList.add('show');
+
+    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+}
+
+// ==================== WATCHLIST ====================
+async function addToWatchlist() {
+    const input = document.getElementById('watch-input').value.trim();
+    const resultDiv = document.getElementById('watch-result');
+    const match = input.match(/\d{17}/);
+
+    if (!match) {
+        resultDiv.innerHTML = '❌ Введи SteamID (17 цифр).';
+        resultDiv.classList.add('show');
+        return;
+    }
+
+    resultDiv.innerHTML = '<span class="spinner"></span>Добавляю...';
+    resultDiv.classList.add('show');
+
+    try {
+        const data = await apiCall('/api/watch-add', { steamId: match[0] });
+        resultDiv.innerHTML = `✅ <strong>${escapeHtml(data.name || match[0])}</strong> добавлен в отслеживание<br><br>Бот уведомит при появлении бана.`;
+        document.getElementById('watch-input').value = '';
+        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    } catch (e) {
+        resultDiv.innerHTML = `❌ Ошибка: ${escapeHtml(e.message)}`;
+    }
+}
+
+async function loadWatchlist() {
+    const resultDiv = document.getElementById('watchlist-result');
+    resultDiv.innerHTML = '<span class="spinner"></span>Загружаю...';
+    resultDiv.classList.add('show');
+
+    try {
+        const list = await apiCall('/api/watch-list');
+        if (!list?.length) {
+            resultDiv.innerHTML = '📊 Список пуст. Добавь игроков через форму выше.';
+            return;
+        }
+
+        let html = `<strong>📊 Отслеживается: ${list.length}</strong><br><br>`;
+        list.forEach((w, i) => {
+            html += `<div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06);">`;
+            html += `<strong>${i + 1}. ${escapeHtml(w.name)}</strong><br>`;
+            html += `<small style="opacity:0.6">${w.steamId}</small><br>`;
+            html += `<small>🚫 VAC: ${w.lastVacBans} · Game: ${w.lastGameBans}</small><br>`;
+            html += `<button class="btn secondary" style="margin-top:8px; padding:10px; font-size:13px;" onclick="removeFromWatchlist('${w.steamId}')">🗑 Удалить</button>`;
+            html += `</div>`;
+        });
+
+        resultDiv.innerHTML = html;
+    } catch (e) {
+        resultDiv.innerHTML = `❌ Ошибка: ${escapeHtml(e.message)}`;
+    }
+}
+
+async function removeFromWatchlist(steamId) {
+    try {
+        await apiCall('/api/watch-remove', { steamId });
+        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        loadWatchlist();
+    } catch (e) {
+        alert('Ошибка: ' + e.message);
+    }
+}
+
+// ==================== HELPERS ====================
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ==================== INIT ====================
+renderRaidItems();
+updateCraftInfo();
