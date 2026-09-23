@@ -18,7 +18,7 @@
                 <span class="logo">🦀</span>
             </div>
             <h1>Rust Toolkit</h1>
-            <p class="subtitle">Steam Checker · Raid Calc</p>
+            <p class="subtitle">Steam Checker · Raid · Craft</p>
         </header>
 
         <nav class="tabs">
@@ -30,9 +30,9 @@
                 <span class="tab-icon">💥</span>
                 <span class="tab-label">Рейд</span>
             </button>
-            <button class="tab" data-tab="sulfur">
+            <button class="tab" data-tab="craft">
                 <span class="tab-icon">🧨</span>
-                <span class="tab-label">Сера</span>
+                <span class="tab-label">Крафт</span>
             </button>
             <button class="tab" data-tab="watch">
                 <span class="tab-icon">👁️</span>
@@ -103,13 +103,13 @@
             </div>
         </section>
 
-        <!-- SULFUR -->
-        <section class="panel" id="panel-sulfur">
+        <!-- CRAFT -->
+        <section class="panel" id="panel-craft">
             <div class="card">
                 <div class="card-head">
                     <div>
-                        <h2>Конвертер серы</h2>
-                        <p class="desc">Сколько взрывчатки можно скрафтить</p>
+                        <h2>Калькулятор крафта</h2>
+                        <p class="desc">Что можно скрафтить из твоих ресурсов</p>
                     </div>
                     <div class="chip">🧨</div>
                 </div>
@@ -143,6 +143,110 @@
                 </button>
 
                 <div id="sulfur-result" class="result"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <h2>Что нужно для крафта</h2>
+                        <p class="desc">Ресурсы на 1 единицу</p>
+                    </div>
+                </div>
+
+                <div class="craft-list">
+                    <details class="craft-item">
+                        <summary>
+                            <span class="cost-emoji">💥</span>
+                            <div class="craft-title">
+                                <strong>C4 (Timed Explosive)</strong>
+                                <small>2200 серы + 60 LGF</small>
+                            </div>
+                        </summary>
+                        <div class="craft-details">
+                            <div class="resource">• 20 Explosives</div>
+                            <div class="resource">• 5 Cloth</div>
+                            <div class="resource">• 2 Tech Trash</div>
+                            <div class="resource total">Итого: 2200 серы + 60 LGF</div>
+                        </div>
+                    </details>
+
+                    <details class="craft-item">
+                        <summary>
+                            <span class="cost-emoji">🚀</span>
+                            <div class="craft-title">
+                                <strong>Ракета</strong>
+                                <small>1400 серы + 30 LGF</small>
+                            </div>
+                        </summary>
+                        <div class="craft-details">
+                            <div class="resource">• 10 Explosives</div>
+                            <div class="resource">• 150 Gunpowder</div>
+                            <div class="resource">• 2 Metal Pipe</div>
+                            <div class="resource total">Итого: 1400 серы + 30 LGF</div>
+                        </div>
+                    </details>
+
+                    <details class="craft-item">
+                        <summary>
+                            <span class="cost-emoji">🎒</span>
+                            <div class="craft-title">
+                                <strong>Satchel Charge</strong>
+                                <small>480 серы</small>
+                            </div>
+                        </summary>
+                        <div class="craft-details">
+                            <div class="resource">• 4 Beancan Grenade</div>
+                            <div class="resource">• 1 Small Stash</div>
+                            <div class="resource">• 1 Rope</div>
+                            <div class="resource total">Итого: 480 серы</div>
+                        </div>
+                    </details>
+
+                    <details class="craft-item">
+                        <summary>
+                            <span class="cost-emoji">💣</span>
+                            <div class="craft-title">
+                                <strong>Beancan Grenade</strong>
+                                <small>120 серы</small>
+                            </div>
+                        </summary>
+                        <div class="craft-details">
+                            <div class="resource">• 60 Gunpowder</div>
+                            <div class="resource">• 20 Metal Fragments</div>
+                            <div class="resource total">Итого: 120 серы</div>
+                        </div>
+                    </details>
+
+                    <details class="craft-item">
+                        <summary>
+                            <span class="cost-emoji">🔫</span>
+                            <div class="craft-title">
+                                <strong>Explosive 5.56</strong>
+                                <small>25 серы / патрон</small>
+                            </div>
+                        </summary>
+                        <div class="craft-details">
+                            <div class="resource">• 5 Gunpowder</div>
+                            <div class="resource">• 10 Metal Fragments</div>
+                            <div class="resource total">Итого: 25 серы / патрон</div>
+                        </div>
+                    </details>
+
+                    <details class="craft-item">
+                        <summary>
+                            <span class="cost-emoji">🔥</span>
+                            <div class="craft-title">
+                                <strong>Low Grade Fuel (LGF)</strong>
+                                <small>1 единица</small>
+                            </div>
+                        </summary>
+                        <div class="craft-details">
+                            <div class="resource">• 3 Animal Fat</div>
+                            <div class="resource">• 1 Cloth</div>
+                            <div class="resource total">Итого: 1 LGF</div>
+                        </div>
+                    </details>
+                </div>
             </div>
         </section>
 
