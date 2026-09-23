@@ -4,6 +4,17 @@ tg.expand();
 
 const API_BASE = 'https://rust-bot.sdadawqdqdasda.workers.dev';
 
+// Открываем главное меню при запуске
+window.addEventListener('load', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    const steamTab = document.querySelector('.tab[data-tab="steam"]');
+    if (steamTab) {
+        steamTab.classList.add('active');
+        document.getElementById('panel-steam').classList.add('active');
+    }
+});
+
 // ==================== API ====================
 async function apiCall(endpoint, data = {}) {
     const res = await fetch(`${API_BASE}${endpoint}`, {
@@ -300,13 +311,13 @@ async function loadWatchlist() {
             return;
         }
 
-        let html = `<strong>📊 Отслеживается: ${list.length}</strong><br><br>`;
+        let html = `<strong>📊 Отслеживается игроков: ${list.length}</strong><br><br>`;
         list.forEach((w, i) => {
             html += `<div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06);">`;
             html += `<strong>${i + 1}. ${escapeHtml(w.name)}</strong><br>`;
             html += `<small style="opacity:0.6">${w.steamId}</small><br>`;
             html += `<small>🚫 VAC: ${w.lastVacBans} · Game: ${w.lastGameBans}</small><br>`;
-            html += `<button class="btn secondary" style="margin-top:8px; padding:10px; font-size:13px;" onclick="removeFromWatchlist('${w.steamId}')">🗑 Удалить</button>`;
+            html += `<button class="btn secondary" style="margin-top:8px; padding:10px; font-size:13px;" onclick="removeFromWatchlist('${w.steamId}')">🗑 Удалить из отслеживания</button>`;
             html += `</div>`;
         });
 
