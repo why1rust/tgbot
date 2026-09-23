@@ -1,187 +1,381 @@
 :root {
-    --tg-bg: var(--tg-theme-bg-color, #1a1a1a);
-    --tg-text: var(--tg-theme-text-color, #fff);
-    --tg-secondary: var(--tg-theme-secondary-bg-color, #2a2a2a);
-    --tg-button: var(--tg-theme-button-color, #5288c1);
-    --tg-hint: var(--tg-theme-hint-color, #999);
+    --tg-bg: var(--tg-theme-bg-color, #0f0f14);
+    --tg-text: var(--tg-theme-text-color, #ffffff);
+    --tg-secondary: var(--tg-theme-secondary-bg-color, #1c1c24);
+    --tg-button: var(--tg-theme-button-color, #6c5ce7);
+    --tg-hint: var(--tg-theme-hint-color, #888);
+    --tg-link: var(--tg-theme-link-color, #74b9ff);
+
+    --accent: #6c5ce7;
+    --accent-light: #a29bfe;
+    --success: #00b894;
+    --danger: #ff7675;
+    --warning: #fdcb6e;
+    --card-bg: #1c1c24;
+    --border: #2d2d3a;
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
     background: var(--tg-bg);
     color: var(--tg-text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     margin: 0;
-    padding: 16px;
+    padding: 0;
     font-size: 15px;
     line-height: 1.5;
+    min-height: 100vh;
 }
 
-.container {
-    max-width: 500px;
+.app {
+    max-width: 520px;
     margin: 0 auto;
+    padding: 16px;
+    padding-bottom: 32px;
 }
 
-h1 {
+/* Заголовок */
+.app-header {
     text-align: center;
-    margin: 0 0 20px;
-    font-size: 22px;
+    margin-bottom: 20px;
+    padding: 20px 0;
 }
 
-h2 {
-    margin-top: 0;
-    font-size: 18px;
-    margin-bottom: 12px;
+.app-logo {
+    font-size: 48px;
+    line-height: 1;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 4px 12px rgba(108, 92, 231, 0.4));
 }
 
-/* Вкладки */
-.tabs {
+.app-header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.app-subtitle {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--tg-hint);
+    opacity: 0.7;
+}
+
+/* Навигация */
+.nav {
     display: flex;
     gap: 6px;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding: 4px;
+    background: var(--card-bg);
+    border-radius: 14px;
     scrollbar-width: none;
 }
-.tabs::-webkit-scrollbar { display: none; }
+.nav::-webkit-scrollbar { display: none; }
 
-.tab {
-    padding: 10px 16px;
+.nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 14px;
     border: none;
-    border-radius: 8px;
-    background: var(--tg-secondary);
-    color: var(--tg-text);
-    font-size: 14px;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--tg-hint);
+    font-size: 11px;
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
-    transition: background 0.2s;
-}
-.tab:active { opacity: 0.7; }
-.tab.active {
-    background: var(--tg-button);
-    font-weight: bold;
-}
-
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-
-/* Карточки */
-.card {
-    background: var(--tg-secondary);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-}
-
-/* Поля ввода */
-label {
-    display: block;
-    margin: 12px 0 4px;
-    font-size: 14px;
-    opacity: 0.8;
-}
-
-input, select, textarea, button {
-    width: 100%;
-    padding: 12px;
-    margin: 4px 0;
-    border-radius: 8px;
-    border: 1px solid #444;
-    background: #333;
-    color: #fff;
-    font-size: 16px;
+    transition: all 0.2s;
     font-family: inherit;
 }
 
-textarea {
-    font-family: 'Courier New', monospace;
-    resize: vertical;
-    min-height: 100px;
-    line-height: 1.5;
+.nav-btn .nav-icon {
+    font-size: 18px;
+}
+
+.nav-btn.active {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.35);
+}
+
+.nav-btn:active {
+    transform: scale(0.95);
+}
+
+/* Вкладки */
+.tab-content { display: none; }
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Карточки */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 14px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.badge {
+    font-size: 20px;
+}
+
+/* Поля ввода */
+.input-group {
+    margin-bottom: 12px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: var(--tg-hint);
+    font-weight: 500;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: #252530;
+    color: var(--tg-text);
+    font-size: 15px;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: var(--tg-button);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
 }
 
-button {
-    background: var(--tg-button);
-    border: none;
-    cursor: pointer;
-    margin-top: 12px;
-    font-weight: bold;
-    transition: opacity 0.2s;
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 18px;
+    padding-right: 40px;
 }
-button:active { opacity: 0.8; }
+
+/* Кнопки */
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #6c5ce7, #8e7bff);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+    font-family: inherit;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 6px rgba(108, 92, 231, 0.3);
+}
 
 /* Результаты */
 .result-box {
     margin-top: 16px;
     padding: 14px;
-    background: rgba(82, 136, 193, 0.15);
-    border-left: 3px solid var(--tg-button);
-    border-radius: 8px;
+    background: rgba(108, 92, 231, 0.1);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
     display: none;
     font-size: 14px;
     line-height: 1.7;
+    animation: slideIn 0.3s ease;
 }
+
 .result-box.show { display: block; }
 .result-box strong { color: #fff; }
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 /* Подсказки */
 .hint {
     font-size: 12px;
-    opacity: 0.6;
-    margin: 4px 0;
+    color: var(--tg-hint);
+    opacity: 0.7;
+    margin: 4px 0 12px;
 }
 
-/* Гены */
-.legend {
+/* Список стоимости */
+.cost-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cost-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: #252530;
+    border-radius: 10px;
+}
+
+.cost-icon {
+    font-size: 24px;
+    width: 32px;
+    text-align: center;
+}
+
+.cost-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.cost-info strong {
+    font-size: 14px;
+}
+
+.cost-info small {
+    font-size: 12px;
+    color: var(--tg-hint);
+}
+
+/* Список фич */
+.feature-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
     font-size: 14px;
+    color: var(--tg-hint);
 }
 
-.gene-box {
-    display: inline-block;
-    width: 26px;
-    height: 26px;
-    line-height: 26px;
-    text-align: center;
-    border-radius: 5px;
-    margin: 0 2px 0 0;
-    font-weight: bold;
-    font-size: 13px;
-    vertical-align: middle;
+/* Статус */
+.status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.gene-box.green {
-    background: #2e7d32;
-    color: #fff;
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: #252530;
+    border-radius: 10px;
 }
 
-.gene-box.red {
-    background: #c62828;
-    color: #fff;
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
 }
 
-.gene-box.neutral {
-    background: #555;
-    color: #ccc;
+.status-dot.online {
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+    animation: pulse 2s infinite;
 }
 
-/* Мелкие утилиты */
-small {
-    opacity: 0.7;
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.status-item strong {
+    font-size: 14px;
+    display: block;
+}
+
+.status-item small {
+    font-size: 11px;
+    color: var(--tg-hint);
+}
+
+/* Команды */
+.command-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.command-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: #252530;
+    border-radius: 10px;
+}
+
+.command-item code {
+    background: #2d2d3a;
+    padding: 4px 8px;
+    border-radius: 6px;
     font-size: 12px;
+    color: var(--accent-light);
+    font-family: 'Courier New', monospace;
+    white-space: nowrap;
 }
+
+.command-item span {
+    font-size: 13px;
+    color: var(--tg-hint);
+}
+
+/* Подвал */
+.app-footer {
+    text-align: center;
+    margin-top: 24px;
+    padding: 16px 0;
+    font-size: 12px;
+    color: var(--tg-hint);
+    opacity: 0.5;
+}
+
+/* Прочее */
+small { opacity: 0.7; font-size: 12px; }
 
 code {
-    background: #333;
+    background: #2d2d3a;
     padding: 2px 6px;
     border-radius: 4px;
     font-family: monospace;
