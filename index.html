@@ -10,29 +10,88 @@
 <body>
     <div class="container">
         <h1>🦀 Rust Toolkit</h1>
-        
-        <div class="card">
-            <h2>Рейд-калькулятор</h2>
-            <label>Сера (Sulfur):</label>
-            <input type="number" id="sulfur" value="1000">
-            
-            <label>Цель:</label>
-            <select id="target">
-                <option value="stone">Каменная стена</option>
-                <option value="sheet">Металлическая стена</option>
-                <option value="hqm">Укреплённая стена (HQM)</option>
-            </select>
-            
-            <button onclick="calculateRaid()">Рассчитать</button>
-            <div id="result"></div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('raid')">🎯 Рейд</button>
+            <button class="tab" onclick="switchTab('genes')">🌱 Гены</button>
+            <button class="tab" onclick="switchTab('servers')">📡 Сервера</button>
+            <button class="tab" onclick="switchTab('profile')">👤 Профиль</button>
         </div>
 
-        <div class="card">
-            <h2>Информация</h2>
-            <p>💡 Этот Mini App открывается прямо в Telegram.</p>
-            <p>📱 Для полного функционала используйте бота: /menu</p>
+        <!-- Вкладка: Рейд-калькулятор -->
+        <div id="raid" class="tab-content active">
+            <div class="card">
+                <h2>Рейд-калькулятор</h2>
+                <label>Сера (Sulfur):</label>
+                <input type="number" id="sulfur" value="1000">
+
+                <label>Цель:</label>
+                <select id="target">
+                    <option value="stone">Каменная стена</option>
+                    <option value="sheet">Металлическая стена</option>
+                    <option value="hqm">Укреплённая стена (HQM)</option>
+                    <option value="garage">Гаражная дверь</option>
+                    <option value="armored">Бронированная дверь</option>
+                </select>
+
+                <button onclick="calculateRaid()">Рассчитать</button>
+                <div id="raid-result"></div>
+            </div>
+        </div>
+
+        <!-- Вкладка: Калькулятор генов -->
+        <div id="genes" class="tab-content">
+            <div class="card">
+                <h2>Калькулятор генов</h2>
+                <p class="hint">Введи 6 генов через пробел (G, Y, H, W, X)</p>
+
+                <label>Растение 1:</label>
+                <input type="text" id="plant1" placeholder="G Y G Y G Y" maxlength="13">
+
+                <label>Растение 2:</label>
+                <input type="text" id="plant2" placeholder="Y G Y G Y G" maxlength="13">
+
+                <button onclick="calculateCrossbreed()">Скрестить</button>
+                <div id="gene-result"></div>
+            </div>
+
+            <div class="card">
+                <h2>Справочник генов</h2>
+                <div class="gene-legend">
+                    <span class="green">G</span> — Рост<br>
+                    <span class="green">Y</span> — Урожай<br>
+                    <span class="green">H</span> — Выносливость<br>
+                    <span class="red">W</span> — Вода (плохой)<br>
+                    <span class="red">X</span> — Пусто (плохой)
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладка: Сервера -->
+        <div id="servers" class="tab-content">
+            <div class="card">
+                <h2>Сервера</h2>
+                <p class="hint">Добавь сервер для отслеживания онлайна</p>
+
+                <label>IP сервера:</label>
+                <input type="text" id="server-ip" placeholder="127.0.0.1:28015">
+
+                <button onclick="addServer()">Добавить</button>
+                <div id="server-list"></div>
+            </div>
+        </div>
+
+        <!-- Вкладка: Профиль -->
+        <div id="profile" class="tab-content">
+            <div class="card">
+                <h2>👤 Профиль</h2>
+                <p>Имя: <span id="user-name">Гость</span></p>
+                <p>ID: <span id="user-id">—</span></p>
+                <p class="hint">Данные берутся из Telegram WebApp</p>
+            </div>
         </div>
     </div>
+
     <script src="app.js"></script>
 </body>
 </html>
