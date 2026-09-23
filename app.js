@@ -2,7 +2,6 @@ const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
-// URL твоего Cloudflare Worker'а
 const API_BASE = 'https://rust-bot.sdadawqdqdasda.workers.dev';
 
 // ==================== API ====================
@@ -10,10 +9,7 @@ async function apiCall(endpoint, data = {}) {
     const res = await fetch(`${API_BASE}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            initData: tg.initData,
-            ...data
-        })
+        body: JSON.stringify({ initData: tg.initData, ...data })
     });
     const json = await res.json();
     if (!res.ok) throw new Error(json.error || 'Ошибка API');
@@ -24,77 +20,20 @@ async function apiCall(endpoint, data = {}) {
 document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
         const name = tab.dataset.tab;
-
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-
         tab.classList.add('active');
         document.getElementById(`panel-${name}`).classList.add('active');
-
         if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
     });
 });
-
-// ==================== SULFUR ====================
-const SULFUR_COSTS = {
-    c4:      { sulfur: 2200, lgf: 60 },
-    rocket:  { sulfur: 1400, lgf: 30 },
-    satchel: { sulfur: 480,  lgf: 0  },
-    beancan: { sulfur: 120,  lgf: 0  },
-    explo:   { sulfur: 25,   lgf: 0  }
-};
-
-const EXPLOSIVE_NAMES = {
-    c4:      'C4 (Timed Explosive)',
-    rocket:  'Ракета',
-    satchel: 'Satchel Charge',
-    beancan: 'Beancan Grenade',
-    explo:   'Explosive 5.56'
-};
-
-function calculateSulfur() {
-    const sulfur = parseInt(document.getElementById('sulfur-input').value) || 0;
-    const lgf = parseInt(document.getElementById('lgf-input').value) || 0;
-    const type = document.getElementById('explosive-type').value;
-    const resultDiv = document.getElementById('sulfur-result');
-
-    const cost = SULFUR_COSTS[type];
-    const name = EXPLOSIVE_NAMES[type];
-
-    const bySulfur = Math.floor(sulfur / cost.sulfur);
-    const byLgf = cost.lgf > 0 ? Math.floor(lgf / cost.lgf) : Infinity;
-    const count = Math.min(bySulfur, byLgf);
-
-    let limiter = '';
-    if (cost.lgf === 0) limiter = 'только серой';
-    else if (bySulfur < byLgf) limiter = 'серой';
-    else if (byLgf < bySulfur) limiter = 'топливом';
-    else limiter = 'обоими ресурсами';
-
-    const sUsed = count * cost.sulfur;
-    const lUsed = count * cost.lgf;
-
-    let html = `<strong>${name}</strong><br><br>`;
-    html += `🎯 Можно скрафтить: <strong>${count} шт.</strong><br>`;
-    html += `⚠️ Ограничитель: ${limiter}<br><br>`;
-    html += `📦 Сера: ${sUsed} / ${sulfur} · остаток <strong>${sulfur - sUsed}</strong><br>`;
-    if (cost.lgf > 0) {
-        html += `🔥 Топливо: ${lUsed} / ${lgf} · остаток <strong>${lgf - lUsed}</strong><br>`;
-    }
-    html += `<br><small style="opacity:0.6">На 1 шт: ${cost.sulfur} серы${cost.lgf > 0 ? ` + ${cost.lgf} LGF` : ''}</small>`;
-
-    resultDiv.innerHTML = html;
-    resultDiv.classList.add('show');
-
-    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-}
 
 // ==================== STEAM ====================
 async function analyzeSteam() {
     const input = document.getElementById('steam-input').value.trim();
     const resultDiv = document.getElementById('steam-result');
-
     const match = input.match(/\d{17}/);
+
     if (!match) {
         resultDiv.innerHTML = '❌ Введи SteamID (17 цифр) или ссылку на профиль.';
         resultDiv.classList.add('show');
@@ -106,16 +45,14 @@ async function analyzeSteam() {
 
     try {
         const data = await apiCall('/api/steam', { steamId: match[0] });
-
         if (data.error) {
             resultDiv.innerHTML = `❌ ${data.error}`;
             return;
         }
-
         resultDiv.innerHTML = formatSteamResult(data);
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) {
-        resultDiv.innerHTML = `❌ Ошибка: ${e.message}`;
+        resultDiv.innerHTML = `❌ Ошибка: ${escapeHtml(e.message)}`;
     }
 }
 
@@ -171,46 +108,65 @@ function formatSteamResult(d) {
     return html;
 }
 
-// ==================== FREE GAMES ====================
-async function loadFreeGames() {
-    const resultDiv = document.getElementById('free-result');
-    resultDiv.innerHTML = '<span class="spinner"></span>Загружаю раздачи...';
-    resultDiv.classList.add('show');
+// ==================== SULFUR ====================
+const SULFUR_COSTS = {
+    c4:      { sulfur: 2200, lgf: 60 },
+    rocket:  { sulfur: 1400, lgf: 30 },
+    satchel: { sulfur: 480,  lgf: 0  },
+    beancan: { sulfur: 120,  lgf: 0  },
+    explo:   { sulfur: 25,   lgf: 0  }
+};
 
-    try {
-        const games = await apiCall('/api/free-games');
+const EXPLOSIVE_NAMES = {
+    c4: 'C4 (Timed Explosive)',
+    rocket: 'Ракета',
+    satchel: 'Satchel Charge',
+    beancan: 'Beancan Grenade',
+    explo: 'Explosive 5.56'
+};
 
-        if (!games?.length) {
-            resultDiv.innerHTML = '😕 Сейчас нет активных Steam-раздач.<br><br>Бот уведомит, когда появятся.';
-            return;
-        }
+function calculateSulfur() {
+    const sulfur = parseInt(document.getElementById('sulfur-input').value) || 0;
+    const lgf = parseInt(document.getElementById('lgf-input').value) || 0;
+    const type = document.getElementById('explosive-type').value;
+    const resultDiv = document.getElementById('sulfur-result');
 
-        let html = `<strong>🎁 Найдено: ${games.length}</strong><br><br>`;
+    const cost = SULFUR_COSTS[type];
+    const name = EXPLOSIVE_NAMES[type];
 
-        games.slice(0, 8).forEach((g, i) => {
-            html += `<div style="margin-bottom: 14px;">`;
-            html += `<strong>${i + 1}. ${escapeHtml(g.name)}</strong><br>`;
-            if (g.price && g.price !== 'N/A') {
-                html += `<small style="opacity:0.7">💰 <s>${escapeHtml(g.price)}</s> → 🎁 БЕСПЛАТНО</small><br>`;
-            }
-            html += `<a href="${escapeHtml(g.url)}" target="_blank">⬇️ Забрать</a>`;
-            if (i < games.slice(0, 8).length - 1) html += `<hr>`;
-            html += `</div>`;
-        });
+    const bySulfur = Math.floor(sulfur / cost.sulfur);
+    const byLgf = cost.lgf > 0 ? Math.floor(lgf / cost.lgf) : Infinity;
+    const count = Math.min(bySulfur, byLgf);
 
-        resultDiv.innerHTML = html;
-        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-    } catch (e) {
-        resultDiv.innerHTML = `❌ Ошибка: ${e.message}`;
+    let limiter = '';
+    if (cost.lgf === 0) limiter = 'только серой';
+    else if (bySulfur < byLgf) limiter = 'серой';
+    else if (byLgf < bySulfur) limiter = 'топливом';
+    else limiter = 'обоими ресурсами';
+
+    const sUsed = count * cost.sulfur;
+    const lUsed = count * cost.lgf;
+
+    let html = `<strong>${name}</strong><br><br>`;
+    html += `🎯 Можно скрафтить: <strong>${count} шт.</strong><br>`;
+    html += `⚠️ Ограничитель: ${limiter}<br><br>`;
+    html += `📦 Сера: ${sUsed} / ${sulfur} · остаток <strong>${sulfur - sUsed}</strong><br>`;
+    if (cost.lgf > 0) {
+        html += `🔥 Топливо: ${lUsed} / ${lgf} · остаток <strong>${lgf - lUsed}</strong><br>`;
     }
+    html += `<br><small style="opacity:0.6">На 1 шт: ${cost.sulfur} серы${cost.lgf > 0 ? ` + ${cost.lgf} LGF` : ''}</small>`;
+
+    resultDiv.innerHTML = html;
+    resultDiv.classList.add('show');
+    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }
 
 // ==================== WATCHLIST ====================
 async function addToWatchlist() {
     const input = document.getElementById('watch-input').value.trim();
     const resultDiv = document.getElementById('watch-result');
-
     const match = input.match(/\d{17}/);
+
     if (!match) {
         resultDiv.innerHTML = '❌ Введи SteamID (17 цифр).';
         resultDiv.classList.add('show');
@@ -226,7 +182,7 @@ async function addToWatchlist() {
         document.getElementById('watch-input').value = '';
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) {
-        resultDiv.innerHTML = `❌ Ошибка: ${e.message}`;
+        resultDiv.innerHTML = `❌ Ошибка: ${escapeHtml(e.message)}`;
     }
 }
 
@@ -237,7 +193,6 @@ async function loadWatchlist() {
 
     try {
         const list = await apiCall('/api/watch-list');
-
         if (!list?.length) {
             resultDiv.innerHTML = '📊 Список пуст.';
             return;
@@ -252,27 +207,7 @@ async function loadWatchlist() {
 
         resultDiv.innerHTML = html;
     } catch (e) {
-        resultDiv.innerHTML = `❌ Ошибка: ${e.message}`;
-    }
-}
-
-// ==================== STATUS ====================
-async function loadStatus() {
-    const resultDiv = document.getElementById('status-result');
-    resultDiv.innerHTML = '<span class="spinner"></span>Загружаю...';
-    resultDiv.classList.add('show');
-
-    try {
-        const data = await apiCall('/api/status');
-
-        let html = `<strong>📊 Статистика бота</strong><br><br>`;
-        html += `👥 Авторизовано: <strong>${data.usersCount}</strong><br>`;
-        html += `📊 Проверок профилей: <strong>${data.historyCount}</strong><br>`;
-        html += `👁️ В watchlist: <strong>${data.watchlistCount}</strong><br>`;
-
-        resultDiv.innerHTML = html;
-    } catch (e) {
-        resultDiv.innerHTML = `❌ Ошибка: ${e.message}`;
+        resultDiv.innerHTML = `❌ Ошибка: ${escapeHtml(e.message)}`;
     }
 }
 
