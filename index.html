@@ -9,22 +9,26 @@
 </head>
 <body>
     <div class="app">
-        <!-- Фоновые градиенты -->
-        <div class="bg-glow bg-glow-1"></div>
-        <div class="bg-glow bg-glow-2"></div>
+        <div class="bg-orb orb-1"></div>
+        <div class="bg-orb orb-2"></div>
+        <div class="bg-orb orb-3"></div>
 
         <header class="header">
-            <div class="logo-wrap">
+            <div class="logo-ring">
                 <span class="logo">🦀</span>
             </div>
             <h1>Rust Toolkit</h1>
-            <p class="subtitle">Steam Checker & Tools</p>
+            <p class="subtitle">Steam Checker · Raid Calc</p>
         </header>
 
         <nav class="tabs">
             <button class="tab active" data-tab="steam">
                 <span class="tab-icon">🎮</span>
                 <span class="tab-label">Steam</span>
+            </button>
+            <button class="tab" data-tab="raid">
+                <span class="tab-icon">💥</span>
+                <span class="tab-label">Рейд</span>
             </button>
             <button class="tab" data-tab="sulfur">
                 <span class="tab-icon">🧨</span>
@@ -36,7 +40,7 @@
             </button>
         </nav>
 
-        <!-- Steam -->
+        <!-- STEAM -->
         <section class="panel active" id="panel-steam">
             <div class="card">
                 <div class="card-head">
@@ -54,14 +58,52 @@
 
                 <button class="btn primary" onclick="analyzeSteam()">
                     <span class="btn-icon">🔍</span>
-                    <span>Анализировать профиль</span>
+                    <span>Анализировать</span>
                 </button>
 
                 <div id="steam-result" class="result"></div>
             </div>
         </section>
 
-        <!-- Сера -->
+        <!-- RAID -->
+        <section class="panel" id="panel-raid">
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <h2>Рейд-калькулятор</h2>
+                        <p class="desc">Что нужно для рейда конкретной цели</p>
+                    </div>
+                    <div class="chip">💥</div>
+                </div>
+
+                <div class="field">
+                    <label>Категория</label>
+                    <div class="select-wrap">
+                        <select id="raid-cat" onchange="renderRaidItems()">
+                            <option value="doors">🚪 Двери</option>
+                            <option value="walls">🧱 Стены</option>
+                            <option value="outer_walls">🛡️ Внешние стены</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Цель</label>
+                    <div class="select-wrap">
+                        <select id="raid-target"></select>
+                    </div>
+                </div>
+
+                <button class="btn primary" onclick="calculateRaid()">
+                    <span class="btn-icon">🔢</span>
+                    <span>Рассчитать</span>
+                </button>
+
+                <div id="raid-result" class="result"></div>
+            </div>
+        </section>
+
+        <!-- SULFUR -->
         <section class="panel" id="panel-sulfur">
             <div class="card">
                 <div class="card-head">
@@ -102,55 +144,9 @@
 
                 <div id="sulfur-result" class="result"></div>
             </div>
-
-            <div class="card">
-                <div class="card-head">
-                    <div>
-                        <h2>Стоимость крафта</h2>
-                        <p class="desc">На 1 единицу взрывчатки</p>
-                    </div>
-                </div>
-                <div class="cost-list">
-                    <div class="cost-row">
-                        <span class="cost-emoji">💥</span>
-                        <div class="cost-info">
-                            <strong>C4</strong>
-                            <small>2200 серы + 60 LGF</small>
-                        </div>
-                    </div>
-                    <div class="cost-row">
-                        <span class="cost-emoji">🚀</span>
-                        <div class="cost-info">
-                            <strong>Ракета</strong>
-                            <small>1400 серы + 30 LGF</small>
-                        </div>
-                    </div>
-                    <div class="cost-row">
-                        <span class="cost-emoji">🎒</span>
-                        <div class="cost-info">
-                            <strong>Satchel Charge</strong>
-                            <small>480 серы</small>
-                        </div>
-                    </div>
-                    <div class="cost-row">
-                        <span class="cost-emoji">💣</span>
-                        <div class="cost-info">
-                            <strong>Beancan Grenade</strong>
-                            <small>120 серы</small>
-                        </div>
-                    </div>
-                    <div class="cost-row">
-                        <span class="cost-emoji">🔫</span>
-                        <div class="cost-info">
-                            <strong>Explosive 5.56</strong>
-                            <small>25 серы / патрон</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </section>
 
-        <!-- Watch -->
+        <!-- WATCH -->
         <section class="panel" id="panel-watch">
             <div class="card">
                 <div class="card-head">
