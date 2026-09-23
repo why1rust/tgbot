@@ -12,86 +12,98 @@
         <h1>🦀 Rust Toolkit</h1>
 
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('raid')">🎯 Рейд</button>
+            <button class="tab active" onclick="switchTab('sulfur')">🧨 Сера</button>
             <button class="tab" onclick="switchTab('genes')">🌱 Гены</button>
-            <button class="tab" onclick="switchTab('servers')">📡 Сервера</button>
-            <button class="tab" onclick="switchTab('profile')">👤 Профиль</button>
+            <button class="tab" onclick="switchTab('info')">ℹ️ Инфо</button>
         </div>
 
-        <!-- Вкладка: Рейд-калькулятор -->
-        <div id="raid" class="tab-content active">
+        <!-- Вкладка: Сера -->
+        <div id="sulfur" class="tab-content active">
             <div class="card">
-                <h2>Рейд-калькулятор</h2>
-                <label>Сера (Sulfur):</label>
-                <input type="number" id="sulfur" value="1000">
+                <h2>Конвертер серы и топлива</h2>
+                <p class="hint">Введи количество ресурсов, выбери тип взрывчатки — узнаешь, сколько можно скрафтить.</p>
 
-                <label>Цель:</label>
-                <select id="target">
-                    <option value="stone">Каменная стена</option>
-                    <option value="sheet">Металлическая стена</option>
-                    <option value="hqm">Укреплённая стена (HQM)</option>
-                    <option value="garage">Гаражная дверь</option>
-                    <option value="armored">Бронированная дверь</option>
+                <label>Сера (Sulfur):</label>
+                <input type="number" id="sulfur-input" value="10000" min="0">
+
+                <label>Низкокачественное топливо (Low Grade Fuel):</label>
+                <input type="number" id="lgf-input" value="500" min="0">
+
+                <label>Тип взрывчатки:</label>
+                <select id="explosive-type">
+                    <option value="c4">C4 (Timed Explosive)</option>
+                    <option value="rocket">Ракета</option>
+                    <option value="satchel">Satchel Charge</option>
+                    <option value="beancan">Beancan Grenade</option>
+                    <option value="explo">Explosive 5.56 (за патрон)</option>
                 </select>
 
-                <button onclick="calculateRaid()">Рассчитать</button>
-                <div id="raid-result"></div>
-            </div>
-        </div>
-
-        <!-- Вкладка: Калькулятор генов -->
-        <div id="genes" class="tab-content">
-            <div class="card">
-                <h2>Калькулятор генов</h2>
-                <p class="hint">Введи 6 генов через пробел (G, Y, H, W, X)</p>
-
-                <label>Растение 1:</label>
-                <input type="text" id="plant1" placeholder="G Y G Y G Y" maxlength="13">
-
-                <label>Растение 2:</label>
-                <input type="text" id="plant2" placeholder="Y G Y G Y G" maxlength="13">
-
-                <button onclick="calculateCrossbreed()">Скрестить</button>
-                <div id="gene-result"></div>
+                <button onclick="calculateSulfur()">Рассчитать</button>
+                <div id="sulfur-result" class="result-box"></div>
             </div>
 
             <div class="card">
-                <h2>Справочник генов</h2>
-                <div class="gene-legend">
-                    <span class="green">G</span> — Рост<br>
-                    <span class="green">Y</span> — Урожай<br>
-                    <span class="green">H</span> — Выносливость<br>
-                    <span class="red">W</span> — Вода (плохой)<br>
-                    <span class="red">X</span> — Пусто (плохой)
+                <h2>Стоимость крафта</h2>
+                <div class="legend">
+                    <div>💥 <strong>C4</strong> — 2200 серы + 60 LGF</div>
+                    <div>🚀 <strong>Ракета</strong> — 1400 серы + 30 LGF</div>
+                    <div>🎒 <strong>Satchel</strong> — 480 серы</div>
+                    <div>💣 <strong>Beancan</strong> — 120 серы</div>
+                    <div>🔫 <strong>Explo 5.56</strong> — 25 серы (за 1 патрон)</div>
                 </div>
             </div>
         </div>
 
-        <!-- Вкладка: Сервера -->
-        <div id="servers" class="tab-content">
+        <!-- Вкладка: Гены -->
+        <div id="genes" class="tab-content">
             <div class="card">
-                <h2>Сервера</h2>
-                <p class="hint">Добавь сервер для отслеживания онлайна</p>
+                <h2>Калькулятор генов</h2>
+                <p class="hint">Введи гены клонов (по 6 букв: G, Y, H, W, X). Каждый клон — с новой строки.</p>
 
-                <label>IP сервера:</label>
-                <input type="text" id="server-ip" placeholder="127.0.0.1:28015">
+                <label>Твои клоны:</label>
+                <textarea id="gene-input" rows="6" placeholder="WGGWYH&#10;GHYWHH&#10;XYHYGH&#10;WYYGGW&#10;GGYYHH&#10;XWYHGG"></textarea>
 
-                <button onclick="addServer()">Добавить</button>
-                <div id="server-list"></div>
+                <label>Цель (6 букв):</label>
+                <input type="text" id="gene-target" value="GGGYYY" maxlength="6">
+
+                <button onclick="calculateGenes()">Найти лучший маршрут</button>
+                <div id="gene-result" class="result-box"></div>
+            </div>
+
+            <div class="card">
+                <h2>Шпаргалка по генам</h2>
+                <div class="legend">
+                    <div><span class="gene-box green">G</span> — Growth (скорость роста)</div>
+                    <div><span class="gene-box green">Y</span> — Yield (объём урожая)</div>
+                    <div><span class="gene-box green">H</span> — Hardiness (выносливость)</div>
+                    <div><span class="gene-box red">W</span> — Water (расход воды, плохой)</div>
+                    <div><span class="gene-box red">X</span> — Empty (пусто, плохой)</div>
+                </div>
+                <p class="hint" style="margin-top: 12px;">
+                    Веса: G/Y/H = 0.6, W/X = 1.0. Красные гены вытесняют зелёные при скрещивании.
+                </p>
             </div>
         </div>
 
-        <!-- Вкладка: Профиль -->
-        <div id="profile" class="tab-content">
+        <!-- Вкладка: Инфо -->
+        <div id="info" class="tab-content">
             <div class="card">
-                <h2>👤 Профиль</h2>
-                <p>Имя: <span id="user-name">Гость</span></p>
-                <p>ID: <span id="user-id">—</span></p>
-                <p class="hint">Данные берутся из Telegram WebApp</p>
+                <h2>О приложении</h2>
+                <p>🦀 <strong>Rust Toolkit</strong> — набор утилит для игрока в Rust.</p>
+                <p>💡 Этот Mini App открывается прямо в Telegram.</p>
+                <p>📱 Все команды бота доступны через <code>/menu</code>.</p>
+            </div>
+
+            <div class="card">
+                <h2>Что внутри</h2>
+                <div class="legend">
+                    <div>🧨 <strong>Сера</strong> — конвертер серы и топлива во взрывчатку</div>
+                    <div>🌱 <strong>Гены</strong> — калькулятор скрещивания растений</div>
+                    <div>ℹ️ <strong>Инфо</strong> — справка по приложению</div>
+                </div>
             </div>
         </div>
     </div>
-
     <script src="app.js"></script>
 </body>
 </html>
