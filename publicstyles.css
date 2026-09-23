@@ -1,0 +1,45 @@
+body {
+    background: var(--tg-theme-bg-color, #1a1a1a);
+    color: var(--tg-theme-text-color, #fff);
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0;
+    padding: 16px;
+}
+.container { max-width: 500px; margin: 0 auto; }
+h1 { text-align: center; margin-bottom: 24px; }
+h2 { margin-top: 0; font-size: 18px; }
+.card {
+    background: var(--tg-theme-secondary-bg-color, #2a2a2a);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+label { display: block; margin: 12px 0 4px; font-size: 14px; opacity: 0.8; }
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin: 4px 0;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #333;
+    color: #fff;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+button {
+    background: var(--tg-theme-button-color, #5288c1);
+    border: none;
+    cursor: pointer;
+    margin-top: 12px;
+    font-weight: bold;
+}
+button:active { opacity: 0.8; }
+#result {
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(82, 136, 193, 0.2);
+    border-radius: 8px;
+    font-weight: bold;
+    display: none;
+}
+#result.show { display: block; }

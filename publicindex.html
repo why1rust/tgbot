@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rust Toolkit</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🦀 Rust Toolkit</h1>
+        
+        <div class="card">
+            <h2>Рейд-калькулятор</h2>
+            <label>Сера (Sulfur):</label>
+            <input type="number" id="sulfur" value="1000">
+            
+            <label>Цель:</label>
+            <select id="target">
+                <option value="stone">Каменная стена</option>
+                <option value="sheet">Металлическая стена</option>
+                <option value="hqm">Укреплённая стена (HQM)</option>
+            </select>
+            
+            <button onclick="calculateRaid()">Рассчитать</button>
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <h2>Информация</h2>
+            <p>💡 Этот Mini App открывается прямо в Telegram.</p>
+            <p>📱 Для полного функционала используйте бота: /menu</p>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
