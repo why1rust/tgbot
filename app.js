@@ -164,7 +164,7 @@ function calculateRaid() {
     if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }
 
-// ==================== SULFUR ====================
+// ==================== CRAFT ====================
 const SULFUR_COSTS = {
     c4:      { sulfur: 2200, lgf: 60 },
     rocket:  { sulfur: 1400, lgf: 30 },
