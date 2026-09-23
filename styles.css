@@ -1,20 +1,62 @@
+:root {
+    --tg-bg: var(--tg-theme-bg-color, #1a1a1a);
+    --tg-text: var(--tg-theme-text-color, #fff);
+    --tg-secondary: var(--tg-theme-secondary-bg-color, #2a2a2a);
+    --tg-button: var(--tg-theme-button-color, #5288c1);
+}
+
 body {
-    background: var(--tg-theme-bg-color, #1a1a1a);
-    color: var(--tg-theme-text-color, #fff);
+    background: var(--tg-bg);
+    color: var(--tg-text);
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
     margin: 0;
     padding: 16px;
 }
+
 .container { max-width: 500px; margin: 0 auto; }
-h1 { text-align: center; margin-bottom: 24px; }
-h2 { margin-top: 0; font-size: 18px; }
+
+h1 { text-align: center; margin-bottom: 20px; font-size: 22px; }
+
+/* Вкладки */
+.tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.tab {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    background: var(--tg-secondary);
+    color: var(--tg-text);
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.tab.active {
+    background: var(--tg-button);
+    font-weight: bold;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
 .card {
-    background: var(--tg-theme-secondary-bg-color, #2a2a2a);
+    background: var(--tg-secondary);
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 16px;
 }
+
+h2 { margin-top: 0; font-size: 18px; }
+
 label { display: block; margin: 12px 0 4px; font-size: 14px; opacity: 0.8; }
+
 input, select, button {
     width: 100%;
     padding: 12px;
@@ -26,20 +68,31 @@ input, select, button {
     font-size: 16px;
     box-sizing: border-box;
 }
+
 button {
-    background: var(--tg-theme-button-color, #5288c1);
+    background: var(--tg-button);
     border: none;
     cursor: pointer;
     margin-top: 12px;
     font-weight: bold;
 }
+
 button:active { opacity: 0.8; }
-#result {
+
+#raid-result, #gene-result, #server-list {
     margin-top: 16px;
     padding: 12px;
     background: rgba(82, 136, 193, 0.2);
     border-radius: 8px;
-    font-weight: bold;
     display: none;
 }
-#result.show { display: block; }
+
+#raid-result.show, #gene-result.show, #server-list.show { display: block; }
+
+.hint { font-size: 12px; opacity: 0.6; margin: 4px 0; }
+
+.gene-legend { line-height: 1.8; font-size: 14px; }
+.green { color: #4caf50; font-weight: bold; }
+.red { color: #f44336; font-weight: bold; }
+
+.result-line { margin: 4px 0; }
