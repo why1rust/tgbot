@@ -38,14 +38,14 @@
             </button>
         </nav>
 
-        <!-- Вкладка: Сера -->
+        <!-- Сера -->
         <div class="tab-content active" id="tab-sulfur">
             <div class="card">
                 <div class="card-header">
                     <h2>Конвертер серы</h2>
                     <span class="badge">🧨</span>
                 </div>
-                <p class="hint">Введи ресурсы — узнаешь, сколько взрывчатки можно скрафтить.</p>
+                <p class="hint">Сколько взрывчатки можно скрафтить из ресурсов.</p>
 
                 <div class="input-group">
                     <label>Сера (Sulfur)</label>
@@ -119,14 +119,14 @@
             </div>
         </div>
 
-        <!-- Вкладка: Steam -->
+        <!-- Steam -->
         <div class="tab-content" id="tab-steam">
             <div class="card">
                 <div class="card-header">
                     <h2>Steam Checker</h2>
                     <span class="badge">🎮</span>
                 </div>
-                <p class="hint">Введи SteamID (17 цифр) или ссылку на профиль для анализа.</p>
+                <p class="hint">Проверка профиля: часы в Rust, баны, риск.</p>
 
                 <div class="input-group">
                     <label>SteamID или ссылка</label>
@@ -134,34 +134,21 @@
                 </div>
 
                 <button class="btn-primary" onclick="analyzeSteam()">
-                    <span>Анализировать</span>
+                    <span>🔍 Анализировать</span>
                 </button>
 
                 <div id="steam-result" class="result-box"></div>
             </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2>Что показывает анализ</h2>
-                </div>
-                <div class="feature-list">
-                    <div>📊 Статус и возраст аккаунта</div>
-                    <div>🦀 Часы в Rust</div>
-                    <div>🎮 Игры, друзья, уровень</div>
-                    <div>🚫 VAC/Game баны</div>
-                    <div>📈 Risk score и рекомендация</div>
-                </div>
-            </div>
         </div>
 
-        <!-- Вкладка: Игры -->
+        <!-- Игры -->
         <div class="tab-content" id="tab-free">
             <div class="card">
                 <div class="card-header">
                     <h2>Бесплатные игры</h2>
                     <span class="badge">🎁</span>
                 </div>
-                <p class="hint">Активные раздачи Steam через GamerPower API.</p>
+                <p class="hint">Активные раздачи Steam через GamerPower.</p>
 
                 <button class="btn-primary" onclick="loadFreeGames()">
                     <span>🔍 Найти раздачи</span>
@@ -171,31 +158,33 @@
             </div>
         </div>
 
-        <!-- Вкладка: Watchlist -->
+        <!-- Watch -->
         <div class="tab-content" id="tab-watch">
             <div class="card">
                 <div class="card-header">
                     <h2>Отслеживание банов</h2>
                     <span class="badge">👁️</span>
                 </div>
-                <p class="hint">Следим за игроком — сообщим, если появится бан.</p>
+                <p class="hint">Следим за игроком, сообщим о бане.</p>
 
                 <div class="input-group">
                     <label>SteamID игрока</label>
                     <input type="text" id="watch-input" placeholder="76561199685927598" inputmode="text">
                 </div>
 
-                <button class="btn-primary" onclick="openBotForWatch()">
-                    <span>Добавить через бота</span>
+                <button class="btn-primary" onclick="addToWatchlist()">
+                    <span>➕ Добавить</span>
                 </button>
 
-                <p class="hint" style="margin-top: 12px;">
-                    💡 Управление watchlist доступно в боте: <code>/watch add/remove/list</code>
-                </p>
+                <button class="btn-secondary" onclick="loadWatchlist()">
+                    <span>📋 Показать список</span>
+                </button>
+
+                <div id="watch-result" class="result-box"></div>
             </div>
         </div>
 
-        <!-- Вкладка: Статус -->
+        <!-- Статус -->
         <div class="tab-content" id="tab-status">
             <div class="card">
                 <div class="card-header">
@@ -225,42 +214,13 @@
                             <small>RUST_BOT_KV</small>
                         </div>
                     </div>
-                    <div class="status-item">
-                        <span class="status-dot online"></span>
-                        <div>
-                            <strong>Cron Triggers</strong>
-                            <small>Каждый час / 6 часов</small>
-                        </div>
-                    </div>
                 </div>
-            </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h2>Команды бота</h2>
-                </div>
-                <div class="command-list">
-                    <div class="command-item">
-                        <code>/menu</code>
-                        <span>Главное меню</span>
-                    </div>
-                    <div class="command-item">
-                        <code>/steam ID</code>
-                        <span>Проверка профиля</span>
-                    </div>
-                    <div class="command-item">
-                        <code>/free</code>
-                        <span>Бесплатные игры</span>
-                    </div>
-                    <div class="command-item">
-                        <code>/watch add</code>
-                        <span>Отслеживание банов</span>
-                    </div>
-                    <div class="command-item">
-                        <code>/app</code>
-                        <span>Открыть Mini App</span>
-                    </div>
-                </div>
+                <button class="btn-primary" onclick="loadStatus()">
+                    <span>🔄 Обновить</span>
+                </button>
+
+                <div id="status-result" class="result-box"></div>
             </div>
         </div>
 
