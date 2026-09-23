@@ -91,9 +91,7 @@ function formatSteamResult(d) {
 
     if (d.reasons?.length > 0) {
         html += `<br><strong>📋 Факторы:</strong><br>`;
-        d.reasons.slice(0, 5).forEach(r => {
-            html += `· ${escapeHtml(r)}<br>`;
-        });
+        d.reasons.slice(0, 5).forEach(r => html += `· ${escapeHtml(r)}<br>`);
     }
 
     let rec = '';
@@ -108,6 +106,64 @@ function formatSteamResult(d) {
     return html;
 }
 
+// ==================== RAID ====================
+const RAID_DATA = {
+    doors: {
+        title: '🚪 Двери',
+        items: {
+            wood_door:    { name: 'Деревянная дверь', hp: 200,  explosive: '2 молотова',            resources: '100 топлива' },
+            sheet_door:   { name: 'Железная дверь',   hp: 250,  explosive: '1 ракета, 8 разрывов',  resources: '1600 серы' },
+            garage_door:  { name: 'Гаражка',          hp: 600,  explosive: '3 ракеты',              resources: '4200 серы' },
+            mvp_door:     { name: 'МВК дверь',        hp: 1000, explosive: '2 C4, 30 разрывов',     resources: '5900 серы' },
+            ladder_hatch: { name: 'Люк',              hp: 250,  explosive: '1 ракета, 8 разрывов',  resources: '1600 серы' },
+            shop_front:   { name: 'Витрина',          hp: 750,  explosive: '3 C4',                  resources: '6600 серы' }
+        }
+    },
+    walls: {
+        title: '🧱 Стены',
+        items: {
+            wood_wall:  { name: 'Деревянная стена', hp: 250,  explosive: '4 молотова',            resources: '200 топлива' },
+            stone_wall: { name: 'Каменная стена',   hp: 500,  explosive: '3 ракеты, 35 разрывов', resources: '5075 серы' },
+            sheet_wall: { name: 'Железная стена',   hp: 1000, explosive: '7 ракет, 15 разрывов',  resources: '10175 серы' },
+            mvp_wall:   { name: 'МВК стена',        hp: 2000, explosive: '14 ракет, 30 разрывов', resources: '20350 серы' }
+        }
+    },
+    outer_walls: {
+        title: '🛡️ Внешние стены',
+        items: {
+            outer_stone: { name: 'Каменная стена',   hp: 500, explosive: '2 C4',                   resources: '4400 серы' },
+            outer_wood:  { name: 'Деревянная стена', hp: 500, explosive: '1 зажигательная ракета', resources: '75 топлива' }
+        }
+    }
+};
+
+function renderRaidItems() {
+    const cat = document.getElementById('raid-cat').value;
+    const select = document.getElementById('raid-target');
+    const items = RAID_DATA[cat].items;
+
+    select.innerHTML = Object.entries(items)
+        .map(([key, item]) => `<option value="${key}">${item.name}</option>`)
+        .join('');
+}
+
+function calculateRaid() {
+    const cat = document.getElementById('raid-cat').value;
+    const targetKey = document.getElementById('raid-target').value;
+    const item = RAID_DATA[cat].items[targetKey];
+    const resultDiv = document.getElementById('raid-result');
+
+    let html = `<strong>${item.name}</strong><br><br>`;
+    html += `❤️ ХП: <strong>${item.hp}</strong><br>`;
+    html += `💥 Взрывчатка: <strong>${item.explosive}</strong><br>`;
+    html += `📦 Ресурсы: <strong>${item.resources}</strong>`;
+
+    resultDiv.innerHTML = html;
+    resultDiv.classList.add('show');
+
+    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+}
+
 // ==================== SULFUR ====================
 const SULFUR_COSTS = {
     c4:      { sulfur: 2200, lgf: 60 },
@@ -118,11 +174,7 @@ const SULFUR_COSTS = {
 };
 
 const EXPLOSIVE_NAMES = {
-    c4: 'C4 (Timed Explosive)',
-    rocket: 'Ракета',
-    satchel: 'Satchel Charge',
-    beancan: 'Beancan Grenade',
-    explo: 'Explosive 5.56'
+    c4: 'C4', rocket: 'Ракета', satchel: 'Satchel', beancan: 'Beancan', explo: 'Explo 5.56'
 };
 
 function calculateSulfur() {
@@ -142,7 +194,7 @@ function calculateSulfur() {
     if (cost.lgf === 0) limiter = 'только серой';
     else if (bySulfur < byLgf) limiter = 'серой';
     else if (byLgf < bySulfur) limiter = 'топливом';
-    else limiter = 'обоими ресурсами';
+    else limiter = 'обоими';
 
     const sUsed = count * cost.sulfur;
     const lUsed = count * cost.lgf;
@@ -151,10 +203,7 @@ function calculateSulfur() {
     html += `🎯 Можно скрафтить: <strong>${count} шт.</strong><br>`;
     html += `⚠️ Ограничитель: ${limiter}<br><br>`;
     html += `📦 Сера: ${sUsed} / ${sulfur} · остаток <strong>${sulfur - sUsed}</strong><br>`;
-    if (cost.lgf > 0) {
-        html += `🔥 Топливо: ${lUsed} / ${lgf} · остаток <strong>${lgf - lUsed}</strong><br>`;
-    }
-    html += `<br><small style="opacity:0.6">На 1 шт: ${cost.sulfur} серы${cost.lgf > 0 ? ` + ${cost.lgf} LGF` : ''}</small>`;
+    if (cost.lgf > 0) html += `🔥 Топливо: ${lUsed} / ${lgf} · остаток <strong>${lgf - lUsed}</strong><br>`;
 
     resultDiv.innerHTML = html;
     resultDiv.classList.add('show');
@@ -218,3 +267,6 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+
+// ==================== INIT ====================
+renderRaidItems();
