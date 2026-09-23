@@ -2,230 +2,221 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Rust Toolkit</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="app">
-        <header class="app-header">
-            <div class="app-logo">🦀</div>
-            <h1>Rust Toolkit</h1>
-            <p class="app-subtitle">Steam Checker & Tools</p>
+        <header class="header">
+            <div class="header-glow"></div>
+            <div class="header-content">
+                <div class="logo-wrap">
+                    <span class="logo">🦀</span>
+                </div>
+                <h1>Rust Toolkit</h1>
+                <p class="subtitle">Steam Checker & Tools</p>
+            </div>
         </header>
 
-        <nav class="nav">
-            <button class="nav-btn active" data-tab="sulfur">
-                <span class="nav-icon">🧨</span>
-                <span>Сера</span>
+        <nav class="tabs">
+            <button class="tab active" data-tab="sulfur">
+                <span class="tab-icon">🧨</span>
+                <span class="tab-label">Сера</span>
             </button>
-            <button class="nav-btn" data-tab="steam">
-                <span class="nav-icon">🎮</span>
-                <span>Steam</span>
+            <button class="tab" data-tab="steam">
+                <span class="tab-icon">🎮</span>
+                <span class="tab-label">Steam</span>
             </button>
-            <button class="nav-btn" data-tab="free">
-                <span class="nav-icon">🎁</span>
-                <span>Игры</span>
+            <button class="tab" data-tab="free">
+                <span class="tab-icon">🎁</span>
+                <span class="tab-label">Игры</span>
             </button>
-            <button class="nav-btn" data-tab="watch">
-                <span class="nav-icon">👁️</span>
-                <span>Watch</span>
+            <button class="tab" data-tab="watch">
+                <span class="tab-icon">👁️</span>
+                <span class="tab-label">Watch</span>
             </button>
-            <button class="nav-btn" data-tab="status">
-                <span class="nav-icon">📊</span>
-                <span>Статус</span>
+            <button class="tab" data-tab="status">
+                <span class="tab-icon">📊</span>
+                <span class="tab-label">Статус</span>
             </button>
         </nav>
 
         <!-- Сера -->
-        <div class="tab-content active" id="tab-sulfur">
+        <section class="panel active" id="panel-sulfur">
             <div class="card">
-                <div class="card-header">
+                <div class="card-top">
                     <h2>Конвертер серы</h2>
-                    <span class="badge">🧨</span>
+                    <span class="chip">🧨</span>
                 </div>
-                <p class="hint">Сколько взрывчатки можно скрафтить из ресурсов.</p>
+                <p class="desc">Сколько взрывчатки можно скрафтить из ресурсов.</p>
 
-                <div class="input-group">
-                    <label>Сера (Sulfur)</label>
-                    <input type="number" id="sulfur-input" value="10000" min="0" inputmode="numeric">
-                </div>
-
-                <div class="input-group">
-                    <label>Топливо (Low Grade Fuel)</label>
-                    <input type="number" id="lgf-input" value="500" min="0" inputmode="numeric">
+                <div class="field">
+                    <label>Сера</label>
+                    <input type="number" id="sulfur-input" value="10000" inputmode="numeric">
                 </div>
 
-                <div class="input-group">
+                <div class="field">
+                    <label>Топливо (LGF)</label>
+                    <input type="number" id="lgf-input" value="500" inputmode="numeric">
+                </div>
+
+                <div class="field">
                     <label>Тип взрывчатки</label>
-                    <select id="explosive-type">
-                        <option value="c4">💥 C4 (Timed Explosive)</option>
-                        <option value="rocket">🚀 Ракета</option>
-                        <option value="satchel">🎒 Satchel Charge</option>
-                        <option value="beancan">💣 Beancan Grenade</option>
-                        <option value="explo">🔫 Explosive 5.56</option>
-                    </select>
+                    <div class="select-wrap">
+                        <select id="explosive-type">
+                            <option value="c4">💥 C4 (Timed Explosive)</option>
+                            <option value="rocket">🚀 Ракета</option>
+                            <option value="satchel">🎒 Satchel Charge</option>
+                            <option value="beancan">💣 Beancan Grenade</option>
+                            <option value="explo">🔫 Explosive 5.56</option>
+                        </select>
+                    </div>
                 </div>
 
-                <button class="btn-primary" onclick="calculateSulfur()">
+                <button class="btn primary" onclick="calculateSulfur()">
                     <span>Рассчитать</span>
                 </button>
 
-                <div id="sulfur-result" class="result-box"></div>
+                <div id="sulfur-result" class="result"></div>
             </div>
 
             <div class="card">
-                <div class="card-header">
+                <div class="card-top">
                     <h2>Стоимость крафта</h2>
                 </div>
-                <div class="cost-list">
-                    <div class="cost-item">
-                        <span class="cost-icon">💥</span>
-                        <div class="cost-info">
-                            <strong>C4</strong>
-                            <small>2200 серы + 60 LGF</small>
-                        </div>
+                <div class="cost-grid">
+                    <div class="cost-row">
+                        <span class="cost-emoji">💥</span>
+                        <div><strong>C4</strong><small>2200 серы + 60 LGF</small></div>
                     </div>
-                    <div class="cost-item">
-                        <span class="cost-icon">🚀</span>
-                        <div class="cost-info">
-                            <strong>Ракета</strong>
-                            <small>1400 серы + 30 LGF</small>
-                        </div>
+                    <div class="cost-row">
+                        <span class="cost-emoji">🚀</span>
+                        <div><strong>Ракета</strong><small>1400 серы + 30 LGF</small></div>
                     </div>
-                    <div class="cost-item">
-                        <span class="cost-icon">🎒</span>
-                        <div class="cost-info">
-                            <strong>Satchel Charge</strong>
-                            <small>480 серы</small>
-                        </div>
+                    <div class="cost-row">
+                        <span class="cost-emoji">🎒</span>
+                        <div><strong>Satchel</strong><small>480 серы</small></div>
                     </div>
-                    <div class="cost-item">
-                        <span class="cost-icon">💣</span>
-                        <div class="cost-info">
-                            <strong>Beancan Grenade</strong>
-                            <small>120 серы</small>
-                        </div>
+                    <div class="cost-row">
+                        <span class="cost-emoji">💣</span>
+                        <div><strong>Beancan</strong><small>120 серы</small></div>
                     </div>
-                    <div class="cost-item">
-                        <span class="cost-icon">🔫</span>
-                        <div class="cost-info">
-                            <strong>Explosive 5.56</strong>
-                            <small>25 серы за патрон</small>
-                        </div>
+                    <div class="cost-row">
+                        <span class="cost-emoji">🔫</span>
+                        <div><strong>Explo 5.56</strong><small>25 серы / патрон</small></div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Steam -->
-        <div class="tab-content" id="tab-steam">
+        <section class="panel" id="panel-steam">
             <div class="card">
-                <div class="card-header">
+                <div class="card-top">
                     <h2>Steam Checker</h2>
-                    <span class="badge">🎮</span>
+                    <span class="chip">🎮</span>
                 </div>
-                <p class="hint">Проверка профиля: часы в Rust, баны, риск.</p>
+                <p class="desc">Проверка профиля: часы в Rust, баны, риск.</p>
 
-                <div class="input-group">
+                <div class="field">
                     <label>SteamID или ссылка</label>
                     <input type="text" id="steam-input" placeholder="76561199685927598" inputmode="text">
                 </div>
 
-                <button class="btn-primary" onclick="analyzeSteam()">
+                <button class="btn primary" onclick="analyzeSteam()">
                     <span>🔍 Анализировать</span>
                 </button>
 
-                <div id="steam-result" class="result-box"></div>
+                <div id="steam-result" class="result"></div>
             </div>
-        </div>
+        </section>
 
         <!-- Игры -->
-        <div class="tab-content" id="tab-free">
+        <section class="panel" id="panel-free">
             <div class="card">
-                <div class="card-header">
+                <div class="card-top">
                     <h2>Бесплатные игры</h2>
-                    <span class="badge">🎁</span>
+                    <span class="chip">🎁</span>
                 </div>
-                <p class="hint">Активные раздачи Steam через GamerPower.</p>
+                <p class="desc">Активные раздачи Steam через GamerPower.</p>
 
-                <button class="btn-primary" onclick="loadFreeGames()">
+                <button class="btn primary" onclick="loadFreeGames()">
                     <span>🔍 Найти раздачи</span>
                 </button>
 
-                <div id="free-result" class="result-box"></div>
+                <div id="free-result" class="result"></div>
             </div>
-        </div>
+        </section>
 
         <!-- Watch -->
-        <div class="tab-content" id="tab-watch">
+        <section class="panel" id="panel-watch">
             <div class="card">
-                <div class="card-header">
-                    <h2>Отслеживание банов</h2>
-                    <span class="badge">👁️</span>
+                <div class="card-top">
+                    <h2>Добавить в Watchlist</h2>
+                    <span class="chip">👁️</span>
                 </div>
-                <p class="hint">Следим за игроком, сообщим о бане.</p>
+                <p class="desc">Следим за игроком, сообщим о бане.</p>
 
-                <div class="input-group">
+                <div class="field">
                     <label>SteamID игрока</label>
                     <input type="text" id="watch-input" placeholder="76561199685927598" inputmode="text">
                 </div>
 
-                <button class="btn-primary" onclick="addToWatchlist()">
+                <button class="btn primary" onclick="addToWatchlist()">
                     <span>➕ Добавить</span>
                 </button>
 
-                <button class="btn-secondary" onclick="loadWatchlist()">
+                <div id="watch-result" class="result"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-top">
+                    <h2>Список отслеживания</h2>
+                </div>
+
+                <button class="btn secondary" onclick="loadWatchlist()">
                     <span>📋 Показать список</span>
                 </button>
 
-                <div id="watch-result" class="result-box"></div>
+                <div id="watchlist-result" class="result"></div>
             </div>
-        </div>
+        </section>
 
         <!-- Статус -->
-        <div class="tab-content" id="tab-status">
+        <section class="panel" id="panel-status">
             <div class="card">
-                <div class="card-header">
+                <div class="card-top">
                     <h2>Статус системы</h2>
-                    <span class="badge">📊</span>
+                    <span class="chip">📊</span>
                 </div>
 
-                <div class="status-list">
-                    <div class="status-item">
-                        <span class="status-dot online"></span>
-                        <div>
-                            <strong>Telegram Bot</strong>
-                            <small>@rustpluslssus_bot</small>
-                        </div>
+                <div class="status-grid">
+                    <div class="status-row">
+                        <span class="dot online"></span>
+                        <div><strong>Telegram Bot</strong><small>@rustpluslssus_bot</small></div>
                     </div>
-                    <div class="status-item">
-                        <span class="status-dot online"></span>
-                        <div>
-                            <strong>Cloudflare Workers</strong>
-                            <small>rust-bot.sdadawqdqdasda.workers.dev</small>
-                        </div>
+                    <div class="status-row">
+                        <span class="dot online"></span>
+                        <div><strong>Cloudflare Workers</strong><small>Работает 24/7</small></div>
                     </div>
-                    <div class="status-item">
-                        <span class="status-dot online"></span>
-                        <div>
-                            <strong>KV Storage</strong>
-                            <small>RUST_BOT_KV</small>
-                        </div>
+                    <div class="status-row">
+                        <span class="dot online"></span>
+                        <div><strong>KV Storage</strong><small>RUST_BOT_KV</small></div>
                     </div>
                 </div>
 
-                <button class="btn-primary" onclick="loadStatus()">
-                    <span>🔄 Обновить</span>
+                <button class="btn primary" onclick="loadStatus()">
+                    <span>🔄 Обновить статистику</span>
                 </button>
 
-                <div id="status-result" class="result-box"></div>
+                <div id="status-result" class="result"></div>
             </div>
-        </div>
+        </section>
 
-        <footer class="app-footer">
-            <p>🦀 Rust Toolkit v2.0</p>
+        <footer class="footer">
+            <span>🦀 Rust Toolkit v2.0</span>
         </footer>
     </div>
 
