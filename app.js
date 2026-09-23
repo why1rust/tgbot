@@ -2,9 +2,24 @@ const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
-// Применяем тему Telegram
-if (tg.themeParams && tg.themeParams.bg_color) {
-    document.documentElement.style.setProperty('--tg-bg', tg.themeParams.bg_color);
+// URL твоего Cloudflare Worker'а
+const API_BASE = 'https://rust-bot.sdadawqdqdasda.workers.dev';
+
+// ==================== API ====================
+async function apiCall(endpoint, data = {}) {
+    const res = await fetch(`${API_BASE}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            initData: tg.initData,
+            ...data
+        })
+    });
+    const json = await res.json();
+    if (!res.ok) {
+        throw new Error(json.error || 'Ошибка API');
+    }
+    return json;
 }
 
 // ==================== НАВИГАЦИЯ ====================
@@ -36,7 +51,7 @@ const EXPLOSIVE_NAMES = {
     rocket:  'Ракета',
     satchel: 'Satchel Charge',
     beancan: 'Beancan Grenade',
-    explo:   'Explosive 5.56 (патрон)'
+    explo:   'Explosive 5.56'
 };
 
 function calculateSulfur() {
@@ -53,34 +68,24 @@ function calculateSulfur() {
     const count = Math.min(bySulfur, byLgf);
 
     let limiter = '';
-    if (cost.lgf === 0) {
-        limiter = 'серой (топливо не нужно)';
-    } else if (bySulfur < byLgf) {
-        limiter = 'серой';
-    } else if (byLgf < bySulfur) {
-        limiter = 'топливом';
-    } else {
-        limiter = 'серой и топливом одновременно';
-    }
+    if (cost.lgf === 0) limiter = 'серой (топливо не нужно)';
+    else if (bySulfur < byLgf) limiter = 'серой';
+    else if (byLgf < bySulfur) limiter = 'топливом';
+    else limiter = 'обоими ресурсами';
 
-    const sulfurUsed = count * cost.sulfur;
-    const lgfUsed = count * cost.lgf;
-    const sulfurLeft = sulfur - sulfurUsed;
-    const lgfLeft = lgf - lgfUsed;
+    const sUsed = count * cost.sulfur;
+    const lUsed = count * cost.lgf;
+    const sLeft = sulfur - sUsed;
+    const lLeft = lgf - lUsed;
 
     let html = `<strong>${name}</strong><br><br>`;
     html += `Можно скрафтить: <strong>${count} шт.</strong><br>`;
     html += `Ограничитель: ${limiter}<br><br>`;
-    html += `<strong>Расход ресурсов:</strong><br>`;
-    html += `• Сера: ${sulfurUsed} из ${sulfur} (остаток: <strong>${sulfurLeft}</strong>)<br>`;
-
+    html += `• Сера: ${sUsed} из ${sulfur} (остаток: <strong>${sLeft}</strong>)<br>`;
     if (cost.lgf > 0) {
-        html += `• Топливо: ${lgfUsed} из ${lgf} (остаток: <strong>${lgfLeft}</strong>)<br>`;
+        html += `• Топливо: ${lUsed} из ${lgf} (остаток: <strong>${lLeft}</strong>)<br>`;
     }
-
-    html += `<br><small>На 1 ${name}: ${cost.sulfur} серы`;
-    if (cost.lgf > 0) html += ` + ${cost.lgf} LGF`;
-    html += `</small>`;
+    html += `<br><small>На 1 ${name}: ${cost.sulfur} серы${cost.lgf > 0 ? ` + ${cost.lgf} LGF` : ''}</small>`;
 
     resultDiv.innerHTML = html;
     resultDiv.classList.add('show');
@@ -89,13 +94,11 @@ function calculateSulfur() {
 }
 
 // ==================== STEAM АНАЛИЗ ====================
-const STEAM_ID_REGEX = /\d{17}/;
-
 async function analyzeSteam() {
     const input = document.getElementById('steam-input').value.trim();
     const resultDiv = document.getElementById('steam-result');
 
-    const match = input.match(STEAM_ID_REGEX);
+    const match = input.match(/\d{17}/);
     if (!match) {
         resultDiv.innerHTML = '❌ Введи SteamID (17 цифр) или ссылку на профиль.';
         resultDiv.classList.add('show');
@@ -103,18 +106,75 @@ async function analyzeSteam() {
     }
 
     const steamId = match[0];
-    resultDiv.innerHTML = '⏳ Анализ запущен...<br><br>Открой бота и напиши:<br><code>/steam ' + steamId + '</code>';
+    resultDiv.innerHTML = '⏳ Анализирую профиль...<br><small>Это может занять 10-20 секунд</small>';
     resultDiv.classList.add('show');
 
-    // Копируем команду в буфер обмена
     try {
-        await navigator.clipboard.writeText(`/steam ${steamId}`);
-        resultDiv.innerHTML = '✅ Команда скопирована!<br><br>Открой бота и вставь:<br><code>/steam ' + steamId + '</code><br><br><small>Анализ профиля работает через бота.</small>';
+        const data = await apiCall('/api/steam', { steamId });
+
+        if (data.error) {
+            resultDiv.innerHTML = `❌ ${data.error}`;
+            return;
+        }
+
+        resultDiv.innerHTML = formatSteamResult(data);
+
+        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) {
-        // Fallback — просто показываем
+        resultDiv.innerHTML = `❌ Ошибка: ${e.message}`;
+    }
+}
+
+function formatSteamResult(d) {
+    if (d.privateWarning) {
+        return `<strong>🔒 ${d.name}</strong><br>Приватный профиль — полный анализ недоступен`;
     }
 
-    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    const emoji = d.riskScore >= 70 ? '🔴' : d.riskScore >= 50 ? '🟠' : d.riskScore >= 30 ? '🟡' : '🟢';
+
+    let html = `<strong>👤 ${d.name}</strong><br>`;
+    html += `📊 Статус: ${d.state}<br>`;
+    html += `📅 Возраст: ${d.accountAgeDays} дней (${d.accountAgeYears} лет)<br>`;
+    html += `🦀 Rust: ${d.rustPlaytime} часов<br>`;
+    html += `🎮 Игр: ${d.gamesCount} | 👥 Друзей: ${d.friendsCount}<br>`;
+    html += `📊 Уровень: ${d.steamLevel} | 🏆 Достижений: ${d.achievementsCount}<br>`;
+
+    if (d.vacBans > 0 || d.gameBans > 0 || d.communityBanned || d.tradeBanned) {
+        html += `<br>🚫 <strong>БАНЫ:</strong><br>`;
+        if (d.vacBans > 0) html += `❌ VAC: ${d.vacBans}<br>`;
+        if (d.gameBans > 0) html += `❌ Game: ${d.gameBans}<br>`;
+        if (d.communityBanned) html += `❌ Бан в сообществе<br>`;
+        if (d.tradeBanned) html += `❌ Торговый бан<br>`;
+    } else {
+        html += `<br>✅ Банов нет<br>`;
+    }
+
+    if (d.friendsWithRust?.length > 0) {
+        html += `<br>👥 <strong>Друзья с Rust:</strong><br>`;
+        d.friendsWithRust.slice(0, 5).forEach(f => {
+            html += `• <a href="${f.profileUrl}" target="_blank">${f.name}</a><br>`;
+        });
+    }
+
+    html += `<br>${emoji} <strong>Риск: ${d.riskScore}%</strong> (${d.riskLevel})<br>`;
+
+    if (d.reasons?.length > 0) {
+        html += `<br><strong>Факторы:</strong><br>`;
+        d.reasons.slice(0, 5).forEach(r => {
+            html += `${r}<br>`;
+        });
+    }
+
+    let recommend = '';
+    if (d.riskScore >= 70) recommend = '⚠️ Отклонить!';
+    else if (d.riskScore >= 50) recommend = '⚡ Проверить!';
+    else if (d.riskScore >= 30) recommend = 'ℹ️ Наблюдать.';
+    else recommend = '✅ Допустить.';
+
+    html += `<br><strong>Рекомендация:</strong> ${recommend}`;
+    html += `<br><br><a href="${d.profileUrl}" target="_blank">📂 Открыть профиль Steam</a>`;
+
+    return html;
 }
 
 // ==================== БЕСПЛАТНЫЕ ИГРЫ ====================
@@ -124,24 +184,22 @@ async function loadFreeGames() {
     resultDiv.classList.add('show');
 
     try {
-        const res = await fetch('https://www.gamerpower.com/api/giveaways?platform=steam&type=game');
-        const data = await res.json();
-        const active = data.filter(g => g.status === 'Active');
+        const games = await apiCall('/api/free-games');
 
-        if (active.length === 0) {
-            resultDiv.innerHTML = '😕 Сейчас нет активных Steam-раздач.<br><br>Проверь позже — бот уведомит автоматически.';
+        if (!games || games.length === 0) {
+            resultDiv.innerHTML = '😕 Сейчас нет активных Steam-раздач.<br><br>Бот пришлёт уведомление, когда появится.';
             return;
         }
 
-        let html = `<strong>🎁 Найдено: ${active.length}</strong><br><br>`;
+        let html = `<strong>🎁 Найдено: ${games.length}</strong><br><br>`;
 
-        active.slice(0, 8).forEach((game, i) => {
+        games.slice(0, 8).forEach((game, i) => {
             html += `<div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">`;
-            html += `<strong>${i + 1}. ${game.title}</strong><br>`;
-            if (game.worth && game.worth !== 'N/A') {
-                html += `<small>💰 <s>${game.worth}</s> → 🎁 БЕСПЛАТНО</small><br>`;
+            html += `<strong>${i + 1}. ${game.name}</strong><br>`;
+            if (game.price && game.price !== 'N/A') {
+                html += `<small>💰 <s>${game.price}</s> → 🎁 БЕСПЛАТНО</small><br>`;
             }
-            html += `<a href="${game.open_giveaway_url}" target="_blank" style="color: var(--accent-light);">⬇️ Забрать</a>`;
+            html += `<a href="${game.url}" target="_blank">⬇️ Забрать</a>`;
             html += `</div>`;
         });
 
@@ -149,33 +207,84 @@ async function loadFreeGames() {
 
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) {
-        resultDiv.innerHTML = '❌ Не удалось загрузить раздачи. Попробуй позже.';
+        resultDiv.innerHTML = `❌ Ошибка: ${e.message}`;
     }
 }
 
 // ==================== WATCHLIST ====================
-function openBotForWatch() {
+async function addToWatchlist() {
     const input = document.getElementById('watch-input').value.trim();
-    const match = input.match(STEAM_ID_REGEX);
+    const resultDiv = document.getElementById('watch-result');
 
+    const match = input.match(/\d{17}/);
     if (!match) {
-        alert('Введи SteamID (17 цифр)');
+        resultDiv.innerHTML = '❌ Введи SteamID (17 цифр).';
+        resultDiv.classList.add('show');
         return;
     }
 
-    // Копируем команду
-    const command = `/watch add ${match[0]}`;
-    navigator.clipboard.writeText(command).then(() => {
-        alert(`Команда скопирована:\n${command}\n\nОткрой бота и вставь её.`);
-    }).catch(() => {
-        alert(`Скопируй вручную:\n${command}`);
-    });
+    const steamId = match[0];
+    resultDiv.innerHTML = '⏳ Добавляю...';
+    resultDiv.classList.add('show');
 
-    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    try {
+        const data = await apiCall('/api/watch-add', { steamId });
+        resultDiv.innerHTML = `✅ Добавлен в Watchlist: <strong>${data.name || steamId}</strong><br><br>Бот уведомит, если появится бан.`;
+        document.getElementById('watch-input').value = '';
+
+        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    } catch (e) {
+        resultDiv.innerHTML = `❌ Ошибка: ${e.message}`;
+    }
+}
+
+async function loadWatchlist() {
+    const resultDiv = document.getElementById('watch-result');
+    resultDiv.innerHTML = '⏳ Загружаю...';
+    resultDiv.classList.add('show');
+
+    try {
+        const list = await apiCall('/api/watch-list');
+
+        if (!list || list.length === 0) {
+            resultDiv.innerHTML = '📊 Список пуст.';
+            return;
+        }
+
+        let html = `<strong>📊 Watchlist (${list.length})</strong><br><br>`;
+        list.forEach((w, i) => {
+            html += `${i + 1}. <strong>${w.name}</strong><br>`;
+            html += `<small>${w.steamId}</small><br>`;
+            html += `<small>VAC: ${w.lastVacBans} | Game: ${w.lastGameBans}</small><br><br>`;
+        });
+
+        resultDiv.innerHTML = html;
+    } catch (e) {
+        resultDiv.innerHTML = `❌ Ошибка: ${e.message}`;
+    }
+}
+
+// ==================== СТАТУС ====================
+async function loadStatus() {
+    const resultDiv = document.getElementById('status-result');
+    resultDiv.innerHTML = '⏳ Загружаю...';
+    resultDiv.classList.add('show');
+
+    try {
+        const data = await apiCall('/api/status');
+
+        let html = `<strong>📊 Статистика бота</strong><br><br>`;
+        html += `👥 Авторизовано: <strong>${data.usersCount}</strong><br>`;
+        html += `📊 Проверок: <strong>${data.historyCount}</strong><br>`;
+        html += `👁️ Watchlist: <strong>${data.watchlistCount}</strong><br>`;
+
+        resultDiv.innerHTML = html;
+    } catch (e) {
+        resultDiv.innerHTML = `❌ Ошибка: ${e.message}`;
+    }
 }
 
 // ==================== ИНИЦИАЛИЗАЦИЯ ====================
-// Показываем имя пользователя в консоли (для отладки)
 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-    console.log('👤', tg.initDataUnsafe.user.first_name || 'User');
+    console.log('👤 User:', tg.initDataUnsafe.user.first_name || 'User');
 }
