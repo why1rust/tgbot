@@ -8,102 +8,267 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>🦀 Rust Toolkit</h1>
+    <div class="app">
+        <header class="app-header">
+            <div class="app-logo">🦀</div>
+            <h1>Rust Toolkit</h1>
+            <p class="app-subtitle">Steam Checker & Tools</p>
+        </header>
 
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('sulfur')">🧨 Сера</button>
-            <button class="tab" onclick="switchTab('genes')">🌱 Гены</button>
-            <button class="tab" onclick="switchTab('info')">ℹ️ Инфо</button>
-        </div>
+        <nav class="nav">
+            <button class="nav-btn active" data-tab="sulfur">
+                <span class="nav-icon">🧨</span>
+                <span>Сера</span>
+            </button>
+            <button class="nav-btn" data-tab="steam">
+                <span class="nav-icon">🎮</span>
+                <span>Steam</span>
+            </button>
+            <button class="nav-btn" data-tab="free">
+                <span class="nav-icon">🎁</span>
+                <span>Игры</span>
+            </button>
+            <button class="nav-btn" data-tab="watch">
+                <span class="nav-icon">👁️</span>
+                <span>Watch</span>
+            </button>
+            <button class="nav-btn" data-tab="status">
+                <span class="nav-icon">📊</span>
+                <span>Статус</span>
+            </button>
+        </nav>
 
         <!-- Вкладка: Сера -->
-        <div id="sulfur" class="tab-content active">
+        <div class="tab-content active" id="tab-sulfur">
             <div class="card">
-                <h2>Конвертер серы и топлива</h2>
-                <p class="hint">Введи количество ресурсов, выбери тип взрывчатки — узнаешь, сколько можно скрафтить.</p>
+                <div class="card-header">
+                    <h2>Конвертер серы</h2>
+                    <span class="badge">🧨</span>
+                </div>
+                <p class="hint">Введи ресурсы — узнаешь, сколько взрывчатки можно скрафтить.</p>
 
-                <label>Сера (Sulfur):</label>
-                <input type="number" id="sulfur-input" value="10000" min="0">
+                <div class="input-group">
+                    <label>Сера (Sulfur)</label>
+                    <input type="number" id="sulfur-input" value="10000" min="0" inputmode="numeric">
+                </div>
 
-                <label>Низкокачественное топливо (Low Grade Fuel):</label>
-                <input type="number" id="lgf-input" value="500" min="0">
+                <div class="input-group">
+                    <label>Топливо (Low Grade Fuel)</label>
+                    <input type="number" id="lgf-input" value="500" min="0" inputmode="numeric">
+                </div>
 
-                <label>Тип взрывчатки:</label>
-                <select id="explosive-type">
-                    <option value="c4">C4 (Timed Explosive)</option>
-                    <option value="rocket">Ракета</option>
-                    <option value="satchel">Satchel Charge</option>
-                    <option value="beancan">Beancan Grenade</option>
-                    <option value="explo">Explosive 5.56 (за патрон)</option>
-                </select>
+                <div class="input-group">
+                    <label>Тип взрывчатки</label>
+                    <select id="explosive-type">
+                        <option value="c4">💥 C4 (Timed Explosive)</option>
+                        <option value="rocket">🚀 Ракета</option>
+                        <option value="satchel">🎒 Satchel Charge</option>
+                        <option value="beancan">💣 Beancan Grenade</option>
+                        <option value="explo">🔫 Explosive 5.56</option>
+                    </select>
+                </div>
 
-                <button onclick="calculateSulfur()">Рассчитать</button>
+                <button class="btn-primary" onclick="calculateSulfur()">
+                    <span>Рассчитать</span>
+                </button>
+
                 <div id="sulfur-result" class="result-box"></div>
             </div>
 
             <div class="card">
-                <h2>Стоимость крафта</h2>
-                <div class="legend">
-                    <div>💥 <strong>C4</strong> — 2200 серы + 60 LGF</div>
-                    <div>🚀 <strong>Ракета</strong> — 1400 серы + 30 LGF</div>
-                    <div>🎒 <strong>Satchel</strong> — 480 серы</div>
-                    <div>💣 <strong>Beancan</strong> — 120 серы</div>
-                    <div>🔫 <strong>Explo 5.56</strong> — 25 серы (за 1 патрон)</div>
+                <div class="card-header">
+                    <h2>Стоимость крафта</h2>
+                </div>
+                <div class="cost-list">
+                    <div class="cost-item">
+                        <span class="cost-icon">💥</span>
+                        <div class="cost-info">
+                            <strong>C4</strong>
+                            <small>2200 серы + 60 LGF</small>
+                        </div>
+                    </div>
+                    <div class="cost-item">
+                        <span class="cost-icon">🚀</span>
+                        <div class="cost-info">
+                            <strong>Ракета</strong>
+                            <small>1400 серы + 30 LGF</small>
+                        </div>
+                    </div>
+                    <div class="cost-item">
+                        <span class="cost-icon">🎒</span>
+                        <div class="cost-info">
+                            <strong>Satchel Charge</strong>
+                            <small>480 серы</small>
+                        </div>
+                    </div>
+                    <div class="cost-item">
+                        <span class="cost-icon">💣</span>
+                        <div class="cost-info">
+                            <strong>Beancan Grenade</strong>
+                            <small>120 серы</small>
+                        </div>
+                    </div>
+                    <div class="cost-item">
+                        <span class="cost-icon">🔫</span>
+                        <div class="cost-info">
+                            <strong>Explosive 5.56</strong>
+                            <small>25 серы за патрон</small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Вкладка: Гены -->
-        <div id="genes" class="tab-content">
+        <!-- Вкладка: Steam -->
+        <div class="tab-content" id="tab-steam">
             <div class="card">
-                <h2>Калькулятор генов</h2>
-                <p class="hint">Введи гены клонов (по 6 букв: G, Y, H, W, X). Каждый клон — с новой строки.</p>
+                <div class="card-header">
+                    <h2>Steam Checker</h2>
+                    <span class="badge">🎮</span>
+                </div>
+                <p class="hint">Введи SteamID (17 цифр) или ссылку на профиль для анализа.</p>
 
-                <label>Твои клоны:</label>
-                <textarea id="gene-input" rows="6" placeholder="WGGWYH&#10;GHYWHH&#10;XYHYGH&#10;WYYGGW&#10;GGYYHH&#10;XWYHGG"></textarea>
+                <div class="input-group">
+                    <label>SteamID или ссылка</label>
+                    <input type="text" id="steam-input" placeholder="76561199685927598" inputmode="text">
+                </div>
 
-                <label>Цель (6 букв):</label>
-                <input type="text" id="gene-target" value="GGGYYY" maxlength="6">
+                <button class="btn-primary" onclick="analyzeSteam()">
+                    <span>Анализировать</span>
+                </button>
 
-                <button onclick="calculateGenes()">Найти лучший маршрут</button>
-                <div id="gene-result" class="result-box"></div>
+                <div id="steam-result" class="result-box"></div>
             </div>
 
             <div class="card">
-                <h2>Шпаргалка по генам</h2>
-                <div class="legend">
-                    <div><span class="gene-box green">G</span> — Growth (скорость роста)</div>
-                    <div><span class="gene-box green">Y</span> — Yield (объём урожая)</div>
-                    <div><span class="gene-box green">H</span> — Hardiness (выносливость)</div>
-                    <div><span class="gene-box red">W</span> — Water (расход воды, плохой)</div>
-                    <div><span class="gene-box red">X</span> — Empty (пусто, плохой)</div>
+                <div class="card-header">
+                    <h2>Что показывает анализ</h2>
                 </div>
+                <div class="feature-list">
+                    <div>📊 Статус и возраст аккаунта</div>
+                    <div>🦀 Часы в Rust</div>
+                    <div>🎮 Игры, друзья, уровень</div>
+                    <div>🚫 VAC/Game баны</div>
+                    <div>📈 Risk score и рекомендация</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладка: Игры -->
+        <div class="tab-content" id="tab-free">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Бесплатные игры</h2>
+                    <span class="badge">🎁</span>
+                </div>
+                <p class="hint">Активные раздачи Steam через GamerPower API.</p>
+
+                <button class="btn-primary" onclick="loadFreeGames()">
+                    <span>🔍 Найти раздачи</span>
+                </button>
+
+                <div id="free-result" class="result-box"></div>
+            </div>
+        </div>
+
+        <!-- Вкладка: Watchlist -->
+        <div class="tab-content" id="tab-watch">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Отслеживание банов</h2>
+                    <span class="badge">👁️</span>
+                </div>
+                <p class="hint">Следим за игроком — сообщим, если появится бан.</p>
+
+                <div class="input-group">
+                    <label>SteamID игрока</label>
+                    <input type="text" id="watch-input" placeholder="76561199685927598" inputmode="text">
+                </div>
+
+                <button class="btn-primary" onclick="openBotForWatch()">
+                    <span>Добавить через бота</span>
+                </button>
+
                 <p class="hint" style="margin-top: 12px;">
-                    Веса: G/Y/H = 0.6, W/X = 1.0. Красные гены вытесняют зелёные при скрещивании.
+                    💡 Управление watchlist доступно в боте: <code>/watch add/remove/list</code>
                 </p>
             </div>
         </div>
 
-        <!-- Вкладка: Инфо -->
-        <div id="info" class="tab-content">
+        <!-- Вкладка: Статус -->
+        <div class="tab-content" id="tab-status">
             <div class="card">
-                <h2>О приложении</h2>
-                <p>🦀 <strong>Rust Toolkit</strong> — набор утилит для игрока в Rust.</p>
-                <p>💡 Этот Mini App открывается прямо в Telegram.</p>
-                <p>📱 Все команды бота доступны через <code>/menu</code>.</p>
+                <div class="card-header">
+                    <h2>Статус системы</h2>
+                    <span class="badge">📊</span>
+                </div>
+
+                <div class="status-list">
+                    <div class="status-item">
+                        <span class="status-dot online"></span>
+                        <div>
+                            <strong>Telegram Bot</strong>
+                            <small>@rustpluslssus_bot</small>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-dot online"></span>
+                        <div>
+                            <strong>Cloudflare Workers</strong>
+                            <small>rust-bot.sdadawqdqdasda.workers.dev</small>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-dot online"></span>
+                        <div>
+                            <strong>KV Storage</strong>
+                            <small>RUST_BOT_KV</small>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-dot online"></span>
+                        <div>
+                            <strong>Cron Triggers</strong>
+                            <small>Каждый час / 6 часов</small>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="card">
-                <h2>Что внутри</h2>
-                <div class="legend">
-                    <div>🧨 <strong>Сера</strong> — конвертер серы и топлива во взрывчатку</div>
-                    <div>🌱 <strong>Гены</strong> — калькулятор скрещивания растений</div>
-                    <div>ℹ️ <strong>Инфо</strong> — справка по приложению</div>
+                <div class="card-header">
+                    <h2>Команды бота</h2>
+                </div>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>/menu</code>
+                        <span>Главное меню</span>
+                    </div>
+                    <div class="command-item">
+                        <code>/steam ID</code>
+                        <span>Проверка профиля</span>
+                    </div>
+                    <div class="command-item">
+                        <code>/free</code>
+                        <span>Бесплатные игры</span>
+                    </div>
+                    <div class="command-item">
+                        <code>/watch add</code>
+                        <span>Отслеживание банов</span>
+                    </div>
+                    <div class="command-item">
+                        <code>/app</code>
+                        <span>Открыть Mini App</span>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <footer class="app-footer">
+            <p>🦀 Rust Toolkit v2.0</p>
+        </footer>
     </div>
+
     <script src="app.js"></script>
 </body>
 </html>
