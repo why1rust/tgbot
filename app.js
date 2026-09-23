@@ -165,108 +165,35 @@ function calculateRaid() {
 }
 
 // ==================== CRAFT ====================
-const SULFUR_COSTS = {
-    c4:      { sulfur: 2200, lgf: 60 },
-    rocket:  { sulfur: 1400, lgf: 30 },
-    satchel: { sulfur: 480,  lgf: 0  },
-    beancan: { sulfur: 120,  lgf: 0  },
-    explo:   { sulfur: 25,   lgf: 0  }
-};
-
-const EXPLOSIVE_NAMES = {
-    c4: 'C4', rocket: 'Ракета', satchel: 'Satchel', beancan: 'Beancan', explo: 'Explo 5.56'
-};
-
-function calculateSulfur() {
-    const sulfur = parseInt(document.getElementById('sulfur-input').value) || 0;
-    const lgf = parseInt(document.getElementById('lgf-input').value) || 0;
-    const type = document.getElementById('explosive-type').value;
-    const resultDiv = document.getElementById('sulfur-result');
-
-    const cost = SULFUR_COSTS[type];
-    const name = EXPLOSIVE_NAMES[type];
-
-    const bySulfur = Math.floor(sulfur / cost.sulfur);
-    const byLgf = cost.lgf > 0 ? Math.floor(lgf / cost.lgf) : Infinity;
-    const count = Math.min(bySulfur, byLgf);
-
-    let limiter = '';
-    if (cost.lgf === 0) limiter = 'только серой';
-    else if (bySulfur < byLgf) limiter = 'серой';
-    else if (byLgf < bySulfur) limiter = 'топливом';
-    else limiter = 'обоими';
-
-    const sUsed = count * cost.sulfur;
-    const lUsed = count * cost.lgf;
-
-    let html = `<strong>${name}</strong><br><br>`;
-    html += `🎯 Можно скрафтить: <strong>${count} шт.</strong><br>`;
-    html += `⚠️ Ограничитель: ${limiter}<br><br>`;
-    html += `📦 Сера: ${sUsed} / ${sulfur} · остаток <strong>${sulfur - sUsed}</strong><br>`;
-    if (cost.lgf > 0) html += `🔥 Топливо: ${lUsed} / ${lgf} · остаток <strong>${lgf - lUsed}</strong><br>`;
-
-    resultDiv.innerHTML = html;
-    resultDiv.classList.add('show');
-    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-}
-
-// ==================== WATCHLIST ====================
-async function addToWatchlist() {
-    const input = document.getElementById('watch-input').value.trim();
-    const resultDiv = document.getElementById('watch-result');
-    const match = input.match(/\d{17}/);
-
-    if (!match) {
-        resultDiv.innerHTML = '❌ Введи SteamID (17 цифр).';
-        resultDiv.classList.add('show');
-        return;
-    }
-
-    resultDiv.innerHTML = '<span class="spinner"></span>Добавляю...';
-    resultDiv.classList.add('show');
-
-    try {
-        const data = await apiCall('/api/watch-add', { steamId: match[0] });
-        resultDiv.innerHTML = `✅ Добавлен: <strong>${escapeHtml(data.name || match[0])}</strong><br><br>Бот уведомит при появлении бана.`;
-        document.getElementById('watch-input').value = '';
-        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-    } catch (e) {
-        resultDiv.innerHTML = `❌ Ошибка: ${escapeHtml(e.message)}`;
-    }
-}
-
-async function loadWatchlist() {
-    const resultDiv = document.getElementById('watchlist-result');
-    resultDiv.innerHTML = '<span class="spinner"></span>Загружаю...';
-    resultDiv.classList.add('show');
-
-    try {
-        const list = await apiCall('/api/watch-list');
-        if (!list?.length) {
-            resultDiv.innerHTML = '📊 Список пуст.';
-            return;
-        }
-
-        let html = `<strong>📊 Watchlist (${list.length})</strong><br><br>`;
-        list.forEach((w, i) => {
-            html += `<strong>${i + 1}. ${escapeHtml(w.name)}</strong><br>`;
-            html += `<small style="opacity:0.6">${w.steamId}</small><br>`;
-            html += `<small>VAC: ${w.lastVacBans} · Game: ${w.lastGameBans}</small><br><br>`;
-        });
-
-        resultDiv.innerHTML = html;
-    } catch (e) {
-        resultDiv.innerHTML = `❌ Ошибка: ${escapeHtml(e.message)}`;
-    }
-}
-
-// ==================== HELPERS ====================
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// ==================== INIT ====================
-renderRaidItems();
+const CRAFT_DATA = {
+    c4: {
+        name: 'C4 (взрывчатка с таймером)',
+        emoji: '💥',
+        sulfur: 2200,
+        lgf: 60,
+        resources: [
+            { name: 'Взрывчатка', count: 20 },
+            { name: 'Ткань', count: 5 },
+            { name: 'Техмусор', count: 2 }
+        ]
+    },
+    rocket: {
+        name: 'Ракета',
+        emoji: '🚀',
+        sulfur: 1400,
+        lgf: 30,
+        resources: [
+            { name: 'Взрывчатка', count: 10 },
+            { name: 'Порох', count: 150 },
+            { name: 'Металлическая труба', count: 2 }
+        ]
+    },
+    satchel: {
+        name: 'Сатчел (связка)',
+        emoji: '🎒',
+        sulfur: 480,
+        lgf: 0,
+        resources: [
+            { name: 'Бобовая граната', count: 4 },
+            { name: 'Малый схрон', count: 1 },
+           
