@@ -18,7 +18,7 @@
                 <span class="logo">🦀</span>
             </div>
             <h1>Rust Toolkit</h1>
-            <p class="subtitle">Steam Checker · Raid · Craft</p>
+            <p class="subtitle">Steam · Рейд · Крафт</p>
         </header>
 
         <nav class="tabs">
@@ -36,7 +36,7 @@
             </button>
             <button class="tab" data-tab="watch">
                 <span class="tab-icon">👁️</span>
-                <span class="tab-label">Watch</span>
+                <span class="tab-label">Watchlist</span>
             </button>
         </nav>
 
@@ -45,14 +45,14 @@
             <div class="card">
                 <div class="card-head">
                     <div>
-                        <h2>Steam Checker</h2>
-                        <p class="desc">Проверка профиля: часы в Rust, баны, риск</p>
+                        <h2>Проверка Steam</h2>
+                        <p class="desc">Часы в Rust, баны, друзья, риск читерства</p>
                     </div>
                     <div class="chip">🎮</div>
                 </div>
 
                 <div class="field">
-                    <label>SteamID или ссылка</label>
+                    <label>SteamID или ссылка на профиль</label>
                     <input type="text" id="steam-input" placeholder="76561199685927598" inputmode="text">
                 </div>
 
@@ -70,7 +70,7 @@
             <div class="card">
                 <div class="card-head">
                     <div>
-                        <h2>Рейд-калькулятор</h2>
+                        <h2>Калькулятор рейда</h2>
                         <p class="desc">Что нужно для рейда конкретной цели</p>
                     </div>
                     <div class="chip">💥</div>
@@ -109,144 +109,45 @@
                 <div class="card-head">
                     <div>
                         <h2>Калькулятор крафта</h2>
-                        <p class="desc">Что можно скрафтить из твоих ресурсов</p>
+                        <p class="desc">Сколько ресурсов нужно на партию</p>
                     </div>
                     <div class="chip">🧨</div>
                 </div>
 
                 <div class="field">
-                    <label>Сера (Sulfur)</label>
-                    <input type="number" id="sulfur-input" value="10000" inputmode="numeric">
-                </div>
-
-                <div class="field">
-                    <label>Топливо (LGF)</label>
-                    <input type="number" id="lgf-input" value="500" inputmode="numeric">
-                </div>
-
-                <div class="field">
-                    <label>Тип взрывчатки</label>
+                    <label>Взрывчатка</label>
                     <div class="select-wrap">
-                        <select id="explosive-type">
-                            <option value="c4">💥 C4 (Timed Explosive)</option>
+                        <select id="craft-type" onchange="updateCraftInfo()">
+                            <option value="c4">💥 C4 (взрывчатка с таймером)</option>
                             <option value="rocket">🚀 Ракета</option>
-                            <option value="satchel">🎒 Satchel Charge</option>
-                            <option value="beancan">💣 Beancan Grenade</option>
-                            <option value="explo">🔫 Explosive 5.56</option>
+                            <option value="satchel">🎒 Сатчел (связка)</option>
+                            <option value="beancan">💣 Бобовая граната</option>
+                            <option value="explo">🔫 Патрон 5.56 (взрывной)</option>
                         </select>
                     </div>
                 </div>
 
-                <button class="btn primary" onclick="calculateSulfur()">
+                <div class="field">
+                    <label>Количество</label>
+                    <input type="number" id="craft-count" value="1" min="1" inputmode="numeric">
+                </div>
+
+                <button class="btn primary" onclick="calculateCraft()">
                     <span class="btn-icon">🔢</span>
-                    <span>Рассчитать</span>
+                    <span>Рассчитать ресурсы</span>
                 </button>
 
-                <div id="sulfur-result" class="result"></div>
+                <div id="craft-result" class="result"></div>
             </div>
 
             <div class="card">
                 <div class="card-head">
                     <div>
-                        <h2>Что нужно для крафта</h2>
-                        <p class="desc">Ресурсы на 1 единицу</p>
+                        <h2>Стоимость на 1 шт.</h2>
+                        <p class="desc">Базовые ресурсы</p>
                     </div>
                 </div>
-
-                <div class="craft-list">
-                    <details class="craft-item">
-                        <summary>
-                            <span class="cost-emoji">💥</span>
-                            <div class="craft-title">
-                                <strong>C4 (Timed Explosive)</strong>
-                                <small>2200 серы + 60 LGF</small>
-                            </div>
-                        </summary>
-                        <div class="craft-details">
-                            <div class="resource">• 20 Explosives</div>
-                            <div class="resource">• 5 Cloth</div>
-                            <div class="resource">• 2 Tech Trash</div>
-                            <div class="resource total">Итого: 2200 серы + 60 LGF</div>
-                        </div>
-                    </details>
-
-                    <details class="craft-item">
-                        <summary>
-                            <span class="cost-emoji">🚀</span>
-                            <div class="craft-title">
-                                <strong>Ракета</strong>
-                                <small>1400 серы + 30 LGF</small>
-                            </div>
-                        </summary>
-                        <div class="craft-details">
-                            <div class="resource">• 10 Explosives</div>
-                            <div class="resource">• 150 Gunpowder</div>
-                            <div class="resource">• 2 Metal Pipe</div>
-                            <div class="resource total">Итого: 1400 серы + 30 LGF</div>
-                        </div>
-                    </details>
-
-                    <details class="craft-item">
-                        <summary>
-                            <span class="cost-emoji">🎒</span>
-                            <div class="craft-title">
-                                <strong>Satchel Charge</strong>
-                                <small>480 серы</small>
-                            </div>
-                        </summary>
-                        <div class="craft-details">
-                            <div class="resource">• 4 Beancan Grenade</div>
-                            <div class="resource">• 1 Small Stash</div>
-                            <div class="resource">• 1 Rope</div>
-                            <div class="resource total">Итого: 480 серы</div>
-                        </div>
-                    </details>
-
-                    <details class="craft-item">
-                        <summary>
-                            <span class="cost-emoji">💣</span>
-                            <div class="craft-title">
-                                <strong>Beancan Grenade</strong>
-                                <small>120 серы</small>
-                            </div>
-                        </summary>
-                        <div class="craft-details">
-                            <div class="resource">• 60 Gunpowder</div>
-                            <div class="resource">• 20 Metal Fragments</div>
-                            <div class="resource total">Итого: 120 серы</div>
-                        </div>
-                    </details>
-
-                    <details class="craft-item">
-                        <summary>
-                            <span class="cost-emoji">🔫</span>
-                            <div class="craft-title">
-                                <strong>Explosive 5.56</strong>
-                                <small>25 серы / патрон</small>
-                            </div>
-                        </summary>
-                        <div class="craft-details">
-                            <div class="resource">• 5 Gunpowder</div>
-                            <div class="resource">• 10 Metal Fragments</div>
-                            <div class="resource total">Итого: 25 серы / патрон</div>
-                        </div>
-                    </details>
-
-                    <details class="craft-item">
-                        <summary>
-                            <span class="cost-emoji">🔥</span>
-                            <div class="craft-title">
-                                <strong>Low Grade Fuel (LGF)</strong>
-                                <small>1 единица</small>
-                            </div>
-                        </summary>
-                        <div class="craft-details">
-                            <div class="resource">• 3 Animal Fat</div>
-                            <div class="resource">• 1 Cloth</div>
-                            <div class="resource total">Итого: 1 LGF</div>
-                        </div>
-                    </details>
-                </div>
+                <div id="craft-info" class="craft-info"></div>
             </div>
         </section>
 
@@ -255,10 +156,10 @@
             <div class="card">
                 <div class="card-head">
                     <div>
-                        <h2>Добавить в Watchlist</h2>
-                        <p class="desc">Следим за игроком, сообщим о бане</p>
+                        <h2>Добавить в отслеживание</h2>
+                        <p class="desc">Бот сообщит, если появится бан</p>
                     </div>
-                    <div class="chip">👁️</div>
+                    <div class="chip">➕</div>
                 </div>
 
                 <div class="field">
@@ -277,14 +178,15 @@
             <div class="card">
                 <div class="card-head">
                     <div>
-                        <h2>Список отслеживания</h2>
+                        <h2>Мои отслеживания</h2>
                         <p class="desc">Игроки, за которыми следит бот</p>
                     </div>
+                    <div class="chip">👁️</div>
                 </div>
 
                 <button class="btn secondary" onclick="loadWatchlist()">
-                    <span class="btn-icon">📋</span>
-                    <span>Показать список</span>
+                    <span class="btn-icon">🔄</span>
+                    <span>Обновить список</span>
                 </button>
 
                 <div id="watchlist-result" class="result"></div>
