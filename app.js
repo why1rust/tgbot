@@ -16,28 +16,26 @@ async function apiCall(endpoint, data = {}) {
         })
     });
     const json = await res.json();
-    if (!res.ok) {
-        throw new Error(json.error || 'Ошибка API');
-    }
+    if (!res.ok) throw new Error(json.error || 'Ошибка API');
     return json;
 }
 
-// ==================== НАВИГАЦИЯ ====================
-document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const tab = btn.dataset.tab;
+// ==================== TABS ====================
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        const name = tab.dataset.tab;
 
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
 
-        btn.classList.add('active');
-        document.getElementById(`tab-${tab}`).classList.add('active');
+        tab.classList.add('active');
+        document.getElementById(`panel-${name}`).classList.add('active');
 
         if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
     });
 });
 
-// ==================== КОНВЕРТЕР СЕРЫ ====================
+// ==================== SULFUR ====================
 const SULFUR_COSTS = {
     c4:      { sulfur: 2200, lgf: 60 },
     rocket:  { sulfur: 1400, lgf: 30 },
@@ -68,24 +66,22 @@ function calculateSulfur() {
     const count = Math.min(bySulfur, byLgf);
 
     let limiter = '';
-    if (cost.lgf === 0) limiter = 'серой (топливо не нужно)';
+    if (cost.lgf === 0) limiter = 'только серой';
     else if (bySulfur < byLgf) limiter = 'серой';
     else if (byLgf < bySulfur) limiter = 'топливом';
     else limiter = 'обоими ресурсами';
 
     const sUsed = count * cost.sulfur;
     const lUsed = count * cost.lgf;
-    const sLeft = sulfur - sUsed;
-    const lLeft = lgf - lUsed;
 
     let html = `<strong>${name}</strong><br><br>`;
-    html += `Можно скрафтить: <strong>${count} шт.</strong><br>`;
-    html += `Ограничитель: ${limiter}<br><br>`;
-    html += `• Сера: ${sUsed} из ${sulfur} (остаток: <strong>${sLeft}</strong>)<br>`;
+    html += `🎯 Можно скрафтить: <strong>${count} шт.</strong><br>`;
+    html += `⚠️ Ограничитель: ${limiter}<br><br>`;
+    html += `📦 Сера: ${sUsed} / ${sulfur} · остаток <strong>${sulfur - sUsed}</strong><br>`;
     if (cost.lgf > 0) {
-        html += `• Топливо: ${lUsed} из ${lgf} (остаток: <strong>${lLeft}</strong>)<br>`;
+        html += `🔥 Топливо: ${lUsed} / ${lgf} · остаток <strong>${lgf - lUsed}</strong><br>`;
     }
-    html += `<br><small>На 1 ${name}: ${cost.sulfur} серы${cost.lgf > 0 ? ` + ${cost.lgf} LGF` : ''}</small>`;
+    html += `<br><small style="opacity:0.6">На 1 шт: ${cost.sulfur} серы${cost.lgf > 0 ? ` + ${cost.lgf} LGF` : ''}</small>`;
 
     resultDiv.innerHTML = html;
     resultDiv.classList.add('show');
@@ -93,7 +89,7 @@ function calculateSulfur() {
     if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }
 
-// ==================== STEAM АНАЛИЗ ====================
+// ==================== STEAM ====================
 async function analyzeSteam() {
     const input = document.getElementById('steam-input').value.trim();
     const resultDiv = document.getElementById('steam-result');
@@ -105,12 +101,11 @@ async function analyzeSteam() {
         return;
     }
 
-    const steamId = match[0];
-    resultDiv.innerHTML = '⏳ Анализирую профиль...<br><small>Это может занять 10-20 секунд</small>';
+    resultDiv.innerHTML = '<span class="spinner"></span>Анализирую профиль...';
     resultDiv.classList.add('show');
 
     try {
-        const data = await apiCall('/api/steam', { steamId });
+        const data = await apiCall('/api/steam', { steamId: match[0] });
 
         if (data.error) {
             resultDiv.innerHTML = `❌ ${data.error}`;
@@ -118,7 +113,6 @@ async function analyzeSteam() {
         }
 
         resultDiv.innerHTML = formatSteamResult(data);
-
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) {
         resultDiv.innerHTML = `❌ Ошибка: ${e.message}`;
@@ -127,17 +121,17 @@ async function analyzeSteam() {
 
 function formatSteamResult(d) {
     if (d.privateWarning) {
-        return `<strong>🔒 ${d.name}</strong><br>Приватный профиль — полный анализ недоступен`;
+        return `<strong>🔒 ${escapeHtml(d.name)}</strong><br><br>Приватный профиль — полный анализ недоступен.`;
     }
 
     const emoji = d.riskScore >= 70 ? '🔴' : d.riskScore >= 50 ? '🟠' : d.riskScore >= 30 ? '🟡' : '🟢';
 
-    let html = `<strong>👤 ${d.name}</strong><br>`;
-    html += `📊 Статус: ${d.state}<br>`;
+    let html = `<strong>👤 ${escapeHtml(d.name)}</strong><br><br>`;
+    html += `📊 Статус: <strong>${d.state}</strong><br>`;
     html += `📅 Возраст: ${d.accountAgeDays} дней (${d.accountAgeYears} лет)<br>`;
-    html += `🦀 Rust: ${d.rustPlaytime} часов<br>`;
-    html += `🎮 Игр: ${d.gamesCount} | 👥 Друзей: ${d.friendsCount}<br>`;
-    html += `📊 Уровень: ${d.steamLevel} | 🏆 Достижений: ${d.achievementsCount}<br>`;
+    html += `🦀 Rust: <strong>${d.rustPlaytime}ч</strong><br>`;
+    html += `🎮 Игр: ${d.gamesCount} · 👥 Друзей: ${d.friendsCount}<br>`;
+    html += `📈 Уровень: ${d.steamLevel} · 🏆 ${d.achievementsCount}<br>`;
 
     if (d.vacBans > 0 || d.gameBans > 0 || d.communityBanned || d.tradeBanned) {
         html += `<br>🚫 <strong>БАНЫ:</strong><br>`;
@@ -146,65 +140,65 @@ function formatSteamResult(d) {
         if (d.communityBanned) html += `❌ Бан в сообществе<br>`;
         if (d.tradeBanned) html += `❌ Торговый бан<br>`;
     } else {
-        html += `<br>✅ Банов нет<br>`;
+        html += `<br>✅ <strong>Банов нет</strong><br>`;
     }
 
     if (d.friendsWithRust?.length > 0) {
-        html += `<br>👥 <strong>Друзья с Rust:</strong><br>`;
+        html += `<br>👥 <strong>Друзья с Rust (${d.friendsWithRust.length}):</strong><br>`;
         d.friendsWithRust.slice(0, 5).forEach(f => {
-            html += `• <a href="${f.profileUrl}" target="_blank">${f.name}</a><br>`;
+            html += `• <a href="${escapeHtml(f.profileUrl)}" target="_blank">${escapeHtml(f.name)}</a><br>`;
         });
     }
 
-    html += `<br>${emoji} <strong>Риск: ${d.riskScore}%</strong> (${d.riskLevel})<br>`;
+    html += `<br>${emoji} <strong>Риск: ${d.riskScore}%</strong> · ${d.riskLevel}<br>`;
 
     if (d.reasons?.length > 0) {
-        html += `<br><strong>Факторы:</strong><br>`;
+        html += `<br><strong>📋 Факторы:</strong><br>`;
         d.reasons.slice(0, 5).forEach(r => {
-            html += `${r}<br>`;
+            html += `· ${escapeHtml(r)}<br>`;
         });
     }
 
-    let recommend = '';
-    if (d.riskScore >= 70) recommend = '⚠️ Отклонить!';
-    else if (d.riskScore >= 50) recommend = '⚡ Проверить!';
-    else if (d.riskScore >= 30) recommend = 'ℹ️ Наблюдать.';
-    else recommend = '✅ Допустить.';
+    let rec = '';
+    if (d.riskScore >= 70) rec = '⚠️ <strong>Отклонить</strong>';
+    else if (d.riskScore >= 50) rec = '⚡ <strong>Проверить</strong>';
+    else if (d.riskScore >= 30) rec = 'ℹ️ Наблюдать';
+    else rec = '✅ Допустить';
 
-    html += `<br><strong>Рекомендация:</strong> ${recommend}`;
-    html += `<br><br><a href="${d.profileUrl}" target="_blank">📂 Открыть профиль Steam</a>`;
+    html += `<br>${rec}`;
+    html += `<br><br><a href="${escapeHtml(d.profileUrl)}" target="_blank">📂 Открыть профиль Steam</a>`;
 
     return html;
 }
 
-// ==================== БЕСПЛАТНЫЕ ИГРЫ ====================
+// ==================== FREE GAMES ====================
 async function loadFreeGames() {
     const resultDiv = document.getElementById('free-result');
-    resultDiv.innerHTML = '⏳ Загружаю раздачи...';
+    resultDiv.innerHTML = '<span class="spinner"></span>Загружаю раздачи...';
     resultDiv.classList.add('show');
 
     try {
         const games = await apiCall('/api/free-games');
 
-        if (!games || games.length === 0) {
-            resultDiv.innerHTML = '😕 Сейчас нет активных Steam-раздач.<br><br>Бот пришлёт уведомление, когда появится.';
+        if (!games?.length) {
+            resultDiv.innerHTML = '😕 Сейчас нет активных Steam-раздач.<br><br>Бот уведомит, когда появятся.';
             return;
         }
 
         let html = `<strong>🎁 Найдено: ${games.length}</strong><br><br>`;
 
-        games.slice(0, 8).forEach((game, i) => {
-            html += `<div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">`;
-            html += `<strong>${i + 1}. ${game.name}</strong><br>`;
-            if (game.price && game.price !== 'N/A') {
-                html += `<small>💰 <s>${game.price}</s> → 🎁 БЕСПЛАТНО</small><br>`;
+        games.slice(0, 8).forEach((g, i) => {
+            html += `<div style="margin-bottom: 14px;">`;
+            html += `<strong>${i + 1}. ${escapeHtml(g.name)}</strong><br>`;
+            if (g.price && g.price !== 'N/A') {
+                html += `<small style="opacity:0.7">💰 <s>${escapeHtml(g.price)}</s> → 🎁 БЕСПЛАТНО</small><br>`;
             }
-            html += `<a href="${game.url}" target="_blank">⬇️ Забрать</a>`;
+            html += `<a href="${escapeHtml(g.url)}" target="_blank">⬇️ Забрать</a>`;
+            if (i < games.slice(0, 8).length - 1) html += `<hr>`;
             html += `</div>`;
         });
 
         resultDiv.innerHTML = html;
-
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) {
         resultDiv.innerHTML = `❌ Ошибка: ${e.message}`;
@@ -223,15 +217,13 @@ async function addToWatchlist() {
         return;
     }
 
-    const steamId = match[0];
-    resultDiv.innerHTML = '⏳ Добавляю...';
+    resultDiv.innerHTML = '<span class="spinner"></span>Добавляю...';
     resultDiv.classList.add('show');
 
     try {
-        const data = await apiCall('/api/watch-add', { steamId });
-        resultDiv.innerHTML = `✅ Добавлен в Watchlist: <strong>${data.name || steamId}</strong><br><br>Бот уведомит, если появится бан.`;
+        const data = await apiCall('/api/watch-add', { steamId: match[0] });
+        resultDiv.innerHTML = `✅ Добавлен: <strong>${escapeHtml(data.name || match[0])}</strong><br><br>Бот уведомит при появлении бана.`;
         document.getElementById('watch-input').value = '';
-
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) {
         resultDiv.innerHTML = `❌ Ошибка: ${e.message}`;
@@ -239,23 +231,23 @@ async function addToWatchlist() {
 }
 
 async function loadWatchlist() {
-    const resultDiv = document.getElementById('watch-result');
-    resultDiv.innerHTML = '⏳ Загружаю...';
+    const resultDiv = document.getElementById('watchlist-result');
+    resultDiv.innerHTML = '<span class="spinner"></span>Загружаю...';
     resultDiv.classList.add('show');
 
     try {
         const list = await apiCall('/api/watch-list');
 
-        if (!list || list.length === 0) {
+        if (!list?.length) {
             resultDiv.innerHTML = '📊 Список пуст.';
             return;
         }
 
         let html = `<strong>📊 Watchlist (${list.length})</strong><br><br>`;
         list.forEach((w, i) => {
-            html += `${i + 1}. <strong>${w.name}</strong><br>`;
-            html += `<small>${w.steamId}</small><br>`;
-            html += `<small>VAC: ${w.lastVacBans} | Game: ${w.lastGameBans}</small><br><br>`;
+            html += `<strong>${i + 1}. ${escapeHtml(w.name)}</strong><br>`;
+            html += `<small style="opacity:0.6">${w.steamId}</small><br>`;
+            html += `<small>VAC: ${w.lastVacBans} · Game: ${w.lastGameBans}</small><br><br>`;
         });
 
         resultDiv.innerHTML = html;
@@ -264,10 +256,10 @@ async function loadWatchlist() {
     }
 }
 
-// ==================== СТАТУС ====================
+// ==================== STATUS ====================
 async function loadStatus() {
     const resultDiv = document.getElementById('status-result');
-    resultDiv.innerHTML = '⏳ Загружаю...';
+    resultDiv.innerHTML = '<span class="spinner"></span>Загружаю...';
     resultDiv.classList.add('show');
 
     try {
@@ -275,8 +267,8 @@ async function loadStatus() {
 
         let html = `<strong>📊 Статистика бота</strong><br><br>`;
         html += `👥 Авторизовано: <strong>${data.usersCount}</strong><br>`;
-        html += `📊 Проверок: <strong>${data.historyCount}</strong><br>`;
-        html += `👁️ Watchlist: <strong>${data.watchlistCount}</strong><br>`;
+        html += `📊 Проверок профилей: <strong>${data.historyCount}</strong><br>`;
+        html += `👁️ В watchlist: <strong>${data.watchlistCount}</strong><br>`;
 
         resultDiv.innerHTML = html;
     } catch (e) {
@@ -284,7 +276,10 @@ async function loadStatus() {
     }
 }
 
-// ==================== ИНИЦИАЛИЗАЦИЯ ====================
-if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-    console.log('👤 User:', tg.initDataUnsafe.user.first_name || 'User');
+// ==================== HELPERS ====================
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
