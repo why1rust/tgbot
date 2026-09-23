@@ -44,7 +44,7 @@ body {
     z-index: 1;
 }
 
-/* ===== FLOATING ORBS ===== */
+/* FLOATING ORBS */
 .bg-orb {
     position: fixed;
     border-radius: 50%;
@@ -98,7 +98,7 @@ body {
     50% { transform: translate(-40px, 30px) scale(0.9); }
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 .header {
     text-align: center;
     padding: 20px 0 28px;
@@ -116,20 +116,13 @@ body {
     border: 1.5px solid rgba(139, 92, 246, 0.4);
     border-radius: 28px;
     margin-bottom: 16px;
-    box-shadow:
-        0 10px 40px rgba(139, 92, 246, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    position: relative;
+    box-shadow: 0 10px 40px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
     animation: ringPulse 3s ease-in-out infinite;
 }
 
 @keyframes ringPulse {
-    0%, 100% {
-        box-shadow: 0 10px 40px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    }
-    50% {
-        box-shadow: 0 10px 50px rgba(139, 92, 246, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    }
+    0%, 100% { box-shadow: 0 10px 40px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15); }
+    50% { box-shadow: 0 10px 50px rgba(139, 92, 246, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.15); }
 }
 
 .logo {
@@ -165,7 +158,7 @@ body {
     text-transform: uppercase;
 }
 
-/* ===== TABS ===== */
+/* TABS */
 .tabs {
     display: flex;
     gap: 4px;
@@ -210,9 +203,7 @@ body {
 .tab.active {
     background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
     color: #fff;
-    box-shadow:
-        0 6px 24px var(--glow),
-        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    box-shadow: 0 6px 24px var(--glow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .tab.active .tab-icon {
@@ -223,7 +214,7 @@ body {
     transform: scale(0.95);
 }
 
-/* ===== PANELS ===== */
+/* PANELS */
 .panel {
     display: none;
     position: relative;
@@ -236,17 +227,11 @@ body {
 }
 
 @keyframes panelIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.97);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* ===== CARDS ===== */
+/* CARDS */
 .card {
     background: var(--card);
     backdrop-filter: blur(24px);
@@ -306,7 +291,7 @@ body {
     box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
 }
 
-/* ===== FIELDS ===== */
+/* FIELDS */
 .field {
     margin-bottom: 14px;
 }
@@ -373,7 +358,7 @@ select {
     cursor: pointer;
 }
 
-/* ===== BUTTONS ===== */
+/* BUTTONS */
 .btn {
     width: 100%;
     padding: 16px;
@@ -402,9 +387,7 @@ select {
 .btn.primary {
     background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 40%, #c084fc 100%);
     background-size: 200% 200%;
-    box-shadow:
-        0 8px 28px rgba(139, 92, 246, 0.45),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 28px rgba(139, 92, 246, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .btn.primary::after {
@@ -430,7 +413,7 @@ select {
     transform: scale(0.97);
 }
 
-/* ===== RESULT ===== */
+/* RESULT */
 .result {
     margin-top: 16px;
     padding: 18px;
@@ -465,17 +448,106 @@ select {
 }
 
 @keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-12px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== FOOTER ===== */
+/* CRAFT LIST */
+.craft-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.craft-item {
+    background: var(--input);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.craft-item[open] {
+    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
+}
+
+.craft-item summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.craft-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.craft-item summary:hover {
+    background: rgba(139, 92, 246, 0.08);
+}
+
+.craft-title {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.craft-title strong {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.craft-title small {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.craft-item summary::after {
+    content: '▾';
+    color: var(--muted);
+    font-size: 12px;
+    transition: transform 0.3s;
+}
+
+.craft-item[open] summary::after {
+    transform: rotate(180deg);
+}
+
+.craft-details {
+    padding: 0 16px 14px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    animation: slideIn 0.3s ease;
+}
+
+.resource {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.resource.total {
+    margin-top: 6px;
+    padding-top: 10px;
+    border-top: 1px solid var(--card-border);
+    color: var(--accent-3);
+    font-weight: 700;
+}
+
+.cost-emoji {
+    font-size: 22px;
+    width: 32px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* FOOTER */
 .footer {
     text-align: center;
     margin-top: 24px;
@@ -490,7 +562,7 @@ select {
     z-index: 2;
 }
 
-/* ===== SPINNER ===== */
+/* SPINNER */
 .spinner {
     display: inline-block;
     width: 14px;
@@ -507,7 +579,7 @@ select {
     to { transform: rotate(360deg); }
 }
 
-/* ===== SCROLL ===== */
+/* SCROLL */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
