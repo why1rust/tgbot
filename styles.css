@@ -452,99 +452,30 @@ select {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* CRAFT LIST */
-.craft-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+/* CRAFT INFO */
+.craft-info {
+    padding: 4px 0;
 }
 
-.craft-item {
-    background: var(--input);
-    border: 1px solid var(--card-border);
-    border-radius: 14px;
-    overflow: hidden;
-    transition: all 0.3s;
+.craft-info-title {
+    font-size: 15px;
+    margin-bottom: 10px;
+    color: #fff;
 }
 
-.craft-item[open] {
-    border-color: rgba(139, 92, 246, 0.4);
-    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
-}
-
-.craft-item summary {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    cursor: pointer;
-    list-style: none;
-    user-select: none;
-    transition: background 0.2s;
-}
-
-.craft-item summary::-webkit-details-marker {
-    display: none;
-}
-
-.craft-item summary:hover {
-    background: rgba(139, 92, 246, 0.08);
-}
-
-.craft-title {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.craft-title strong {
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.craft-title small {
-    font-size: 12px;
-    color: var(--muted);
-}
-
-.craft-item summary::after {
-    content: '▾';
-    color: var(--muted);
-    font-size: 12px;
-    transition: transform 0.3s;
-}
-
-.craft-item[open] summary::after {
-    transform: rotate(180deg);
-}
-
-.craft-details {
-    padding: 0 16px 14px 60px;
+.craft-info-list {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    animation: slideIn 0.3s ease;
 }
 
-.resource {
+.craft-info-list .resource {
     font-size: 13px;
     color: var(--muted);
 }
 
-.resource.total {
-    margin-top: 6px;
-    padding-top: 10px;
-    border-top: 1px solid var(--card-border);
+.craft-info-list .resource strong {
     color: var(--accent-3);
-    font-weight: 700;
-}
-
-.cost-emoji {
-    font-size: 22px;
-    width: 32px;
-    text-align: center;
-    flex-shrink: 0;
 }
 
 /* FOOTER */
