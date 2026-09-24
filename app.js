@@ -1377,6 +1377,7 @@ async function init() {
 
     renderRaidItems();
     updateCraftInfo();
+    loadHome();
 
     const hash = location.hash || '';
     if (hash.startsWith('#ticket=')) {
