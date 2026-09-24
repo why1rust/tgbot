@@ -1604,10 +1604,10 @@ async function adminLoadGiveaways() {
                     </div>
                 </div>
                 <div class="admin-giveaway-meta">
-                    🏆 ${escapeHtml(g.prize || '—')}<br>
-                    👥 Участников: <b>${participants}</b><br>
-                    ⏰ ${untilText}
-                </div>
+    🏆 ${escapeHtml(g.prize || '—')}<br>
+    👥 Участников: <b>${participants}</b><br>
+    ⏰ ${untilText}${g.status === 'ended' && g.winner ? `<br>👑 Победитель: <code>${g.winner}</code>` : ''}
+</div>
                 <div class="admin-giveaway-actions">
                     <button onclick="openGiveawayModal('${g.id}')">✏️ Редакт.</button>
                     ${g.status === 'active' ? `<button class="finish" onclick="adminFinishGiveaway('${g.id}')">🏆 Завершить</button>` : ''}
