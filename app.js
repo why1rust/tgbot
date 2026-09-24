@@ -58,15 +58,19 @@ async function analyzeSteam() {
 }
 
 function renderSteamProfile(d) {
+    const avatarSrc = d.avatar 
+        ? `${API_BASE}/api/avatar?url=${encodeURIComponent(d.avatar)}`
+        : '';
+
     if (d.privateWarning) {
         return `
             <div class="player-card">
                 <div class="player-top">
-                    ${d.avatar 
-                        ? `<img class="player-avatar-img" src="${escapeHtml(d.avatar)}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` 
+                    ${avatarSrc 
+                        ? `<img class="player-avatar-img" src="${avatarSrc}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` 
                         : ''
                     }
-                    <div class="player-avatar" style="${d.avatar ? 'display:none;' : ''}">🔒</div>
+                    <div class="player-avatar" style="${avatarSrc ? 'display:none;' : ''}">🔒</div>
                     <div class="player-info">
                         <h3>${escapeHtml(d.name)}</h3>
                         <span class="player-status offline">Приватный профиль</span>
@@ -85,11 +89,11 @@ function renderSteamProfile(d) {
     return `
         <div class="player-card">
             <div class="player-top">
-                ${d.avatar 
-                    ? `<img class="player-avatar-img ${isOnline ? 'online' : ''}" src="${escapeHtml(d.avatar)}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` 
+                ${avatarSrc 
+                    ? `<img class="player-avatar-img ${isOnline ? 'online' : ''}" src="${avatarSrc}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` 
                     : ''
                 }
-                <div class="player-avatar ${isOnline ? 'online' : ''}" style="${d.avatar ? 'display:none;' : ''}">${initials}</div>
+                <div class="player-avatar ${isOnline ? 'online' : ''}" style="${avatarSrc ? 'display:none;' : ''}">${initials}</div>
                 <div class="player-info">
                     <h3>${escapeHtml(d.name)}</h3>
                     <span class="player-status ${isOnline ? 'online' : 'offline'}">Steam ${d.state.replace(/[^\wа-яА-Я\s]/g, '').trim() || 'Оффлайн'}</span>
@@ -186,7 +190,7 @@ function renderSteamProfile(d) {
                 </div>
             </div>
 
-            ${d.friendsWithRust?.length > 0 ? `
+            ${d.friendsWithRust && d.friendsWithRust.length > 0 ? `
                 <div class="activity-item">
                     <div class="activity-icon friend">👥</div>
                     <div class="activity-content">
@@ -198,8 +202,8 @@ function renderSteamProfile(d) {
                 <div class="activity-item">
                     <div class="activity-icon friend">👥</div>
                     <div class="activity-content">
-                        <h4>Друзей с Rust: 0</h4>
-                        <p>Никто из друзей не играет в Rust</p>
+                        <h4>Друзей всего: ${d.friendsCount}</h4>
+                        <p>Steam API скрывает список друзей для чужих профилей</p>
                     </div>
                 </div>
             `}
