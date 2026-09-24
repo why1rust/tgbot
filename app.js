@@ -7,6 +7,171 @@ if (tg.setBackgroundColor) tg.setBackgroundColor('#0a0a0f');
 const API_BASE = 'https://rust-bot.sdadawqdqdasda.workers.dev';
 const INIT_DATA = tg.initData || '';
 
+// ==================== I18N ====================
+const I18N = {
+    ru: {
+        tab_steam: 'Steam', tab_raid: 'Рейд', tab_craft: 'Крафт', tab_watch: 'Watch', tab_profile: 'Профиль', tab_support: 'Помощь', tab_settings: 'Настройки',
+        btn_analyze: 'Анализ', btn_calc: 'Рассчитать', btn_add: 'Добавить', btn_refresh: '🔄 Обновить', btn_create: '✅ Создать', btn_cancel: 'Отмена', btn_save: '💾 Сохранить', btn_send: '📢 Отправить', btn_preview: '👁 Превью', btn_close: 'Закрыть',
+        raid_title: 'Калькулятор рейда', raid_category: 'Категория', raid_target: 'Цель',
+        raid_doors_opt: '🚪 Двери', raid_walls_opt: '🧱 Стены', raid_outer_opt: '🛡️ Внешние стены',
+        craft_title: 'Калькулятор крафта', craft_explosive: 'Взрывчатка', craft_count: 'Количество', craft_per_unit: 'Стоимость на 1 шт.',
+        craft_rocket: 'Ракета', craft_satchel: 'Сатчел', craft_beancan: 'Бобовая граната', craft_bullet: 'Патрон 5.56',
+        watch_add_title: 'Добавить в Watchlist', watch_steamid: 'SteamID', watch_list_title: 'Список отслеживания',
+        support_title: '💬 Техподдержка', support_desc: 'Наши админы помогут решить проблему',
+        support_hero: 'Нужна помощь?', support_hero_desc: 'Опиши свою проблему — администратор ответит в ближайшее время',
+        support_problem: 'Опиши проблему', support_placeholder: 'Подробно опиши, что случилось...',
+        support_call: 'Позвать поддержку', support_time: 'Ответ обычно в течение 1-2 часов',
+        support_here: 'Отвечаем прямо здесь, в Mini App', support_notify: 'Уведомление придёт в Telegram',
+        chat_support: 'Поддержка', chat_called: 'Поддержка вызвана', chat_wait_hint: 'Ожидайте ответа, админ уже уведомлён',
+        chat_input_ph: 'Написать сообщение...', chat_reply_ph: 'Ответить...', chat_close: 'Закрыть тикет',
+        settings_title: '⚙️ Настройки',
+        settings_theme: 'Тема оформления', settings_theme_hint: 'Как выглядит приложение',
+        settings_language: 'Язык', settings_language_hint: 'Язык интерфейса',
+        settings_notifications: 'Уведомления в Telegram', settings_notifications_hint: 'Ответы поддержки, баны watchlist',
+        settings_watch_notif: 'Оповещения о банах', settings_watch_notif_hint: 'Когда у отслеживаемого появляется бан',
+        settings_haptic: 'Вибро-отклик', settings_haptic_hint: 'Тактильный отклик при действиях',
+        settings_about: 'ℹ️ О приложении', settings_version: 'Версия', settings_bot: 'Бот', settings_api: 'API',
+        theme_dark: 'Тёмная', theme_light: 'Светлая', theme_auto: 'Система',
+        admin_title: '👑 Админ-панель', admin_stats: '📊 Статистика', admin_users: '👥 Пользователи', admin_premium: '⭐ Управление премиумом',
+        admin_promos: '🎟 Промокоды', admin_promo_create: '➕ Создать промокод', admin_promo_list_title: 'Список промокодов',
+        admin_tickets: '🎫 Тикеты поддержки', admin_broadcast: '📢 Рассылка', admin_template: 'Шаблон', admin_choose_template: 'Выбери шаблон',
+        admin_broadcast_text: 'Текст (HTML разрешён)', admin_broadcast_ph: 'Введи текст рассылки...',
+        admin_target: 'ID или @тег', admin_days: 'Дней', admin_give: '⭐ Выдать', admin_revoke: '❌ Забрать',
+        promo_code: 'Код', promo_type: 'Тип', promo_type_premium: '⭐ Дни премиума', promo_type_checks: '🎮 Бонусные проверки', promo_type_discount: '💰 Скидка на покупку',
+        promo_days: 'Дней премиума', promo_checks: 'Кол-во проверок', promo_percent: 'Скидка (%)',
+        promo_max_uses: 'Лимит использований (пусто = безлимит)', promo_valid_days: 'Срок действия (дней, пусто = бессрочный)',
+        promo_only_new: 'Только для новых пользователей', promo_broadcast: '📢 Сделать рассылку об этом промокоде',
+        edit_promo_title: '✏️ Редактировать промокод',
+        steam_private: 'Приватный профиль', hours_rust: 'часов Rust', friends_lbl: 'друзей', bans_lbl: 'банов',
+        risk_title: 'Риск читерства', risk_sub: 'Анализ VAC, часов и активности', risk_low: 'Низкий', risk_high: 'Высокий',
+        activity_title: 'Активность', vac_ban: 'VAC бан', vac_active: 'активных', no_bans: 'Банов нет', clean_history: 'Чистая история',
+        steam_level: 'Steam уровень', achievements: 'Достижений', age_lbl: 'Возраст', years_lbl: 'лет', days_lbl: 'дней', games_lbl: 'Игр',
+        friends_rust: 'Друзей с Rust', open_friends: 'Открыть список в Steam', open_profile: 'Открыть профиль',
+        profile_loading: '⏳ Загружаю профиль...',
+        profile_premium_active: 'Премиум активен', profile_premium_admin: 'Администратор', profile_premium_inactive: 'Премиум не активен',
+        profile_premium_hint: 'Купи премиум для безлимита', profile_admin_perm: 'Постоянный доступ',
+        until_lbl: 'до', at_lbl: 'в', days_left: 'Осталось', discount_lbl: 'Скидка', on_premium_buy: 'На покупку премиума',
+        actions_title: 'Действия', btn_buy_premium: '⭐ Купить премиум', btn_trial: '🎁 Пробная', days_suffix: 'дня',
+        btn_activate_promo: '🎟 Активировать промокод', btn_ref_link: '🎁 Реферальная ссылка', btn_admin_panel: '👑 Админ-панель',
+        checks_lbl: 'Проверок', watchlist_lbl: 'Watchlist', refs_lbl: 'Рефералов',
+        err_steamid: '❌ Введи SteamID (17 цифр)',
+        analyzing: 'Анализирую...',
+        watchlist_empty: '📊 Список пуст', watching_lbl: '📊 Отслеживается',
+        ref_title: '🎁 Реферальная ссылка', ref_invited: 'Приглашено', ref_bonus: 'Бонусов',
+        ref_hint: 'За каждого друга +1 проверка!', ref_copy: '📋 Скопировать', ref_share: '📤 Поделиться',
+        ref_copied: '✅ Ссылка скопирована',
+        err_creating: 'Ошибка: ', err_deleting: 'Ошибка: ',
+        open_bot: 'Открой бота → /start → «⭐ Купить премиум»',
+        trial_activated: '🎉 Пробная активирована на', days_word: 'дня',
+        promo_activated: '✅ Промокод активирован',
+        sending_lbl: 'Отправка', sending_bg: 'Рассылка запущена в фоне', users_word: 'юзеров',
+        sending_run: 'Отправка запущена...', broadcast_sent: '✅ Рассылка запущена в фоне для',
+        preview_lbl: '👁 ПРЕВЬЮ',
+        empty_lbl: '❌ Пусто',
+        confirm_broadcast: 'Отправить всем пользователям?',
+        confirm_delete_promo: 'Удалить промокод',
+        confirm_close_ticket: 'Закрыть тикет?',
+        premium_given: '✅ Премиум выдан на', days_short: 'дн.',
+        ticket_closed: '✅ Тикет закрыт',
+        admin_close_ok: '✅ Тикет закрыт',
+        promo_updated: '✅ Промокод обновлён',
+        settings_saved: '✅ Настройки сохранены',
+        no_users: 'Нет пользователей', no_promos: 'Промокодов нет', no_tickets: 'Нет тикетов',
+        loading_short: '⏳', loading_lbl: '⏳ Загрузка...',
+        promo_uses_lbl: 'Использований', promo_until_lbl: 'До', promo_forever_lbl: '♾ Бессрочный',
+        promo_expired_lbl: '⏰ Истёк', promo_temp_lbl: 'Временный', promo_active_lbl: 'Активный',
+        promo_limit_lbl: 'Лимит', promo_only_new_lbl: 'Только новые', promo_days_badge: 'Дней',
+        refs_short: 'Рефералов', watch_short: 'В watchlist', income_lbl: 'Доход', today_checks: 'Проверок сегодня',
+        users_short: 'Юзеров', premium_short: 'Премиум',
+        chat_waiting: 'Ожидаем ответа администратора...', chat_connected: 'Админ подключился', chat_finished: 'Диалог завершён',
+        chat_waiting_sys: '⏳ Ожидаем ответа администратора', chat_closed_sys: '✅ Тикет закрыт', chat_need_reply: '⏳ Ждём ответа... (юзер вызвал поддержку)',
+        unread_lbl: 'непрочитано'
+    },
+    en: {
+        tab_steam: 'Steam', tab_raid: 'Raid', tab_craft: 'Craft', tab_watch: 'Watch', tab_profile: 'Profile', tab_support: 'Help', tab_settings: 'Settings',
+        btn_analyze: 'Analyze', btn_calc: 'Calculate', btn_add: 'Add', btn_refresh: '🔄 Refresh', btn_create: '✅ Create', btn_cancel: 'Cancel', btn_save: '💾 Save', btn_send: '📢 Send', btn_preview: '👁 Preview', btn_close: 'Close',
+        raid_title: 'Raid Calculator', raid_category: 'Category', raid_target: 'Target',
+        raid_doors_opt: '🚪 Doors', raid_walls_opt: '🧱 Walls', raid_outer_opt: '🛡️ Outer Walls',
+        craft_title: 'Craft Calculator', craft_explosive: 'Explosive', craft_count: 'Amount', craft_per_unit: 'Cost per 1 unit',
+        craft_rocket: 'Rocket', craft_satchel: 'Satchel', craft_beancan: 'Beancan', craft_bullet: 'Bullet 5.56',
+        watch_add_title: 'Add to Watchlist', watch_steamid: 'SteamID', watch_list_title: 'Watchlist',
+        support_title: '💬 Support', support_desc: 'Our admins will help you',
+        support_hero: 'Need help?', support_hero_desc: 'Describe your problem — admin will reply soon',
+        support_problem: 'Describe problem', support_placeholder: 'Describe in detail what happened...',
+        support_call: 'Call Support', support_time: 'Usually reply within 1-2 hours',
+        support_here: 'We reply right here in Mini App', support_notify: 'You will get a Telegram notification',
+        chat_support: 'Support', chat_called: 'Support called', chat_wait_hint: 'Wait for admin reply, admin is notified',
+        chat_input_ph: 'Write a message...', chat_reply_ph: 'Reply...', chat_close: 'Close ticket',
+        settings_title: '⚙️ Settings',
+        settings_theme: 'Theme', settings_theme_hint: 'App appearance',
+        settings_language: 'Language', settings_language_hint: 'Interface language',
+        settings_notifications: 'Telegram notifications', settings_notifications_hint: 'Support replies, watchlist bans',
+        settings_watch_notif: 'Ban alerts', settings_watch_notif_hint: 'When a tracked player gets banned',
+        settings_haptic: 'Haptic feedback', settings_haptic_hint: 'Vibration on actions',
+        settings_about: 'ℹ️ About', settings_version: 'Version', settings_bot: 'Bot', settings_api: 'API',
+        theme_dark: 'Dark', theme_light: 'Light', theme_auto: 'System',
+        admin_title: '👑 Admin panel', admin_stats: '📊 Stats', admin_users: '👥 Users', admin_premium: '⭐ Premium',
+        admin_promos: '🎟 Promos', admin_promo_create: '➕ Create promo', admin_promo_list_title: 'Promo list',
+        admin_tickets: '🎫 Support tickets', admin_broadcast: '📢 Broadcast', admin_template: 'Template', admin_choose_template: 'Choose template',
+        admin_broadcast_text: 'Text (HTML allowed)', admin_broadcast_ph: 'Enter broadcast text...',
+        admin_target: 'ID or @tag', admin_days: 'Days', admin_give: '⭐ Give', admin_revoke: '❌ Revoke',
+        promo_code: 'Code', promo_type: 'Type', promo_type_premium: '⭐ Premium days', promo_type_checks: '🎮 Bonus checks', promo_type_discount: '💰 Discount',
+        promo_days: 'Premium days', promo_checks: 'Checks amount', promo_percent: 'Discount (%)',
+        promo_max_uses: 'Max uses (empty = unlimited)', promo_valid_days: 'Valid days (empty = forever)',
+        promo_only_new: 'New users only', promo_broadcast: '📢 Send broadcast about this promo',
+        edit_promo_title: '✏️ Edit promo',
+        steam_private: 'Private profile', hours_rust: 'hours Rust', friends_lbl: 'friends', bans_lbl: 'bans',
+        risk_title: 'Cheat risk', risk_sub: 'VAC, hours, activity analysis', risk_low: 'Low', risk_high: 'High',
+        activity_title: 'Activity', vac_ban: 'VAC ban', vac_active: 'active', no_bans: 'No bans', clean_history: 'Clean history',
+        steam_level: 'Steam level', achievements: 'Achievements', age_lbl: 'Age', years_lbl: 'years', days_lbl: 'days', games_lbl: 'Games',
+        friends_rust: 'Friends with Rust', open_friends: 'Open list in Steam', open_profile: 'Open profile',
+        profile_loading: '⏳ Loading profile...',
+        profile_premium_active: 'Premium active', profile_premium_admin: 'Administrator', profile_premium_inactive: 'Premium inactive',
+        profile_premium_hint: 'Buy premium for unlimited', profile_admin_perm: 'Permanent access',
+        until_lbl: 'until', at_lbl: 'at', days_left: 'Left', discount_lbl: 'Discount', on_premium_buy: 'On premium purchase',
+        actions_title: 'Actions', btn_buy_premium: '⭐ Buy premium', btn_trial: '🎁 Trial', days_suffix: 'days',
+        btn_activate_promo: '🎟 Activate promo', btn_ref_link: '🎁 Referral link', btn_admin_panel: '👑 Admin panel',
+        checks_lbl: 'Checks', watchlist_lbl: 'Watchlist', refs_lbl: 'Referrals',
+        err_steamid: '❌ Enter SteamID (17 digits)',
+        analyzing: 'Analyzing...',
+        watchlist_empty: '📊 List is empty', watching_lbl: '📊 Tracking',
+        ref_title: '🎁 Referral link', ref_invited: 'Invited', ref_bonus: 'Bonus',
+        ref_hint: '+1 check for each friend!', ref_copy: '📋 Copy', ref_share: '📤 Share',
+        ref_copied: '✅ Link copied',
+        err_creating: 'Error: ', err_deleting: 'Error: ',
+        open_bot: 'Open bot → /start → "⭐ Buy premium"',
+        trial_activated: '🎉 Trial activated for', days_word: 'days',
+        promo_activated: '✅ Promo activated',
+        sending_lbl: 'Sending', sending_bg: 'Broadcast started in background', users_word: 'users',
+        sending_run: 'Sending started...', broadcast_sent: '✅ Broadcast started in background for',
+        preview_lbl: '👁 PREVIEW',
+        empty_lbl: '❌ Empty',
+        confirm_broadcast: 'Send to all users?',
+        confirm_delete_promo: 'Delete promo',
+        confirm_close_ticket: 'Close ticket?',
+        premium_given: '✅ Premium given for', days_short: 'days',
+        ticket_closed: '✅ Ticket closed',
+        admin_close_ok: '✅ Ticket closed',
+        promo_updated: '✅ Promo updated',
+        settings_saved: '✅ Settings saved',
+        no_users: 'No users', no_promos: 'No promos', no_tickets: 'No tickets',
+        loading_short: '⏳', loading_lbl: '⏳ Loading...',
+        promo_uses_lbl: 'Uses', promo_until_lbl: 'Until', promo_forever_lbl: '♾ Forever',
+        promo_expired_lbl: '⏰ Expired', promo_temp_lbl: 'Temporary', promo_active_lbl: 'Active',
+        promo_limit_lbl: 'Limit', promo_only_new_lbl: 'New only', promo_days_badge: 'Days',
+        refs_short: 'Referrals', watch_short: 'In watchlist', income_lbl: 'Income', today_checks: 'Checks today',
+        users_short: 'Users', premium_short: 'Premium',
+        chat_waiting: 'Waiting for admin reply...', chat_connected: 'Admin connected', chat_finished: 'Dialog finished',
+        chat_waiting_sys: '⏳ Waiting for admin reply', chat_closed_sys: '✅ Ticket closed', chat_need_reply: '⏳ Waiting... (user called support)',
+        unread_lbl: 'unread'
+    }
+};
+
+let LANG = 'ru';
+let SETTINGS = { theme: 'dark', language: 'ru', notifications: true, watchNotifications: true, haptic: true };
+
+function tr(key) { return (I18N[LANG] && I18N[LANG][key]) || (I18N.ru[key]) || key; }
+
 // ==================== API ====================
 async function apiCall(endpoint, data = {}) {
     const res = await fetch(`${API_BASE}${endpoint}`, {
@@ -15,8 +180,79 @@ async function apiCall(endpoint, data = {}) {
         body: JSON.stringify({ initData: INIT_DATA, ...data })
     });
     const json = await res.json();
-    if (!res.ok) throw new Error(json.error || 'Ошибка API');
+    if (!res.ok) throw new Error(json.error || 'API Error');
     return json;
+}
+
+// ==================== THEME ====================
+function applyTheme(theme) {
+    const t = (theme === 'auto')
+        ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+        : theme;
+    document.documentElement.setAttribute('data-theme', t);
+    document.getElementById('theme-color-meta').setAttribute('content', t === 'light' ? '#f5f5f8' : '#0a0a0f');
+    if (tg.setHeaderColor) tg.setHeaderColor(t === 'light' ? '#f5f5f8' : '#0a0a0f');
+    if (tg.setBackgroundColor) tg.setBackgroundColor(t === 'light' ? '#f5f5f8' : '#0a0a0f');
+    const btn = document.getElementById('theme-toggle');
+    if (btn) btn.textContent = t === 'light' ? '☀️' : '🌙';
+    document.querySelectorAll('#theme-seg button').forEach(b => {
+        b.classList.toggle('active', b.dataset.theme === theme);
+    });
+}
+
+function toggleTheme() {
+    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+}
+
+async function setTheme(theme) {
+    SETTINGS.theme = theme;
+    applyTheme(theme);
+    try { await apiCall('/api/settings', { settings: { theme } }); } catch (e) {}
+    if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+}
+
+async function setLanguage(lang) {
+    SETTINGS.language = lang;
+    LANG = lang;
+    applyI18n();
+    updateThemeSegActive();
+    try { await apiCall('/api/settings', { settings: { language: lang } }); } catch (e) {}
+    if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+    // Перерисовать динамические секции
+    if (document.getElementById('panel-profile').classList.contains('active')) loadProfile();
+    if (document.getElementById('panel-support').classList.contains('active')) loadSupport();
+    if (document.querySelector('.tab[data-tab="watch"]').classList.contains('active')) loadWatchlist();
+}
+
+async function setSetting(key, value) {
+    SETTINGS[key] = value;
+    try { await apiCall('/api/settings', { settings: { [key]: value } }); } catch (e) {}
+    if (key === 'haptic' && value && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+}
+
+function updateThemeSegActive() {
+    document.querySelectorAll('#theme-seg button').forEach(b => b.classList.toggle('active', b.dataset.theme === SETTINGS.theme));
+    document.querySelectorAll('#lang-seg button').forEach(b => b.classList.toggle('active', b.dataset.lang === SETTINGS.language));
+}
+
+function applyI18n() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (key) el.textContent = tr(key);
+    });
+    document.querySelectorAll('[data-i18n_placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n_placeholder');
+        if (key) el.setAttribute('placeholder', tr(key));
+    });
+    document.querySelectorAll('[data-i18n_title]').forEach(el => {
+        const key = el.getAttribute('data-i18n_title');
+        if (key) el.setAttribute('title', tr(key));
+    });
+    const apiEl = document.getElementById('about-api');
+    if (apiEl) apiEl.textContent = API_BASE.replace('https://', '').split('.')[0];
+    updateThemeSegActive();
 }
 
 // ==================== TABS ====================
@@ -31,8 +267,9 @@ document.querySelectorAll('.tab').forEach(tab => {
         if (name === 'profile') loadProfile();
         if (name === 'support') loadSupport();
         if (name === 'watch') loadWatchlist();
+        if (name === 'settings') loadSettingsToUI();
 
-        if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
     });
 });
 
@@ -41,19 +278,15 @@ async function analyzeSteam() {
     const input = document.getElementById('steam-input').value.trim();
     const resultDiv = document.getElementById('steam-result');
     const match = input.match(/\d{17}/);
-    if (!match) {
-        resultDiv.innerHTML = '❌ Введи SteamID (17 цифр)';
-        resultDiv.classList.add('show');
-        return;
-    }
-    resultDiv.innerHTML = '<span class="spinner"></span>Анализирую...';
+    if (!match) { resultDiv.innerHTML = tr('err_steamid'); resultDiv.classList.add('show'); return; }
+    resultDiv.innerHTML = `<span class="spinner"></span>${tr('analyzing')}`;
     resultDiv.classList.add('show');
     try {
         const data = await apiCall('/api/steam', { steamId: match[0] });
         if (data.error) { resultDiv.innerHTML = `❌ ${escapeHtml(data.error)}`; return; }
         resultDiv.innerHTML = renderSteamProfile(data);
         resultDiv.classList.add('show');
-        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) {
         resultDiv.innerHTML = `❌ ${escapeHtml(e.message)}`;
     }
@@ -61,9 +294,9 @@ async function analyzeSteam() {
 
 function renderSteamProfile(d) {
     if (d.privateWarning) {
-        return `<div class="player-card"><div class="player-top"><div class="player-avatar">🔒</div><div class="player-info"><h3>${escapeHtml(d.name)}</h3><span class="player-status offline">Приватный профиль</span></div></div></div>`;
+        return `<div class="player-card"><div class="player-top"><div class="player-avatar">🔒</div><div class="player-info"><h3>${escapeHtml(d.name)}</h3><span class="player-status offline">${tr('steam_private')}</span></div></div></div>`;
     }
-    const isOnline = d.state.includes('Онлайн') || d.state.includes('В игре');
+    const isOnline = d.state.includes('Online') || d.state.includes('In game') || d.state.includes('Онлайн') || d.state.includes('В игре');
     const initials = d.name.substring(0, 2).toUpperCase();
     const riskClass = d.riskScore >= 70 ? 'critical' : d.riskScore >= 50 ? 'high' : d.riskScore >= 30 ? 'medium' : 'low';
     const hasBan = d.vacBans > 0 || d.gameBans > 0;
@@ -76,51 +309,51 @@ function renderSteamProfile(d) {
                 <div class="player-avatar ${isOnline ? 'online' : ''}" style="${avatarSrc ? 'display:none' : ''}">${initials}</div>
                 <div class="player-info">
                     <h3>${escapeHtml(d.name)}</h3>
-                    <span class="player-status ${isOnline ? 'online' : 'offline'}">Steam ${d.state.replace(/[^\wа-яА-Я\s]/g, '').trim() || 'Оффлайн'}</span>
+                    <span class="player-status ${isOnline ? 'online' : 'offline'}">Steam ${escapeHtml(d.state)}</span>
                 </div>
                 ${hasBan ? `<div class="vac-badge">⚠ BAN</div>` : `<div class="no-vac-badge">✓ OK</div>`}
             </div>
             <div class="stats-grid">
-                <div class="stat-box"><div class="stat-icon purple">🦀</div><div><div class="stat-value">${d.rustPlaytime.toLocaleString('ru-RU')}</div><div class="stat-label">часов Rust</div></div></div>
-                <div class="stat-box"><div class="stat-icon cyan">👥</div><div><div class="stat-value">${d.friendsCount}</div><div class="stat-label">друзей</div></div></div>
-                <div class="stat-box"><div class="stat-icon red">!</div><div><div class="stat-value">${totalBans}</div><div class="stat-label">банов</div></div></div>
+                <div class="stat-box"><div class="stat-icon purple">🦀</div><div><div class="stat-value">${d.rustPlaytime.toLocaleString(LANG === 'en' ? 'en-US' : 'ru-RU')}</div><div class="stat-label">${tr('hours_rust')}</div></div></div>
+                <div class="stat-box"><div class="stat-icon cyan">👥</div><div><div class="stat-value">${d.friendsCount}</div><div class="stat-label">${tr('friends_lbl')}</div></div></div>
+                <div class="stat-box"><div class="stat-icon red">!</div><div><div class="stat-value">${totalBans}</div><div class="stat-label">${tr('bans_lbl')}</div></div></div>
             </div>
         </div>
         <div class="risk-card">
-            <div class="risk-head"><div><h3>Риск читерства</h3><p>Анализ VAC, часов и активности</p></div><div class="risk-value"><div class="risk-percent ${riskClass}">${d.riskScore}%</div><div class="risk-level ${riskClass}">${d.riskLevel}</div></div></div>
+            <div class="risk-head"><div><h3>${tr('risk_title')}</h3><p>${tr('risk_sub')}</p></div><div class="risk-value"><div class="risk-percent ${riskClass}">${d.riskScore}%</div><div class="risk-level ${riskClass}">${escapeHtml(d.riskLevel)}</div></div></div>
             <div class="risk-bar"><div class="risk-indicator" style="left: ${d.riskScore}%"></div></div>
-            <div class="risk-labels"><span>Низкий</span><span>Высокий</span></div>
+            <div class="risk-labels"><span>${tr('risk_low')}</span><span>${tr('risk_high')}</span></div>
         </div>
-        <div class="section-title"><span>Активность</span></div>
+        <div class="section-title"><span>${tr('activity_title')}</span></div>
         <div class="activity-list">
-            ${hasBan ? `<div class="activity-item"><div class="activity-icon vac">VAC</div><div class="activity-content"><h4>VAC бан</h4><p>${d.vacBans} активных</p></div></div>` : `<div class="activity-item"><div class="activity-icon vpn">✓</div><div class="activity-content"><h4>Банов нет</h4><p>Чистая история</p></div></div>`}
-            <div class="activity-item"><div class="activity-icon raid">🔥</div><div class="activity-content"><h4>Steam уровень: ${d.steamLevel}</h4><p>Достижений: ${d.achievementsCount}</p></div></div>
-            <div class="activity-item"><div class="activity-icon friend">📅</div><div class="activity-content"><h4>Возраст: ${d.accountAgeYears} лет</h4><p>${d.accountAgeDays} дней · Игр: ${d.gamesCount}</p></div></div>
-            ${d.friendsWithRust?.length > 0 ? `<div class="activity-item" onclick="window.open('${escapeHtml(d.profileUrl)}friends/','_blank')"><div class="activity-icon friend">👥</div><div class="activity-content"><h4>Друзей с Rust: ${d.friendsWithRust.length}</h4><p>Открыть список в Steam</p></div></div>` : ''}
-            <div class="activity-item" onclick="window.open('${escapeHtml(d.profileUrl)}','_blank')"><div class="activity-icon vpn">🔗</div><div class="activity-content"><h4>Открыть профиль</h4><p>${d.steamId}</p></div></div>
+            ${hasBan ? `<div class="activity-item"><div class="activity-icon vac">VAC</div><div class="activity-content"><h4>${tr('vac_ban')}</h4><p>${d.vacBans} ${tr('vac_active')}</p></div></div>` : `<div class="activity-item"><div class="activity-icon vpn">✓</div><div class="activity-content"><h4>${tr('no_bans')}</h4><p>${tr('clean_history')}</p></div></div>`}
+            <div class="activity-item"><div class="activity-icon raid">🔥</div><div class="activity-content"><h4>${tr('steam_level')}: ${d.steamLevel}</h4><p>${tr('achievements')}: ${d.achievementsCount}</p></div></div>
+            <div class="activity-item"><div class="activity-icon friend">📅</div><div class="activity-content"><h4>${tr('age_lbl')}: ${d.accountAgeYears} ${tr('years_lbl')}</h4><p>${d.accountAgeDays} ${tr('days_lbl')} · ${tr('games_lbl')}: ${d.gamesCount}</p></div></div>
+            ${d.friendsWithRust?.length > 0 ? `<div class="activity-item" onclick="window.open('${escapeHtml(d.profileUrl)}friends/','_blank')"><div class="activity-icon friend">👥</div><div class="activity-content"><h4>${tr('friends_rust')}: ${d.friendsWithRust.length}</h4><p>${tr('open_friends')}</p></div></div>` : ''}
+            <div class="activity-item" onclick="window.open('${escapeHtml(d.profileUrl)}','_blank')"><div class="activity-icon vpn">🔗</div><div class="activity-content"><h4>${tr('open_profile')}</h4><p>${d.steamId}</p></div></div>
         </div>
     `;
 }
 
 // ==================== RAID ====================
 const RAID_DATA = {
-    doors: { title: '🚪 Двери', items: {
-        wood_door: { name: 'Деревянная дверь', hp: 200, explosive: '2 молотова', resources: '100 топлива' },
-        sheet_door: { name: 'Железная дверь', hp: 250, explosive: '1 ракета, 8 разрывов', resources: '1600 серы' },
-        garage_door: { name: 'Гаражка', hp: 600, explosive: '3 ракеты', resources: '4200 серы' },
-        mvp_door: { name: 'МВК дверь', hp: 1000, explosive: '2 C4, 30 разрывов', resources: '5900 серы' },
-        ladder_hatch: { name: 'Люк', hp: 250, explosive: '1 ракета, 8 разрывов', resources: '1600 серы' },
-        shop_front: { name: 'Витрина', hp: 750, explosive: '3 C4', resources: '6600 серы' }
+    doors: { title: '🚪 Doors', items: {
+        wood_door: { name: 'Wood Door / Деревянная', hp: 200, explosive: '2 molotov', resources: '100 fuel' },
+        sheet_door: { name: 'Sheet Door / Железная', hp: 250, explosive: '1 rocket, 8 beancans', resources: '1600 sulfur' },
+        garage_door: { name: 'Garage Door / Гаражка', hp: 600, explosive: '3 rockets', resources: '4200 sulfur' },
+        mvp_door: { name: 'Armored Door / МВК', hp: 1000, explosive: '2 C4, 30 beancans', resources: '5900 sulfur' },
+        ladder_hatch: { name: 'Ladder Hatch / Люк', hp: 250, explosive: '1 rocket', resources: '1600 sulfur' },
+        shop_front: { name: 'Shop Front / Витрина', hp: 750, explosive: '3 C4', resources: '6600 sulfur' }
     }},
-    walls: { title: '🧱 Стены', items: {
-        wood_wall: { name: 'Деревянная стена', hp: 250, explosive: '4 молотова', resources: '200 топлива' },
-        stone_wall: { name: 'Каменная стена', hp: 500, explosive: '3 ракеты, 35 разрывов', resources: '5075 серы' },
-        sheet_wall: { name: 'Железная стена', hp: 1000, explosive: '7 ракет, 15 разрывов', resources: '10175 серы' },
-        mvp_wall: { name: 'МВК стена', hp: 2000, explosive: '14 ракет, 30 разрывов', resources: '20350 серы' }
+    walls: { title: '🧱 Walls', items: {
+        wood_wall: { name: 'Wood Wall / Дерево', hp: 250, explosive: '4 molotov', resources: '200 fuel' },
+        stone_wall: { name: 'Stone Wall / Камень', hp: 500, explosive: '3 rockets', resources: '5075 sulfur' },
+        sheet_wall: { name: 'Sheet Wall / Железо', hp: 1000, explosive: '7 rockets', resources: '10175 sulfur' },
+        mvp_wall: { name: 'Armored Wall / МВК', hp: 2000, explosive: '14 rockets', resources: '20350 sulfur' }
     }},
-    outer_walls: { title: '🛡️ Внешние стены', items: {
-        outer_stone: { name: 'Каменная стена', hp: 500, explosive: '2 C4', resources: '4400 серы' },
-        outer_wood: { name: 'Деревянная стена', hp: 500, explosive: '1 зажигательная ракета', resources: '75 топлива' }
+    outer_walls: { title: '🛡️ Outer', items: {
+        outer_stone: { name: 'Stone / Камень', hp: 500, explosive: '2 C4', resources: '4400 sulfur' },
+        outer_wood: { name: 'Wood / Дерево', hp: 500, explosive: '1 incendiary', resources: '75 fuel' }
     }}
 };
 
@@ -135,18 +368,18 @@ function calculateRaid() {
     const key = document.getElementById('raid-target').value;
     const item = RAID_DATA[cat].items[key];
     const result = document.getElementById('raid-result');
-    result.innerHTML = `<strong>${item.name}</strong><br><br>❤️ ХП: <strong>${item.hp}</strong><br>💥 ${item.explosive}<br>📦 ${item.resources}`;
+    result.innerHTML = `<strong>${item.name}</strong><br><br>❤️ HP: <strong>${item.hp}</strong><br>💥 ${item.explosive}<br>📦 ${item.resources}`;
     result.classList.add('show');
-    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }
 
 // ==================== CRAFT ====================
 const CRAFT_DATA = {
-    c4: { name: 'C4', emoji: '💥', sulfur: 2200, lgf: 60, resources: [{name:'Взрывчатка',count:20},{name:'Ткань',count:5},{name:'Микросхемы',count:2}] },
-    rocket: { name: 'Ракета', emoji: '🚀', sulfur: 1400, lgf: 30, resources: [{name:'Взрывчатка',count:10},{name:'Порох',count:150},{name:'Металлическая труба',count:2}] },
-    satchel: { name: 'Сатчел', emoji: '🎒', sulfur: 480, lgf: 0, resources: [{name:'Бобовая граната',count:4},{name:'Малый схрон',count:1},{name:'Верёвка',count:1}] },
-    beancan: { name: 'Бобовая граната', emoji: '💣', sulfur: 120, lgf: 0, resources: [{name:'Порох',count:60},{name:'Металлические фрагменты',count:20}] },
-    explo: { name: 'Патрон 5.56', emoji: '🔫', sulfur: 25, lgf: 0, resources: [{name:'Порох',count:5},{name:'Металлические фрагменты',count:10}] }
+    c4: { name: 'C4', emoji: '💥', sulfur: 2200, lgf: 60, resources: [{name:'Explosive',count:20},{name:'Cloth',count:5},{name:'Tech Trash',count:2}] },
+    rocket: { name: 'Rocket', emoji: '🚀', sulfur: 1400, lgf: 30, resources: [{name:'Explosive',count:10},{name:'Gunpowder',count:150},{name:'Pipe',count:2}] },
+    satchel: { name: 'Satchel', emoji: '🎒', sulfur: 480, lgf: 0, resources: [{name:'Beancan',count:4},{name:'Small Stash',count:1},{name:'Rope',count:1}] },
+    beancan: { name: 'Beancan', emoji: '💣', sulfur: 120, lgf: 0, resources: [{name:'Gunpowder',count:60},{name:'Metal Frags',count:20}] },
+    explo: { name: 'Bullet 5.56', emoji: '🔫', sulfur: 25, lgf: 0, resources: [{name:'Gunpowder',count:5},{name:'Metal Frags',count:10}] }
 };
 
 function updateCraftInfo() {
@@ -155,8 +388,8 @@ function updateCraftInfo() {
     const info = document.getElementById('craft-info');
     let html = `<div class="craft-info-list">`;
     item.resources.forEach(r => html += `<div class="craft-row"><span>${r.name}</span><strong>${r.count}</strong></div>`);
-    html += `<div class="craft-row"><span>Сера</span><strong>${item.sulfur}</strong></div>`;
-    if (item.lgf > 0) html += `<div class="craft-row"><span>Топливо (LGF)</span><strong>${item.lgf}</strong></div>`;
+    html += `<div class="craft-row"><span>Sulfur / Сера</span><strong>${item.sulfur}</strong></div>`;
+    if (item.lgf > 0) html += `<div class="craft-row"><span>Fuel (LGF) / Топливо</span><strong>${item.lgf}</strong></div>`;
     html += `</div>`;
     info.innerHTML = html;
 }
@@ -168,11 +401,11 @@ function calculateCraft() {
     const result = document.getElementById('craft-result');
     let html = `<strong>${item.emoji} ${item.name} × ${count}</strong><br><br>`;
     item.resources.forEach(r => html += `• ${r.name}: <strong>${r.count * count}</strong><br>`);
-    html += `• Сера: <strong>${item.sulfur * count}</strong><br>`;
-    if (item.lgf > 0) html += `• Топливо: <strong>${item.lgf * count}</strong><br>`;
+    html += `• Sulfur: <strong>${item.sulfur * count}</strong><br>`;
+    if (item.lgf > 0) html += `• Fuel: <strong>${item.lgf * count}</strong><br>`;
     result.innerHTML = html;
     result.classList.add('show');
-    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }
 
 // ==================== WATCHLIST ====================
@@ -180,18 +413,14 @@ async function addToWatchlist() {
     const input = document.getElementById('watch-input').value.trim();
     const result = document.getElementById('watch-result');
     const match = input.match(/\d{17}/);
-    if (!match) {
-        result.innerHTML = '❌ Введи SteamID';
-        result.classList.add('show');
-        return;
-    }
-    result.innerHTML = '<span class="spinner"></span>Добавляю...';
+    if (!match) { result.innerHTML = tr('err_steamid'); result.classList.add('show'); return; }
+    result.innerHTML = `<span class="spinner"></span>${tr('analyzing')}`;
     result.classList.add('show');
     try {
         const data = await apiCall('/api/watch-add', { steamId: match[0] });
-        result.innerHTML = `✅ <strong>${escapeHtml(data.name)}</strong> добавлен`;
+        result.innerHTML = `✅ <strong>${escapeHtml(data.name)}</strong>`;
         document.getElementById('watch-input').value = '';
-        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) {
         result.innerHTML = `❌ ${escapeHtml(e.message)}`;
     }
@@ -199,14 +428,14 @@ async function addToWatchlist() {
 
 async function loadWatchlist() {
     const result = document.getElementById('watchlist-result');
-    result.innerHTML = '<span class="spinner"></span>Загружаю...';
+    result.innerHTML = `<span class="spinner"></span>${tr('loading_short')}`;
     result.classList.add('show');
     try {
         const list = await apiCall('/api/watch-list');
-        if (!list?.length) { result.innerHTML = '📊 Список пуст'; return; }
-        let html = `<strong>📊 Отслеживается: ${list.length}</strong><br><br>`;
+        if (!list?.length) { result.innerHTML = tr('watchlist_empty'); return; }
+        let html = `<strong>${tr('watching_lbl')}: ${list.length}</strong><br><br>`;
         list.forEach((w, i) => {
-            html += `<div class="watch-item"><strong>${i+1}. ${escapeHtml(w.name)}</strong><br><small>${w.steamId}</small><br><small>VAC: ${w.lastVacBans} · Game: ${w.lastGameBans}</small><br><button class="btn secondary" style="margin-top:8px;padding:8px;font-size:12px;" onclick="removeFromWatchlist('${w.steamId}')">🗑 Удалить</button></div>`;
+            html += `<div class="watch-item"><strong>${i+1}. ${escapeHtml(w.name)}</strong><br><small>${w.steamId}</small><br><small>VAC: ${w.lastVacBans} · Game: ${w.lastGameBans}</small><br><button class="btn secondary" style="margin-top:8px;padding:8px;font-size:12px;" onclick="removeFromWatchlist('${w.steamId}')">🗑 ${LANG === 'en' ? 'Remove' : 'Удалить'}</button></div>`;
         });
         result.innerHTML = html;
     } catch (e) {
@@ -217,66 +446,90 @@ async function loadWatchlist() {
 async function removeFromWatchlist(steamId) {
     try {
         await apiCall('/api/watch-remove', { steamId });
-        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         loadWatchlist();
-    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
 }
 
 // ==================== PROFILE ====================
 async function loadProfile() {
     const container = document.getElementById('profile-content');
-    container.innerHTML = '<div class="loading-block">⏳ Загружаю профиль...</div>';
+    container.innerHTML = `<div class="loading-block">${tr('profile_loading')}</div>`;
     try {
         const profile = await apiCall('/api/profile');
+        LANG = profile.settings?.language || LANG;
+        SETTINGS = { ...SETTINGS, ...(profile.settings || {}) };
+        applyI18n();
+        applyTheme(SETTINGS.theme);
+
         let premiumHtml = '';
+        const dateFmt = (ts) => {
+            const d = new Date(ts);
+            return {
+                date: d.toLocaleDateString(LANG === 'en' ? 'en-US' : 'ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+                time: d.toLocaleTimeString(LANG === 'en' ? 'en-US' : 'ru-RU', { hour: '2-digit', minute: '2-digit' })
+            };
+        };
+
         if (profile.premium && profile.premiumExpires) {
-            const date = new Date(profile.premiumExpires);
-            const dateStr = date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const timeStr = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-            premiumHtml = `<div class="premium-status active"><div class="premium-status-icon">⭐</div><div class="premium-status-info"><div class="premium-status-title">Премиум активен</div><div class="premium-status-date">до <b>${dateStr}</b> в <b>${timeStr}</b></div><div class="premium-status-days">Осталось: <b>${profile.daysLeft} дн.</b></div></div></div>`;
+            const { date, time } = dateFmt(profile.premiumExpires);
+            premiumHtml = `<div class="premium-status active"><div class="premium-status-icon">⭐</div><div class="premium-status-info"><div class="premium-status-title">${tr('profile_premium_active')}</div><div class="premium-status-date">${tr('until_lbl')} <b>${date}</b> ${tr('at_lbl')} <b>${time}</b></div><div class="premium-status-days">${tr('days_left')}: <b>${profile.daysLeft} ${tr('days_short')}</b></div></div></div>`;
         } else if (profile.premium) {
-            premiumHtml = `<div class="premium-status active"><div class="premium-status-icon">👑</div><div class="premium-status-info"><div class="premium-status-title">Администратор</div><div class="premium-status-date">Постоянный доступ</div></div></div>`;
+            premiumHtml = `<div class="premium-status active"><div class="premium-status-icon">👑</div><div class="premium-status-info"><div class="premium-status-title">${tr('profile_premium_admin')}</div><div class="premium-status-date">${tr('profile_admin_perm')}</div></div></div>`;
         } else {
-            premiumHtml = `<div class="premium-status inactive"><div class="premium-status-icon">❌</div><div class="premium-status-info"><div class="premium-status-title">Премиум не активен</div><div class="premium-status-date">Купи премиум для безлимита</div></div></div>`;
+            premiumHtml = `<div class="premium-status inactive"><div class="premium-status-icon">❌</div><div class="premium-status-info"><div class="premium-status-title">${tr('profile_premium_inactive')}</div><div class="premium-status-date">${tr('profile_premium_hint')}</div></div></div>`;
         }
+
         let avatarHtml = '';
         if (profile.photoUrl) {
             avatarHtml = `<img class="profile-avatar" src="${escapeHtml(profile.photoUrl)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><div class="profile-avatar-fallback" style="display:none">${(profile.firstName || 'U').charAt(0).toUpperCase()}</div>`;
         } else {
             avatarHtml = `<div class="profile-avatar-fallback">${(profile.firstName || 'U').charAt(0).toUpperCase()}</div>`;
         }
+
         let html = `
             <div class="profile-hero">
                 ${avatarHtml}
                 <div class="profile-name">${escapeHtml(profile.firstName)} ${escapeHtml(profile.lastName || '')}</div>
-                <div class="profile-username">${profile.username ? '@' + escapeHtml(profile.username) : 'без @'}</div>
+                <div class="profile-username">${profile.username ? '@' + escapeHtml(profile.username) : '—'}</div>
             </div>
             ${premiumHtml}
             <div class="stats-profile-grid">
-                <div class="stat-profile-box"><div class="stat-profile-value">${profile.remainingChecks}</div><div class="stat-profile-label">Проверок</div></div>
-                <div class="stat-profile-box"><div class="stat-profile-value">${profile.watchlistCount}/${profile.watchlistLimit}</div><div class="stat-profile-label">Watchlist</div></div>
-                <div class="stat-profile-box"><div class="stat-profile-value">${profile.referral.count}</div><div class="stat-profile-label">Рефералов</div></div>
+                <div class="stat-profile-box"><div class="stat-profile-value">${profile.remainingChecks}</div><div class="stat-profile-label">${tr('checks_lbl')}</div></div>
+                <div class="stat-profile-box"><div class="stat-profile-value">${profile.watchlistCount}/${profile.watchlistLimit}</div><div class="stat-profile-label">${tr('watchlist_lbl')}</div></div>
+                <div class="stat-profile-box"><div class="stat-profile-value">${profile.referral.count}</div><div class="stat-profile-label">${tr('refs_lbl')}</div></div>
             </div>
         `;
+
         if (profile.discount) {
-            html += `<div class="premium-status active" style="background:linear-gradient(135deg,rgba(6,182,212,.15),rgba(6,182,212,.05));border-color:rgba(6,182,212,.4);"><div class="premium-status-icon">💰</div><div class="premium-status-info"><div class="premium-status-title">Скидка ${profile.discount.percent}%</div><div class="premium-status-date">На покупку премиума</div></div></div>`;
+            const { date, time } = dateFmt(profile.discount.expiresAt);
+            html += `<div class="premium-status active" style="background:linear-gradient(135deg,rgba(6,182,212,.15),rgba(6,182,212,.05));border-color:rgba(6,182,212,.4);">
+                <div class="premium-status-icon">💰</div>
+                <div class="premium-status-info">
+                    <div class="premium-status-title">${tr('discount_lbl')} ${profile.discount.percent}%</div>
+                    <div class="premium-status-date">${tr('until_lbl')} <b>${date}</b> ${tr('at_lbl')} <b>${time}</b></div>
+                    <div class="premium-status-days">${tr('on_premium_buy')}</div>
+                </div>
+            </div>`;
         }
+
         html += `<div class="card">
-            <div class="card-head"><h2>Действия</h2></div>
-            ${!profile.premium ? `<button class="btn primary" onclick="openPremiumFromProfile()">⭐ Купить премиум</button>` : ''}
-            ${!profile.trialUsed ? `<button class="btn secondary" style="margin-top:8px" onclick="activateTrial()">🎁 Пробная ${profile.trialDays} дня</button>` : ''}
-            <button class="btn secondary" style="margin-top:8px" onclick="showPromoInput()">🎟 Активировать промокод</button>
-            <button class="btn secondary" style="margin-top:8px" onclick="showReferral()">🎁 Реферальная ссылка</button>
-            ${profile.isAdmin ? `<button class="btn danger" style="margin-top:8px" onclick="openAdminPanel()">👑 Админ-панель</button>` : ''}
+            <div class="card-head"><h2>${tr('actions_title')}</h2></div>
+            ${!profile.premium ? `<button class="btn primary" onclick="openPremiumFromProfile()">${tr('btn_buy_premium')}</button>` : ''}
+            ${!profile.trialUsed ? `<button class="btn secondary" style="margin-top:8px" onclick="activateTrial()">${tr('btn_trial')} ${profile.trialDays} ${tr('days_word')}</button>` : ''}
+            <button class="btn secondary" style="margin-top:8px" onclick="showPromoInput()">${tr('btn_activate_promo')}</button>
+            <button class="btn secondary" style="margin-top:8px" onclick="showReferral()">${tr('btn_ref_link')}</button>
+            ${profile.isAdmin ? `<button class="btn danger" style="margin-top:8px" onclick="openAdminPanel()">${tr('btn_admin_panel')}</button>` : ''}
         </div>`;
         container.innerHTML = html;
 
-        // Скрываем админку в DOM для не-админов
         if (!profile.isAdmin) {
             const ap = document.getElementById('admin-panel');
             if (ap) ap.remove();
             const atc = document.getElementById('admin-ticket-chat');
             if (atc) atc.remove();
+            const epm = document.getElementById('edit-promo-modal');
+            if (epm) epm.remove();
         }
     } catch (e) {
         container.innerHTML = `<div class="card"><div class="result show">❌ ${escapeHtml(e.message)}</div></div>`;
@@ -288,26 +541,26 @@ function openPremiumFromProfile() {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.querySelector('.tab[data-tab="steam"]').classList.add('active');
     document.getElementById('panel-steam').classList.add('active');
-    tg.showAlert('Открой бота → /start → «⭐ Купить премиум»');
+    tg.showAlert(tr('open_bot'));
 }
 
 async function activateTrial() {
-    const promo = prompt('Введи промокод для пробной:');
+    const promo = prompt(LANG === 'en' ? 'Enter trial promo:' : 'Введи промокод для пробной:');
     if (!promo) return;
     try {
         const result = await apiCall('/api/activate-trial', { promo });
-        tg.showAlert('🎉 Пробная активирована на ' + result.days + ' дня!');
+        tg.showAlert(`${tr('trial_activated')} ${result.days} ${tr('days_word')}!`);
         loadProfile();
-    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
 }
 
 function showPromoInput() {
-    const code = prompt('Введи промокод:');
+    const code = prompt(LANG === 'en' ? 'Enter promo:' : 'Введи промокод:');
     if (!code) return;
     apiCall('/api/use-promo', { code }).then(result => {
-        tg.showAlert('✅ ' + result.message);
+        tg.showAlert(`${tr('promo_activated')}: ${result.message}`);
         loadProfile();
-    }).catch(e => tg.showAlert('Ошибка: ' + e.message));
+    }).catch(e => tg.showAlert(tr('err_creating') + e.message));
 }
 
 async function showReferral() {
@@ -315,18 +568,25 @@ async function showReferral() {
         const profile = await apiCall('/api/profile');
         const link = profile.referral.link;
         tg.showPopup({
-            title: '🎁 Реферальная ссылка',
-            message: `Приглашено: ${profile.referral.count}\nБонусов: ${profile.referral.bonusChecks}\n\n${link}\n\nЗа каждого друга +1 проверка!`,
+            title: tr('ref_title'),
+            message: `${tr('ref_invited')}: ${profile.referral.count}\n${tr('ref_bonus')}: ${profile.referral.bonusChecks}\n\n${link}\n\n${tr('ref_hint')}`,
             buttons: [
-                { id: 'copy', type: 'default', text: '📋 Скопировать' },
-                { id: 'share', type: 'default', text: '📤 Поделиться' },
+                { id: 'copy', type: 'default', text: tr('ref_copy') },
+                { id: 'share', type: 'default', text: tr('ref_share') },
                 { id: 'cancel', type: 'cancel' }
             ]
         }, (id) => {
-            if (id === 'copy') { navigator.clipboard.writeText(link); tg.showAlert('✅ Ссылка скопирована'); }
-            if (id === 'share') { tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('Проверь свой Steam профиль в Rust!')}`); }
+            if (id === 'copy') { navigator.clipboard.writeText(link); tg.showAlert(tr('ref_copied')); }
+            if (id === 'share') { tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}`); }
         });
-    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+}
+
+function loadSettingsToUI() {
+    document.getElementById('set-notifications').checked = !!SETTINGS.notifications;
+    document.getElementById('set-watch-notifications').checked = !!SETTINGS.watchNotifications;
+    document.getElementById('set-haptic').checked = !!SETTINGS.haptic;
+    updateThemeSegActive();
 }
 
 // ==================== SUPPORT (ЮЗЕР) ====================
@@ -337,7 +597,6 @@ async function loadSupport() {
     try {
         const data = await apiCall('/api/support/my-ticket');
         currentTicket = data.ticket;
-
         if (currentTicket && currentTicket.status !== 'closed') {
             document.getElementById('support-start').style.display = 'none';
             document.getElementById('support-chat').style.display = 'flex';
@@ -360,21 +619,24 @@ function updateSupportStatus() {
     if (currentTicket.status === 'waiting') {
         banner.classList.remove('hidden');
         badge.textContent = '⏳';
-        desc.textContent = 'Ожидаем ответа администратора...';
+        desc.textContent = tr('chat_waiting');
     } else if (currentTicket.status === 'admin_connected') {
         banner.classList.add('hidden');
         badge.textContent = '💬';
-        desc.textContent = 'Админ подключился';
+        desc.textContent = tr('chat_connected');
     } else {
         banner.classList.add('hidden');
         badge.textContent = '✅';
-        desc.textContent = 'Диалог завершён';
+        desc.textContent = tr('chat_finished');
     }
 }
 
 async function createTicket() {
     const message = document.getElementById('support-first-message').value.trim();
-    if (!message || message.length < 10) { tg.showAlert('Опиши проблему подробнее (мин. 10 символов)'); return; }
+    if (!message || message.length < 10) {
+        tg.showAlert(LANG === 'en' ? 'Describe problem (min 10 chars)' : 'Опиши проблему подробнее (мин. 10 символов)');
+        return;
+    }
     try {
         const data = await apiCall('/api/support/create', { message });
         currentTicket = data.ticket;
@@ -384,9 +646,8 @@ async function createTicket() {
         renderSupportMessages();
         updateSupportStatus();
         startPolling();
-        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        tg.showAlert('✅ Поддержка вызвана! Админ ответит в ближайшее время.');
-    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
 }
 
 function closeUserChat() {
@@ -395,17 +656,26 @@ function closeUserChat() {
     document.getElementById('support-start').style.display = 'block';
 }
 
+async function closeMyTicket() {
+    const confirmed = await new Promise(res => tg.showConfirm(tr('confirm_close_ticket'), res));
+    if (!confirmed) return;
+    try {
+        await apiCall('/api/support/close-my-ticket');
+        tg.showAlert(tr('ticket_closed'));
+        currentTicket = null;
+        closeUserChat();
+    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+}
+
 function renderSupportMessages() {
     if (!currentTicket) return;
     const container = document.getElementById('support-messages');
     let html = '';
     currentTicket.messages.forEach(msg => {
-        const time = new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        const time = new Date(msg.timestamp).toLocaleTimeString(LANG === 'en' ? 'en-US' : 'ru-RU', { hour: '2-digit', minute: '2-digit' });
         html += `<div class="chat-msg ${msg.role}">${escapeHtml(msg.text)}<span class="chat-msg-time">${time}</span></div>`;
     });
-    if (currentTicket.status === 'waiting') {
-        html += `<div class="chat-msg system">⏳ Ожидаем ответа администратора</div>`;
-    }
+    if (currentTicket.status === 'waiting') html += `<div class="chat-msg system">${tr('chat_waiting_sys')}</div>`;
     container.innerHTML = html;
     container.scrollTop = container.scrollHeight;
 }
@@ -422,8 +692,8 @@ async function sendSupportMessage() {
         currentTicket = data.ticket;
         renderSupportMessages();
         updateSupportStatus();
-        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
 }
 
 function startPolling() {
@@ -438,14 +708,14 @@ function startPolling() {
                 if (currentTicket.status !== oldStatus || currentTicket.messages.length !== oldLen) {
                     renderSupportMessages();
                     updateSupportStatus();
-                    if (currentTicket.messages.length > oldLen && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                    if (currentTicket.messages.length > oldLen && SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 }
             }
         } catch (e) {}
     }, 5000);
 }
 
-// ==================== ADMIN: ТИКЕТЫ (полноэкранный чат) ====================
+// ==================== ADMIN TICKETS ====================
 let currentAdminTicket = null;
 let adminTicketPoll = null;
 
@@ -453,22 +723,19 @@ async function loadAdminTickets() {
     try {
         const data = await apiCall('/api/support/admin/tickets');
         const container = document.getElementById('admin-tickets-list');
-        if (!data.tickets?.length) {
-            container.innerHTML = '<p style="text-align:center;opacity:0.5;padding:20px;">Нет тикетов</p>';
-            return;
-        }
+        if (!data.tickets?.length) { container.innerHTML = `<p style="text-align:center;opacity:.5;padding:20px;">${tr('no_tickets')}</p>`; return; }
         let html = '';
         data.tickets.forEach(ticket => {
             const isUnread = ticket.status === 'waiting';
-            const statusText = { 'waiting': '⏳', 'admin_connected': '💬', 'closed': '✅' }[ticket.status];
-            const usernameText = ticket.username ? `@${ticket.username}` : 'без @';
+            const st = { 'waiting': '⏳', 'admin_connected': '💬', 'closed': '✅' }[ticket.status];
+            const un = ticket.username ? `@${ticket.username}` : '—';
             html += `<div class="ticket-item ${isUnread ? 'unread' : ''}" onclick="openAdminTicket('${ticket.id}')">
                 <div class="ticket-icon">${isUnread ? '🔴' : '💬'}</div>
                 <div class="ticket-info">
-                    <div class="ticket-name">${escapeHtml(ticket.firstName)} · ${usernameText}</div>
+                    <div class="ticket-name">${escapeHtml(ticket.firstName)} · ${un}</div>
                     <div class="ticket-preview">${escapeHtml(ticket.lastMessage.substring(0, 50))}</div>
                 </div>
-                <div class="ticket-status ${ticket.status}">${statusText}</div>
+                <div class="ticket-status ${ticket.status}">${st}</div>
             </div>`;
         });
         container.innerHTML = html;
@@ -479,21 +746,12 @@ async function openAdminTicket(ticketId) {
     try {
         const data = await apiCall('/api/support/admin/ticket', { ticketId });
         currentAdminTicket = data.ticket;
-
-        // Заголовок
-        document.getElementById('admin-ticket-name').textContent = currentAdminTicket.firstName || 'Пользователь';
-        document.getElementById('admin-ticket-sub').textContent =
-            (currentAdminTicket.username ? '@' + currentAdminTicket.username + ' · ' : '') + 'ID: ' + currentAdminTicket.userId;
-        document.getElementById('admin-ticket-avatar').textContent =
-            (currentAdminTicket.firstName || 'U').charAt(0).toUpperCase();
-
+        document.getElementById('admin-ticket-name').textContent = currentAdminTicket.firstName || 'User';
+        document.getElementById('admin-ticket-sub').textContent = (currentAdminTicket.username ? '@' + currentAdminTicket.username + ' · ' : '') + 'ID: ' + currentAdminTicket.userId;
+        document.getElementById('admin-ticket-avatar').textContent = (currentAdminTicket.firstName || 'U').charAt(0).toUpperCase();
         renderAdminTicketMessages();
         document.getElementById('admin-ticket-chat').style.display = 'flex';
-
-        // Закрываем админ-панель, чтобы не мешала
         document.getElementById('admin-panel').style.display = 'none';
-
-        // Поллинг обновлений
         if (adminTicketPoll) clearInterval(adminTicketPoll);
         adminTicketPoll = setInterval(async () => {
             try {
@@ -504,7 +762,7 @@ async function openAdminTicket(ticketId) {
                 }
             } catch (e) {}
         }, 5000);
-    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
 }
 
 function renderAdminTicketMessages() {
@@ -512,14 +770,11 @@ function renderAdminTicketMessages() {
     const c = document.getElementById('admin-ticket-messages');
     let html = '';
     currentAdminTicket.messages.forEach(msg => {
-        const time = new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        const time = new Date(msg.timestamp).toLocaleTimeString(LANG === 'en' ? 'en-US' : 'ru-RU', { hour: '2-digit', minute: '2-digit' });
         html += `<div class="chat-msg ${msg.role}">${escapeHtml(msg.text)}<span class="chat-msg-time">${time}</span></div>`;
     });
-    if (currentAdminTicket.status === 'waiting') {
-        html += `<div class="chat-msg system">⏳ Ждём ответа... (юзер вызвал поддержку)</div>`;
-    } else if (currentAdminTicket.status === 'closed') {
-        html += `<div class="chat-msg system">✅ Тикет закрыт</div>`;
-    }
+    if (currentAdminTicket.status === 'waiting') html += `<div class="chat-msg system">${tr('chat_need_reply')}</div>`;
+    else if (currentAdminTicket.status === 'closed') html += `<div class="chat-msg system">${tr('chat_closed_sys')}</div>`;
     c.innerHTML = html;
     c.scrollTop = c.scrollHeight;
 }
@@ -529,15 +784,14 @@ async function sendAdminTicketMessage() {
     const message = input.value.trim();
     if (!message || !currentAdminTicket) return;
     input.value = '';
-    // Оптимистично добавим на UI
     currentAdminTicket.messages.push({ role: 'admin', text: message, timestamp: Date.now() });
     renderAdminTicketMessages();
     try {
         const data = await apiCall('/api/support/admin/reply', { ticketId: currentAdminTicket.id, message });
         currentAdminTicket = data.ticket;
         renderAdminTicketMessages();
-        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
 }
 
 function closeAdminTicketChat() {
@@ -549,13 +803,13 @@ function closeAdminTicketChat() {
 
 async function closeAdminTicket() {
     if (!currentAdminTicket) return;
-    const confirmed = await new Promise(res => tg.showConfirm('Закрыть тикет?', res));
+    const confirmed = await new Promise(res => tg.showConfirm(tr('confirm_close_ticket'), res));
     if (!confirmed) return;
     try {
         await apiCall('/api/support/admin/close', { ticketId: currentAdminTicket.id });
-        tg.showAlert('✅ Тикет закрыт');
+        tg.showAlert(tr('admin_close_ok'));
         closeAdminTicketChat();
-    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
 }
 
 // ==================== ADMIN PANEL ====================
@@ -574,57 +828,47 @@ document.querySelectorAll('.admin-tab').forEach(tab => {
         document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById(`atab-${tab.dataset.atab}`).classList.add('active');
-        const atab = tab.dataset.atab;
-        if (atab === 'stats') adminLoadStats();
-        if (atab === 'users') adminLoadUsers();
-        if (atab === 'promos') adminLoadPromos();
-        if (atab === 'tickets') loadAdminTickets();
-        if (atab === 'broadcast') loadBroadcastTemplates();
+        const a = tab.dataset.atab;
+        if (a === 'stats') adminLoadStats();
+        if (a === 'users') adminLoadUsers();
+        if (a === 'promos') adminLoadPromos();
+        if (a === 'tickets') loadAdminTickets();
+        if (a === 'broadcast') loadBroadcastTemplates();
     });
 });
 
 async function adminLoadStats() {
     const c = document.getElementById('admin-stats-content');
-    c.innerHTML = '<div class="loading-block">⏳</div>';
+    c.innerHTML = `<div class="loading-block">${tr('loading_short')}</div>`;
     try {
-        const stats = await apiCall('/api/admin/stats');
+        const s = await apiCall('/api/admin/stats');
         c.innerHTML = `
             <div class="stats-profile-grid">
-                <div class="stat-profile-box"><div class="stat-profile-value">${stats.totalUsers}</div><div class="stat-profile-label">Юзеров</div></div>
-                <div class="stat-profile-box"><div class="stat-profile-value">${stats.premiumUsers}</div><div class="stat-profile-label">Премиум</div></div>
-                <div class="stat-profile-box"><div class="stat-profile-value">${stats.todayChecks}</div><div class="stat-profile-label">Проверок сегодня</div></div>
+                <div class="stat-profile-box"><div class="stat-profile-value">${s.totalUsers}</div><div class="stat-profile-label">${tr('users_short')}</div></div>
+                <div class="stat-profile-box"><div class="stat-profile-value">${s.premiumUsers}</div><div class="stat-profile-label">${tr('premium_short')}</div></div>
+                <div class="stat-profile-box"><div class="stat-profile-value">${s.todayChecks}</div><div class="stat-profile-label">${tr('today_checks')}</div></div>
             </div>
             <div class="stats-profile-grid">
-                <div class="stat-profile-box"><div class="stat-profile-value">${stats.totalReferrals}</div><div class="stat-profile-label">Рефералов</div></div>
-                <div class="stat-profile-box"><div class="stat-profile-value">${stats.totalWatched}</div><div class="stat-profile-label">В watchlist</div></div>
-                <div class="stat-profile-box"><div class="stat-profile-value">~${stats.premiumUsers * 59}₽</div><div class="stat-profile-label">Доход</div></div>
-            </div>
-        `;
+                <div class="stat-profile-box"><div class="stat-profile-value">${s.totalReferrals}</div><div class="stat-profile-label">${tr('refs_short')}</div></div>
+                <div class="stat-profile-box"><div class="stat-profile-value">${s.totalWatched}</div><div class="stat-profile-label">${tr('watch_short')}</div></div>
+                <div class="stat-profile-box"><div class="stat-profile-value">~${s.premiumUsers * 59}₽</div><div class="stat-profile-label">${tr('income_lbl')}</div></div>
+            </div>`;
     } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
 }
 
 async function adminLoadUsers() {
     const c = document.getElementById('admin-users-content');
-    c.innerHTML = '<div class="loading-block">⏳</div>';
+    c.innerHTML = `<div class="loading-block">${tr('loading_short')}</div>`;
     try {
         const data = await apiCall('/api/admin/users');
-        if (!data.users?.length) { c.innerHTML = '<div class="loading-block">Нет пользователей</div>'; return; }
+        if (!data.users?.length) { c.innerHTML = `<div class="loading-block">${tr('no_users')}</div>`; return; }
         let html = '';
         data.users.slice(0, 50).forEach(u => {
-            const usernameText = u.username ? `@${u.username}` : 'без @';
-            const premiumIcon = u.premium ? '⭐' : '👤';
-            let expiresText = '';
-            if (u.premiumExpires) {
-                const d = new Date(u.premiumExpires);
-                expiresText = `до ${d.toLocaleDateString('ru-RU')}`;
-            }
-            html += `<div class="promo-item">
-                <div>
-                    <div class="promo-code">${premiumIcon} ${escapeHtml(u.firstName || 'Без имени')}</div>
-                    <div class="promo-details">${usernameText} · ID: ${u.userId}</div>
-                    <div class="promo-details">${expiresText} · 👁️ ${u.watchlistCount}</div>
-                </div>
-            </div>`;
+            const un = u.username ? `@${u.username}` : '—';
+            const pi = u.premium ? '⭐' : '👤';
+            let exp = '';
+            if (u.premiumExpires) { const d = new Date(u.premiumExpires); exp = `${tr('until_lbl')} ${d.toLocaleDateString(LANG === 'en' ? 'en-US' : 'ru-RU')}`; }
+            html += `<div class="promo-item"><div><div class="promo-code">${pi} ${escapeHtml(u.firstName || '—')}</div><div class="promo-details">${un} · ID: ${u.userId}</div><div class="promo-details">${exp} · 👁️ ${u.watchlistCount}</div></div></div>`;
         });
         c.innerHTML = html;
     } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
@@ -634,39 +878,39 @@ async function adminGivePremium() {
     const target = document.getElementById('admin-premium-target').value.trim();
     const days = parseInt(document.getElementById('admin-premium-days').value) || 30;
     const result = document.getElementById('admin-premium-result');
-    if (!target) { result.innerHTML = '❌ Укажи ID или @тег'; result.classList.add('show'); return; }
-    result.innerHTML = '<span class="spinner"></span>Обработка...';
+    if (!target) { result.innerHTML = `❌ ${tr('admin_target')}`; result.classList.add('show'); return; }
+    result.innerHTML = `<span class="spinner"></span>${tr('sending_run')}`;
     result.classList.add('show');
     try {
         let targetId = target;
         if (target.startsWith('@')) {
-            const users = await apiCall('/api/admin/users');
-            const found = users.users.find(u => u.username?.toLowerCase() === target.replace('@', '').toLowerCase());
-            if (!found) throw new Error('Пользователь не найден');
-            targetId = found.userId;
+            const u = await apiCall('/api/admin/users');
+            const f = u.users.find(x => x.username?.toLowerCase() === target.replace('@', '').toLowerCase());
+            if (!f) throw new Error('Not found');
+            targetId = f.userId;
         }
         await apiCall('/api/admin/give-premium', { targetId: parseInt(targetId), days });
-        result.innerHTML = `✅ Премиум выдан на ${days} дн.`;
-        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        result.innerHTML = `${tr('premium_given')} ${days} ${tr('days_short')}`;
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
 }
 
 async function adminRevokePremium() {
     const target = document.getElementById('admin-premium-target').value.trim();
     const result = document.getElementById('admin-premium-result');
-    if (!target) { result.innerHTML = '❌ Укажи ID или @тег'; result.classList.add('show'); return; }
-    result.innerHTML = '<span class="spinner"></span>Обработка...';
+    if (!target) { result.innerHTML = `❌ ${tr('admin_target')}`; result.classList.add('show'); return; }
+    result.innerHTML = `<span class="spinner"></span>${tr('sending_run')}`;
     result.classList.add('show');
     try {
         let targetId = target;
         if (target.startsWith('@')) {
-            const users = await apiCall('/api/admin/users');
-            const found = users.users.find(u => u.username?.toLowerCase() === target.replace('@', '').toLowerCase());
-            if (!found) throw new Error('Пользователь не найден');
-            targetId = found.userId;
+            const u = await apiCall('/api/admin/users');
+            const f = u.users.find(x => x.username?.toLowerCase() === target.replace('@', '').toLowerCase());
+            if (!f) throw new Error('Not found');
+            targetId = f.userId;
         }
         await apiCall('/api/admin/revoke-premium', { targetId: parseInt(targetId) });
-        result.innerHTML = `✅ Премиум забран`;
+        result.innerHTML = `✅`;
     } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
 }
 
@@ -691,16 +935,11 @@ async function adminCreatePromo() {
     const validDays = document.getElementById('promo-valid-days').value ? parseInt(document.getElementById('promo-valid-days').value) : null;
     const onlyNew = document.getElementById('promo-only-new').checked;
     const broadcast = document.getElementById('promo-broadcast').checked;
-
-    if (!code) { tg.showAlert('Введи код'); return; }
-
+    if (!code) { tg.showAlert('Code'); return; }
     try {
         const result = await apiCall('/api/admin/create-promo', { code, type, days, checks, percent, maxUses, validDays, onlyNew, broadcast });
-        if (broadcast && result.broadcast) {
-            tg.showAlert(`✅ Промокод создан!\n📢 Рассылка запущена в фоне (${result.broadcast.background ? 'всем юзерам' : 'отправлено'})`);
-        } else {
-            tg.showAlert('✅ Промокод создан!');
-        }
+        if (broadcast) tg.showAlert(tr('sending_bg'));
+        else tg.showAlert('✅');
         adminHidePromoCreate();
         document.getElementById('promo-code').value = '';
         document.getElementById('promo-max-uses').value = '';
@@ -708,49 +947,44 @@ async function adminCreatePromo() {
         document.getElementById('promo-only-new').checked = false;
         document.getElementById('promo-broadcast').checked = false;
         adminLoadPromos();
-    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
 }
 
 async function adminLoadPromos() {
     const c = document.getElementById('admin-promos-list');
-    c.innerHTML = '<div class="loading-block">⏳</div>';
+    c.innerHTML = `<div class="loading-block">${tr('loading_short')}</div>`;
     try {
         const data = await apiCall('/api/admin/promo-list');
-        if (!data.promos?.length) { c.innerHTML = '<div class="loading-block">Промокодов нет</div>'; return; }
+        if (!data.promos?.length) { c.innerHTML = `<div class="loading-block">${tr('no_promos')}</div>`; return; }
+        window.__promosCache = data.promos;
         const now = Date.now();
         let html = '';
         data.promos.forEach(p => {
-            let typeText = '';
-            if (p.type === 'premium') typeText = `⭐ ${p.days} дней премиума`;
-            else if (p.type === 'checks') typeText = `🎮 +${p.checks} проверок`;
-            else if (p.type === 'discount') typeText = `💰 Скидка ${p.percent}%`;
-            const usesText = p.maxUses ? `Использований: ${p.uses}/${p.maxUses}` : `Использований: ${p.uses}`;
-            let expiresText = '', expiresBadge = '';
+            let tt = '';
+            if (p.type === 'premium') tt = `⭐ ${p.days} ${tr('promo_days_badge')}`;
+            else if (p.type === 'checks') tt = `🎮 +${p.checks}`;
+            else if (p.type === 'discount') tt = `💰 ${p.percent}%`;
+            const ut = p.maxUses ? `${tr('promo_uses_lbl')}: ${p.uses}/${p.maxUses}` : `${tr('promo_uses_lbl')}: ${p.uses}`;
+            let et = '', eb = '';
             if (p.expiresAt) {
                 const d = new Date(p.expiresAt);
-                if (p.expiresAt < now) {
-                    expiresText = `⏰ Истёк: ${d.toLocaleDateString('ru-RU')}`;
-                    expiresBadge = '<span class="promo-badge expired">Истёк</span>';
-                } else {
-                    const daysLeft = Math.ceil((p.expiresAt - now) / 86400000);
-                    expiresText = `⏰ До: ${d.toLocaleDateString('ru-RU')} (${daysLeft} дн.)`;
-                    expiresBadge = '<span class="promo-badge temp">Временный</span>';
-                }
-            } else {
-                expiresText = '♾ Бессрочный';
-                expiresBadge = '<span class="promo-badge active">Активный</span>';
-            }
-            const limitedBadge = p.maxUses ? `<span class="promo-badge limited">Лимит ${p.maxUses}</span>` : '';
-            const newBadge = p.onlyNew ? '<span class="promo-badge temp">Только новые</span>' : '';
+                if (p.expiresAt < now) { et = `${tr('promo_expired_lbl')}: ${d.toLocaleDateString(LANG === 'en' ? 'en-US' : 'ru-RU')}`; eb = `<span class="promo-badge expired">${tr('promo_expired_lbl')}</span>`; }
+                else { const dl = Math.ceil((p.expiresAt - now) / 86400000); et = `${tr('promo_until_lbl')}: ${d.toLocaleDateString(LANG === 'en' ? 'en-US' : 'ru-RU')} (${dl} ${tr('days_short')})`; eb = `<span class="promo-badge temp">${tr('promo_temp_lbl')}</span>`; }
+            } else { et = tr('promo_forever_lbl'); eb = `<span class="promo-badge active">${tr('promo_active_lbl')}</span>`; }
+            const lb = p.maxUses ? `<span class="promo-badge limited">${tr('promo_limit_lbl')} ${p.maxUses}</span>` : '';
+            const nb = p.onlyNew ? `<span class="promo-badge temp">${tr('promo_only_new_lbl')}</span>` : '';
             html += `<div class="promo-item">
                 <div style="flex:1;min-width:0;">
                     <div class="promo-code">${escapeHtml(p.code)}</div>
-                    <div class="promo-details">${typeText}</div>
-                    <div class="promo-details">${usesText}</div>
-                    <div class="promo-details">${expiresText}</div>
-                    <div class="promo-stats">${expiresBadge} ${limitedBadge} ${newBadge}</div>
+                    <div class="promo-details">${tt}</div>
+                    <div class="promo-details">${ut}</div>
+                    <div class="promo-details">${et}</div>
+                    <div class="promo-stats">${eb} ${lb} ${nb}</div>
                 </div>
-                <button class="promo-delete-btn" onclick="adminDeletePromo('${escapeHtml(p.code)}')">🗑</button>
+                <div class="promo-actions">
+                    <button class="promo-edit-btn" onclick="openEditPromo('${escapeHtml(p.code)}')">✏️</button>
+                    <button class="promo-delete-btn" onclick="adminDeletePromo('${escapeHtml(p.code)}')">🗑</button>
+                </div>
             </div>`;
         });
         c.innerHTML = html;
@@ -758,12 +992,68 @@ async function adminLoadPromos() {
 }
 
 async function adminDeletePromo(code) {
-    if (!confirm(`Удалить промокод ${code}?`)) return;
+    if (!confirm(`${tr('confirm_delete_promo')} ${code}?`)) return;
     try {
         await apiCall('/api/admin/delete-promo', { code });
-        tg.showAlert('✅ Удалён');
+        tg.showAlert('✅');
         adminLoadPromos();
-    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+}
+
+// ==================== EDIT PROMO ====================
+let editingPromo = null;
+
+function openEditPromo(code) {
+    const promos = window.__promosCache || [];
+    const promo = promos.find(p => p.code === code);
+    if (!promo) { tg.showAlert('Promo not found'); return; }
+    editingPromo = promo;
+    document.getElementById('edit-promo-code').value = promo.code;
+    document.getElementById('edit-promo-code-view').value = promo.code;
+    const valField = document.getElementById('edit-promo-value-field');
+    const valLabel = document.getElementById('edit-promo-value-label');
+    const valInput = document.getElementById('edit-promo-value');
+    if (promo.type === 'premium') { valLabel.textContent = tr('promo_days'); valInput.value = promo.days; valField.style.display = 'block'; }
+    else if (promo.type === 'checks') { valLabel.textContent = tr('promo_checks'); valInput.value = promo.checks; valField.style.display = 'block'; }
+    else if (promo.type === 'discount') { valLabel.textContent = tr('promo_percent'); valInput.value = promo.percent; valField.style.display = 'block'; }
+    document.getElementById('edit-promo-max-uses').value = promo.maxUses || '';
+    if (promo.expiresAt) {
+        const days = Math.max(1, Math.ceil((promo.expiresAt - Date.now()) / 86400000));
+        document.getElementById('edit-promo-valid-days').value = days;
+    } else {
+        document.getElementById('edit-promo-valid-days').value = '';
+    }
+    document.getElementById('edit-promo-only-new').checked = !!promo.onlyNew;
+    document.getElementById('edit-promo-result').classList.remove('show');
+    document.getElementById('edit-promo-modal').style.display = 'flex';
+}
+
+function closeEditPromo() {
+    document.getElementById('edit-promo-modal').style.display = 'none';
+    editingPromo = null;
+}
+
+async function adminSavePromoEdit() {
+    if (!editingPromo) return;
+    const result = document.getElementById('edit-promo-result');
+    const value = parseInt(document.getElementById('edit-promo-value').value) || 0;
+    const maxUses = document.getElementById('edit-promo-max-uses').value ? parseInt(document.getElementById('edit-promo-max-uses').value) : null;
+    const validDays = document.getElementById('edit-promo-valid-days').value ? parseInt(document.getElementById('edit-promo-valid-days').value) : null;
+    const onlyNew = document.getElementById('edit-promo-only-new').checked;
+    const payload = { code: editingPromo.code, maxUses, validDays, onlyNew };
+    if (editingPromo.type === 'premium') payload.days = value;
+    if (editingPromo.type === 'checks') payload.checks = value;
+    if (editingPromo.type === 'discount') payload.percent = value;
+    try {
+        await apiCall('/api/admin/edit-promo', payload);
+        result.innerHTML = `✅ ${tr('promo_updated')}`;
+        result.classList.add('show');
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        setTimeout(() => { closeEditPromo(); adminLoadPromos(); }, 800);
+    } catch (e) {
+        result.innerHTML = `❌ ${escapeHtml(e.message)}`;
+        result.classList.add('show');
+    }
 }
 
 // ==================== BROADCAST ====================
@@ -775,7 +1065,7 @@ async function loadBroadcastTemplates() {
     try {
         const data = await apiCall('/api/admin/broadcast-templates');
         broadcastTemplates = data.templates;
-        select.innerHTML = '<option value="">— Выбери шаблон —</option>' +
+        select.innerHTML = `<option value="">— ${tr('admin_choose_template')} —</option>` +
             Object.entries(broadcastTemplates).map(([k, t]) => `<option value="${k}">${escapeHtml(t.title)}</option>`).join('');
         select.dataset.loaded = '1';
     } catch (e) { console.error(e); }
@@ -785,29 +1075,29 @@ function applyBroadcastTemplate() {
     const key = document.getElementById('broadcast-template').value;
     if (!key || !broadcastTemplates[key]) return;
     document.getElementById('admin-broadcast-text').value = broadcastTemplates[key].text;
-    if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+    if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
 
 function adminPreviewBroadcast() {
     const text = document.getElementById('admin-broadcast-text').value.trim();
     const preview = document.getElementById('admin-broadcast-preview');
-    if (!text) { preview.innerHTML = '❌ Пусто'; preview.classList.add('show'); return; }
-    preview.innerHTML = `<div style="opacity:0.55;font-size:11px;margin-bottom:6px;">👁 ПРЕВЬЮ</div>${text}`;
+    if (!text) { preview.innerHTML = tr('empty_lbl'); preview.classList.add('show'); return; }
+    preview.innerHTML = `<div style="opacity:.55;font-size:11px;margin-bottom:6px;">${tr('preview_lbl')}</div>${text}`;
     preview.classList.add('show');
 }
 
 async function adminSendBroadcast() {
     const text = document.getElementById('admin-broadcast-text').value.trim();
     const result = document.getElementById('admin-broadcast-result');
-    if (!text) { result.innerHTML = '❌ Введи текст'; result.classList.add('show'); return; }
-    const confirmed = await new Promise(res => tg.showConfirm('Отправить всем пользователям?', res));
+    if (!text) { result.innerHTML = tr('empty_lbl'); result.classList.add('show'); return; }
+    const confirmed = await new Promise(res => tg.showConfirm(tr('confirm_broadcast'), res));
     if (!confirmed) return;
-    result.innerHTML = '<span class="spinner"></span>Отправка запущена...';
+    result.innerHTML = `<span class="spinner"></span>${tr('sending_run')}`;
     result.classList.add('show');
     try {
         const data = await apiCall('/api/admin/broadcast', { text });
-        result.innerHTML = `✅ Рассылка запущена в фоне для <b>${data.total}</b> юзеров`;
-        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        result.innerHTML = `${tr('broadcast_sent')} <b>${data.total}</b> ${tr('users_word')}`;
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
 }
 
@@ -820,5 +1110,42 @@ function escapeHtml(text) {
 }
 
 // ==================== INIT ====================
-renderRaidItems();
-updateCraftInfo();
+async function init() {
+    // Пробуем получить настройки из Telegram
+    const tgLang = (tg.initDataUnsafe?.user?.language_code || 'ru').startsWith('en') ? 'en' : 'ru';
+    LANG = tgLang;
+    SETTINGS.language = tgLang;
+
+    // Системная тема по умолчанию
+    applyTheme('dark');
+    applyI18n();
+
+    // Подтягиваем профиль (там будут реальные настройки)
+    try {
+        const p = await apiCall('/api/profile');
+        if (p.settings) {
+            SETTINGS = { ...SETTINGS, ...p.settings };
+            LANG = p.settings.language || LANG;
+            applyTheme(SETTINGS.theme);
+            applyI18n();
+        }
+        if (!p.isAdmin) {
+            const ap = document.getElementById('admin-panel'); if (ap) ap.remove();
+            const atc = document.getElementById('admin-ticket-chat'); if (atc) atc.remove();
+            const epm = document.getElementById('edit-promo-modal'); if (epm) epm.remove();
+        }
+    } catch (e) { console.warn('init profile failed', e); }
+
+    renderRaidItems();
+    updateCraftInfo();
+    loadSettingsToUI();
+
+    // Следим за системной темой
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+            if (SETTINGS.theme === 'auto') applyTheme('auto');
+        });
+    }
+}
+
+init();
