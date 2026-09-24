@@ -1183,6 +1183,8 @@ document.querySelectorAll('.admin-pill').forEach(pill => {
         if (a === 'helpers') adminLoadHelpers();
         if (a === 'perms') adminLoadPerms();
         if (a === 'promos') adminLoadPromos();
+        if (a === 'giveaways') adminLoadGiveaways();
+        if (a === 'reviews') adminLoadReviews();
         if (a === 'tickets') loadAdminTickets();
         if (a === 'broadcast') loadBroadcastTemplates();
         if (a === 'logs') adminLoadLogs();
