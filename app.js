@@ -4,17 +4,6 @@ tg.expand();
 
 const API_BASE = 'https://rust-bot.sdadawqdqdasda.workers.dev';
 
-// Открываем главное меню при запуске
-window.addEventListener('load', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    const steamTab = document.querySelector('.tab[data-tab="steam"]');
-    if (steamTab) {
-        steamTab.classList.add('active');
-        document.getElementById('panel-steam').classList.add('active');
-    }
-});
-
 // ==================== API ====================
 async function apiCall(endpoint, data = {}) {
     const res = await fetch(`${API_BASE}${endpoint}`, {
@@ -60,61 +49,143 @@ async function analyzeSteam() {
             resultDiv.innerHTML = `❌ ${data.error}`;
             return;
         }
-        resultDiv.innerHTML = formatSteamResult(data);
+        resultDiv.innerHTML = renderSteamProfile(data);
+        resultDiv.classList.add('show');
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) {
         resultDiv.innerHTML = `❌ Ошибка: ${escapeHtml(e.message)}`;
     }
 }
 
-function formatSteamResult(d) {
+function renderSteamProfile(d) {
     if (d.privateWarning) {
-        return `<strong>🔒 ${escapeHtml(d.name)}</strong><br><br>Приватный профиль — полный анализ недоступен.`;
+        return `
+            <div class="player-card">
+                <div class="player-top">
+                    <div class="player-avatar">🔒</div>
+                    <div class="player-info">
+                        <h3>${escapeHtml(d.name)}</h3>
+                        <span class="player-status offline">Приватный профиль</span>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
-    const emoji = d.riskScore >= 70 ? '🔴' : d.riskScore >= 50 ? '🟠' : d.riskScore >= 30 ? '🟡' : '🟢';
+    const isOnline = d.state.includes('Онлайн') || d.state.includes('В игре');
+    const initials = d.name.substring(0, 2).toUpperCase();
+    const riskClass = d.riskScore >= 70 ? 'critical' : d.riskScore >= 50 ? 'high' : d.riskScore >= 30 ? 'medium' : 'low';
+    const hasBan = d.vacBans > 0 || d.gameBans > 0;
+    const totalBans = d.vacBans + d.gameBans;
 
-    let html = `<strong>👤 ${escapeHtml(d.name)}</strong><br><br>`;
-    html += `📊 Статус: <strong>${d.state}</strong><br>`;
-    html += `📅 Возраст: ${d.accountAgeDays} дней (${d.accountAgeYears} лет)<br>`;
-    html += `🦀 Rust: <strong>${d.rustPlaytime}ч</strong><br>`;
-    html += `🎮 Игр: ${d.gamesCount} · 👥 Друзей: ${d.friendsCount}<br>`;
-    html += `📈 Уровень: ${d.steamLevel} · 🏆 ${d.achievementsCount}<br>`;
+    return `
+        <div class="player-card">
+            <div class="player-top">
+                <div class="player-avatar ${isOnline ? 'online' : ''}">${initials}</div>
+                <div class="player-info">
+                    <h3>${escapeHtml(d.name)}</h3>
+                    <span class="player-status ${isOnline ? 'online' : 'offline'}">Steam ${d.state.replace(/[^\wа-яА-Я\s]/g, '').trim() || 'Оффлайн'}</span>
+                </div>
+                ${hasBan
+                    ? `<div class="vac-badge">⚠ VAC Ban</div>`
+                    : `<div class="no-vac-badge">✓ Без банов</div>`
+                }
+            </div>
 
-    if (d.vacBans > 0 || d.gameBans > 0 || d.communityBanned || d.tradeBanned) {
-        html += `<br>🚫 <strong>БАНЫ:</strong><br>`;
-        if (d.vacBans > 0) html += `❌ VAC: ${d.vacBans}<br>`;
-        if (d.gameBans > 0) html += `❌ Game: ${d.gameBans}<br>`;
-        if (d.communityBanned) html += `❌ Бан в сообществе<br>`;
-        if (d.tradeBanned) html += `❌ Торговый бан<br>`;
-    } else {
-        html += `<br>✅ <strong>Банов нет</strong><br>`;
-    }
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-icon purple">🦀</div>
+                    <div>
+                        <div class="stat-value">${d.rustPlaytime.toLocaleString('ru-RU')}</div>
+                        <div class="stat-label">часов в Rust</div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon cyan">👥</div>
+                    <div>
+                        <div class="stat-value">${d.friendsCount}</div>
+                        <div class="stat-label">друзей</div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon red">!</div>
+                    <div>
+                        <div class="stat-value">${totalBans}</div>
+                        <div class="stat-label">активных бана</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    if (d.friendsWithRust?.length > 0) {
-        html += `<br>👥 <strong>Друзья с Rust (${d.friendsWithRust.length}):</strong><br>`;
-        d.friendsWithRust.slice(0, 5).forEach(f => {
-            html += `• <a href="${escapeHtml(f.profileUrl)}" target="_blank">${escapeHtml(f.name)}</a><br>`;
-        });
-    }
+        <div class="risk-card">
+            <div class="risk-head">
+                <div>
+                    <h3>Уровень риска читерства</h3>
+                    <p>Анализ VAC, часов и активности</p>
+                </div>
+                <div class="risk-value">
+                    <div class="risk-percent ${riskClass}">${d.riskScore}%</div>
+                    <div class="risk-level ${riskClass}">${d.riskLevel} риск</div>
+                </div>
+            </div>
 
-    html += `<br>${emoji} <strong>Риск: ${d.riskScore}%</strong> · ${d.riskLevel}<br>`;
+            <div class="risk-bar">
+                <div class="risk-indicator" style="left: ${d.riskScore}%"></div>
+            </div>
 
-    if (d.reasons?.length > 0) {
-        html += `<br><strong>📋 Факторы:</strong><br>`;
-        d.reasons.slice(0, 5).forEach(r => html += `· ${escapeHtml(r)}<br>`);
-    }
+            <div class="risk-labels">
+                <span>Низкий</span>
+                <span>Высокий</span>
+            </div>
+        </div>
 
-    let rec = '';
-    if (d.riskScore >= 70) rec = '⚠️ <strong>Отклонить</strong>';
-    else if (d.riskScore >= 50) rec = '⚡ <strong>Проверить</strong>';
-    else if (d.riskScore >= 30) rec = 'ℹ️ Наблюдать';
-    else rec = '✅ Допустить';
+        <div class="section-title">
+            <span>Недавняя активность</span>
+            <button class="all-btn">Все</button>
+        </div>
 
-    html += `<br>${rec}`;
-    html += `<br><br><a href="${escapeHtml(d.profileUrl)}" target="_blank">📂 Открыть профиль Steam</a>`;
+        <div class="activity-list">
+            ${hasBan ? `
+                <div class="activity-item">
+                    <div class="activity-icon vac">VAC</div>
+                    <div class="activity-content">
+                        <h4>Игрок получил VAC бан</h4>
+                        <p>${d.vacBans} активных VAC банов</p>
+                    </div>
+                    <div class="activity-arrow">›</div>
+                </div>
+            ` : `
+                <div class="activity-item">
+                    <div class="activity-icon vpn">✓</div>
+                    <div class="activity-content">
+                        <h4>Банов не обнаружено</h4>
+                        <p>Чистая история аккаунта</p>
+                    </div>
+                    <div class="activity-arrow">›</div>
+                </div>
+            `}
 
-    return html;
+            <div class="activity-item">
+                <div class="activity-icon raid">🔥</div>
+                <div class="activity-content">
+                    <h4>Steam уровень: ${d.steamLevel}</h4>
+                    <p>Достижений: ${d.achievementsCount}</p>
+                </div>
+                <div class="activity-arrow">›</div>
+            </div>
+
+            ${d.friendsWithRust?.length > 0 ? `
+                <div class="activity-item">
+                    <div class="activity-icon friend">👥</div>
+                    <div class="activity-content">
+                        <h4>Друзей с Rust: ${d.friendsWithRust.length}</h4>
+                        <p>${d.friendsWithRust.slice(0, 2).map(f => f.name).join(', ')}${d.friendsWithRust.length > 2 ? '...' : ''}</p>
+                    </div>
+                    <div class="activity-arrow">›</div>
+                </div>
+            ` : ''}
+        </div>
+    `;
 }
 
 // ==================== RAID ====================
@@ -152,7 +223,6 @@ function renderRaidItems() {
     const cat = document.getElementById('raid-cat').value;
     const select = document.getElementById('raid-target');
     const items = RAID_DATA[cat].items;
-
     select.innerHTML = Object.entries(items)
         .map(([key, item]) => `<option value="${key}">${item.name}</option>`)
         .join('');
@@ -164,24 +234,20 @@ function calculateRaid() {
     const item = RAID_DATA[cat].items[targetKey];
     const resultDiv = document.getElementById('raid-result');
 
-    let html = `<strong>${item.name}</strong><br><br>`;
-    html += `❤️ ХП: <strong>${item.hp}</strong><br>`;
-    html += `💥 Взрывчатка: <strong>${item.explosive}</strong><br>`;
-    html += `📦 Ресурсы: <strong>${item.resources}</strong>`;
-
-    resultDiv.innerHTML = html;
+    resultDiv.innerHTML = `
+        <strong>${item.name}</strong><br><br>
+        ❤️ ХП: <strong>${item.hp}</strong><br>
+        💥 Взрывчатка: <strong>${item.explosive}</strong><br>
+        📦 Ресурсы: <strong>${item.resources}</strong>
+    `;
     resultDiv.classList.add('show');
-
     if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }
 
 // ==================== CRAFT ====================
 const CRAFT_DATA = {
     c4: {
-        name: 'C4 (взрывчатка с таймером)',
-        emoji: '💥',
-        sulfur: 2200,
-        lgf: 60,
+        name: 'C4', emoji: '💥', sulfur: 2200, lgf: 60,
         resources: [
             { name: 'Взрывчатка', count: 20 },
             { name: 'Ткань', count: 5 },
@@ -189,10 +255,7 @@ const CRAFT_DATA = {
         ]
     },
     rocket: {
-        name: 'Ракета',
-        emoji: '🚀',
-        sulfur: 1400,
-        lgf: 30,
+        name: 'Ракета', emoji: '🚀', sulfur: 1400, lgf: 30,
         resources: [
             { name: 'Взрывчатка', count: 10 },
             { name: 'Порох', count: 150 },
@@ -200,10 +263,7 @@ const CRAFT_DATA = {
         ]
     },
     satchel: {
-        name: 'Сатчел (связка)',
-        emoji: '🎒',
-        sulfur: 480,
-        lgf: 0,
+        name: 'Сатчел', emoji: '🎒', sulfur: 480, lgf: 0,
         resources: [
             { name: 'Бобовая граната', count: 4 },
             { name: 'Малый схрон', count: 1 },
@@ -211,20 +271,14 @@ const CRAFT_DATA = {
         ]
     },
     beancan: {
-        name: 'Бобовая граната',
-        emoji: '💣',
-        sulfur: 120,
-        lgf: 0,
+        name: 'Бобовая граната', emoji: '💣', sulfur: 120, lgf: 0,
         resources: [
             { name: 'Порох', count: 60 },
             { name: 'Металлические фрагменты', count: 20 }
         ]
     },
     explo: {
-        name: 'Патрон 5.56 (взрывной)',
-        emoji: '🔫',
-        sulfur: 25,
-        lgf: 0,
+        name: 'Патрон 5.56', emoji: '🔫', sulfur: 25, lgf: 0,
         resources: [
             { name: 'Порох', count: 5 },
             { name: 'Металлические фрагменты', count: 10 }
@@ -237,14 +291,13 @@ function updateCraftInfo() {
     const item = CRAFT_DATA[type];
     const infoDiv = document.getElementById('craft-info');
 
-    let html = `<div class="craft-info-title">${item.emoji} <strong>${item.name}</strong></div>`;
-    html += `<div class="craft-info-list">`;
+    let html = `<div class="craft-info-list">`;
     item.resources.forEach(r => {
-        html += `<div class="resource">• ${r.name}: <strong>${r.count}</strong></div>`;
+        html += `<div class="craft-row"><span>${r.name}</span><strong>${r.count}</strong></div>`;
     });
-    html += `<div class="resource">• Сера: <strong>${item.sulfur}</strong></div>`;
+    html += `<div class="craft-row"><span>Сера</span><strong>${item.sulfur}</strong></div>`;
     if (item.lgf > 0) {
-        html += `<div class="resource">• Топливо низкого качества: <strong>${item.lgf}</strong></div>`;
+        html += `<div class="craft-row"><span>Топливо (LGF)</span><strong>${item.lgf}</strong></div>`;
     }
     html += `</div>`;
 
@@ -259,18 +312,16 @@ function calculateCraft() {
 
     let html = `<strong>${item.emoji} ${item.name} × ${count} шт.</strong><br><br>`;
     html += `<strong>📦 Нужно ресурсов:</strong><br>`;
-
     item.resources.forEach(r => {
         html += `• ${r.name}: <strong>${r.count * count}</strong><br>`;
     });
     html += `• Сера: <strong>${item.sulfur * count}</strong><br>`;
     if (item.lgf > 0) {
-        html += `• Топливо низкого качества: <strong>${item.lgf * count}</strong><br>`;
+        html += `• Топливо: <strong>${item.lgf * count}</strong><br>`;
     }
 
     resultDiv.innerHTML = html;
     resultDiv.classList.add('show');
-
     if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }
 
@@ -291,7 +342,7 @@ async function addToWatchlist() {
 
     try {
         const data = await apiCall('/api/watch-add', { steamId: match[0] });
-        resultDiv.innerHTML = `✅ <strong>${escapeHtml(data.name || match[0])}</strong> добавлен в отслеживание<br><br>Бот уведомит при появлении бана.`;
+        resultDiv.innerHTML = `✅ <strong>${escapeHtml(data.name || match[0])}</strong> добавлен в отслеживание`;
         document.getElementById('watch-input').value = '';
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) {
@@ -307,18 +358,15 @@ async function loadWatchlist() {
     try {
         const list = await apiCall('/api/watch-list');
         if (!list?.length) {
-            resultDiv.innerHTML = '📊 Список пуст. Добавь игроков через форму выше.';
+            resultDiv.innerHTML = '📊 Список пуст.';
             return;
         }
 
-        let html = `<strong>📊 Отслеживается игроков: ${list.length}</strong><br><br>`;
+        let html = `<strong>📊 Отслеживается: ${list.length}</strong><br><br>`;
         list.forEach((w, i) => {
-            html += `<div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06);">`;
             html += `<strong>${i + 1}. ${escapeHtml(w.name)}</strong><br>`;
             html += `<small style="opacity:0.6">${w.steamId}</small><br>`;
-            html += `<small>🚫 VAC: ${w.lastVacBans} · Game: ${w.lastGameBans}</small><br>`;
-            html += `<button class="btn secondary" style="margin-top:8px; padding:10px; font-size:13px;" onclick="removeFromWatchlist('${w.steamId}')">🗑 Удалить из отслеживания</button>`;
-            html += `</div>`;
+            html += `<small>🚫 VAC: ${w.lastVacBans} · Game: ${w.lastGameBans}</small><br><br>`;
         });
 
         resultDiv.innerHTML = html;
@@ -327,14 +375,9 @@ async function loadWatchlist() {
     }
 }
 
-async function removeFromWatchlist(steamId) {
-    try {
-        await apiCall('/api/watch-remove', { steamId });
-        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        loadWatchlist();
-    } catch (e) {
-        alert('Ошибка: ' + e.message);
-    }
+// ==================== SETTINGS ====================
+function openSettings() {
+    tg.showAlert('Настройки: скоро здесь появятся опции темы и уведомлений');
 }
 
 // ==================== HELPERS ====================
