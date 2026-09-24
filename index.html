@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#1a1d2e" id="theme-color-meta">
+    <meta name="theme-color" content="#1a1d24" id="theme-color-meta">
     <title>Rust Toolkit</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="styles.css">
@@ -16,10 +16,15 @@
                 <div class="logo">R</div>
                 <div class="header-info">
                     <h1>RUST TOOLKIT</h1>
-                    <p>HelperRust <span class="version">v6.0</span></p>
+                    <p>HelperRust <span class="version">v7.0</span></p>
                 </div>
             </div>
-            <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Theme">🌙</button>
+            <div class="header-right">
+                <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Theme">🌙</button>
+                <button class="avatar-btn" id="avatar-btn" onclick="toggleSidebar()" title="Profile">
+                    <span id="header-avatar">👤</span>
+                </button>
+            </div>
         </header>
 
         <!-- TABS -->
@@ -39,7 +44,7 @@
                 <div class="hero">
                     <div class="hero-kicker" data-i18n="hero_kicker">RUST CHECKER</div>
                     <h1 class="hero-title" data-i18n="hero_title">Проверь игрока</h1>
-                    <p class="hero-desc" data-i18n="hero_desc">Введи SteamID или ссылку на профиль — получи полный отчёт за секунду</p>
+                    <p class="hero-desc" data-i18n="hero_desc">Введи SteamID или ссылку — получи полный отчёт</p>
                 </div>
                 <div class="search-bar">
                     <div class="search-icon">🔍</div>
@@ -65,7 +70,7 @@
                         </select>
                     </div>
                     <div class="field"><label data-i18n="raid_target">Цель</label><select id="raid-target"></select></div>
-                    <button class="btn primary" onclick="calculateRaid()" data-i18n="btn_calc_upper">РАССЧИТАТЬ</button>
+                    <button class="btn primary pill" onclick="calculateRaid()" data-i18n="btn_calc_upper">РАССЧИТАТЬ</button>
                     <div id="raid-result" class="result"></div>
                 </div>
             </section>
@@ -83,12 +88,12 @@
                             <option value="c4">💥 C4</option>
                             <option value="rocket">🚀 <span data-i18n="craft_rocket">Ракета</span></option>
                             <option value="satchel">🎒 <span data-i18n="craft_satchel">Сатчел</span></option>
-                            <option value="beancan">💣 <span data-i18n="craft_beancan">Бобовая граната</span></option>
+                            <option value="beancan">💣 <span data-i18n="craft_beancan">Бобовая</span></option>
                             <option value="explo">🔫 <span data-i18n="craft_bullet">Патрон 5.56</span></option>
                         </select>
                     </div>
                     <div class="field"><label data-i18n="craft_count">Количество</label><input type="number" id="craft-count" value="1" min="1" inputmode="numeric"></div>
-                    <button class="btn primary" onclick="calculateCraft()" data-i18n="btn_calc_upper">РАССЧИТАТЬ</button>
+                    <button class="btn primary pill" onclick="calculateCraft()" data-i18n="btn_calc_upper">РАССЧИТАТЬ</button>
                     <div id="craft-result" class="result"></div>
                 </div>
                 <div class="card">
@@ -106,7 +111,7 @@
                 <div class="card">
                     <div class="card-head"><h3 data-i18n="watch_add_title">Добавить игрока</h3></div>
                     <div class="field"><label data-i18n="watch_steamid">SteamID</label><input type="text" id="watch-input" placeholder="76561199685927598" inputmode="text"></div>
-                    <button class="btn primary" onclick="addToWatchlist()" data-i18n="btn_add_upper">ДОБАВИТЬ</button>
+                    <button class="btn primary pill" onclick="addToWatchlist()" data-i18n="btn_add_upper">ДОБАВИТЬ</button>
                     <div id="watch-result" class="result"></div>
                 </div>
                 <div class="card">
@@ -130,27 +135,27 @@
                         <div><h3 data-i18n="support_title">Техподдержка</h3><p class="desc" data-i18n="support_desc">Опишите проблему — админ ответит</p></div>
                     </div>
                     <div class="support-hero">
-                        <div class="support-hero-icon">💬</div>
+                        <div class="support-hero-icon">🎧</div>
                         <div class="support-hero-title" data-i18n="support_hero">Нужна помощь?</div>
-                        <div class="support-hero-desc" data-i18n="support_hero_desc">Опишите ситуацию как можно подробнее — мы ответим быстрее</div>
+                        <div class="support-hero-desc" data-i18n="support_hero_desc">Опишите ситуацию подробнее — ответим быстрее</div>
                     </div>
                     <div class="field">
                         <label data-i18n="support_problem">Опиши проблему</label>
                         <textarea id="support-first-message" rows="5" placeholder="Подробно опиши, что случилось..."></textarea>
                     </div>
-                    <button class="btn primary" onclick="createTicket()">
-                        <span data-i18n="support_call_upper">ПОЗВАТЬ ПОДДЕРЖКУ</span>
-                    </button>
+                    <button class="btn primary pill" onclick="createTicket()" data-i18n="support_start_chat">НАЧАТЬ ДИАЛОГ</button>
                 </div>
 
                 <!-- Чат юзера -->
-                <div id="support-chat" class="chat-screen" style="display:none;">
+                <div id="support-chat" class="chat-screen themed" style="display:none;">
                     <div class="chat-header">
                         <button class="chat-back" onclick="closeUserChat()">‹</button>
                         <div class="chat-header-info">
-                            <div class="chat-avatar">🛠</div>
+                            <div class="chat-avatar">
+                                <span>🎧</span>
+                            </div>
                             <div>
-                                <div class="chat-title" data-i18n="chat_support">Поддержка</div>
+                                <div class="chat-title" data-i18n="chat_support_title">Rust Toolkit</div>
                                 <div class="chat-subtitle" id="support-status-desc">—</div>
                             </div>
                         </div>
@@ -186,7 +191,6 @@
                             <button data-theme="auto" onclick="setTheme('auto')">🌗</button>
                         </div>
                     </div>
-
                     <div class="settings-row">
                         <div class="settings-label">
                             <div class="settings-name" data-i18n="settings_language">Язык</div>
@@ -197,7 +201,6 @@
                             <button data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
                         </div>
                     </div>
-
                     <div class="settings-row">
                         <div class="settings-label">
                             <div class="settings-name" data-i18n="settings_notifications">Уведомления</div>
@@ -205,7 +208,6 @@
                         </div>
                         <label class="switch"><input type="checkbox" id="set-notifications" onchange="setSetting('notifications', this.checked)"><span></span></label>
                     </div>
-
                     <div class="settings-row">
                         <div class="settings-label">
                             <div class="settings-name" data-i18n="settings_watch_notif">Оповещения о банах</div>
@@ -213,7 +215,6 @@
                         </div>
                         <label class="switch"><input type="checkbox" id="set-watch-notifications" onchange="setSetting('watchNotifications', this.checked)"><span></span></label>
                     </div>
-
                     <div class="settings-row">
                         <div class="settings-label">
                             <div class="settings-name" data-i18n="settings_haptic">Вибро-отклик</div>
@@ -225,7 +226,67 @@
             </section>
         </main>
 
-        <!-- ADMIN PANEL (полноэкранная) -->
+        <!-- FLOATING SUPPORT BUTTON -->
+        <button class="float-chat" id="float-chat" onclick="openSupportFromFloat()" title="Support">
+            <span class="float-chat-icon">🎧</span>
+        </button>
+
+        <!-- PROFILE SIDEBAR -->
+        <aside id="profile-sidebar" class="profile-sidebar">
+            <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+            <div class="sidebar-content">
+                <div class="sidebar-user">
+                    <div class="sidebar-avatar" id="sidebar-avatar">👤</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="sidebar-user-name">User</div>
+                        <div class="sidebar-user-id" id="sidebar-user-id">ID: —</div>
+                    </div>
+                </div>
+                <div class="sidebar-menu">
+                    <button class="sidebar-item" onclick="goToTab('profile'); toggleSidebar();">
+                        <span class="sidebar-icon">👤</span>
+                        <span data-i18n="sidebar_profile">Профиль</span>
+                    </button>
+                    <button class="sidebar-item" onclick="goToTab('watch'); toggleSidebar();">
+                        <span class="sidebar-icon">👁️</span>
+                        <span data-i18n="sidebar_watch">Watchlist</span>
+                    </button>
+                    <button class="sidebar-item" onclick="goToTab('support'); toggleSidebar();">
+                        <span class="sidebar-icon">💬</span>
+                        <span data-i18n="sidebar_support">Помощь</span>
+                    </button>
+                    <button class="sidebar-item" onclick="goToTab('settings'); toggleSidebar();">
+                        <span class="sidebar-icon">⚙️</span>
+                        <span data-i18n="sidebar_settings">Настройки</span>
+                    </button>
+                    <div class="sidebar-divider"></div>
+                    <button class="sidebar-item" onclick="openReferral()">
+                        <span class="sidebar-icon">🎁</span>
+                        <span data-i18n="sidebar_referral">Реферальная ссылка</span>
+                    </button>
+                    <button class="sidebar-item" onclick="showPromoInput()">
+                        <span class="sidebar-icon">🎟</span>
+                        <span data-i18n="sidebar_promo">Активировать промокод</span>
+                    </button>
+                    <button class="sidebar-item danger" onclick="openBotLink()">
+                        <span class="sidebar-icon">↩️</span>
+                        <span data-i18n="sidebar_back_to_bot">Вернуться в бот</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- FRIENDS SCREEN -->
+        <div id="friends-screen" class="friends-screen" style="display:none;">
+            <div class="friends-topbar">
+                <button class="chat-back" onclick="closeFriendsScreen()">‹</button>
+                <div class="friends-title" data-i18n="friends_title">Друзья с Rust</div>
+                <div style="width:36px"></div>
+            </div>
+            <div class="friends-body" id="friends-body"></div>
+        </div>
+
+        <!-- ADMIN PANEL -->
         <div id="admin-panel" class="admin-panel" style="display:none;">
             <div class="admin-fullscreen">
                 <div class="admin-topbar">
@@ -241,16 +302,13 @@
                     <button class="admin-tab" data-atab="tickets" data-i18n="admin_tab_tickets">Тикеты</button>
                     <button class="admin-tab" data-atab="broadcast" data-i18n="admin_tab_broadcast">Рассылка</button>
                 </div>
-
                 <div class="admin-body">
                     <div class="admin-content active" id="atab-stats">
                         <div id="admin-stats-content" class="loading-block">⏳ Загрузка...</div>
                     </div>
-
                     <div class="admin-content" id="atab-users">
                         <div id="admin-users-content" class="loading-block">⏳ Загрузка...</div>
                     </div>
-
                     <div class="admin-content" id="atab-premium">
                         <div class="admin-field"><label data-i18n="admin_target">ID или @тег</label><input type="text" id="admin-premium-target" placeholder="123456789 или @durov"></div>
                         <div class="admin-field"><label data-i18n="admin_days">Дней</label><input type="number" id="admin-premium-days" value="30" min="1" max="3650"></div>
@@ -260,9 +318,8 @@
                         </div>
                         <div id="admin-premium-result" class="result"></div>
                     </div>
-
                     <div class="admin-content" id="atab-promos">
-                        <button class="btn primary" onclick="adminShowPromoCreate()" data-i18n="admin_promo_create_upper">➕ СОЗДАТЬ ПРОМОКОД</button>
+                        <button class="btn primary pill" onclick="adminShowPromoCreate()" data-i18n="admin_promo_create_upper">➕ СОЗДАТЬ ПРОМОКОД</button>
                         <div id="admin-promo-create" style="display:none; margin-top:16px;">
                             <div class="admin-field"><label data-i18n="promo_code">Код</label><input type="text" id="promo-code" placeholder="RUST30"></div>
                             <div class="admin-field">
@@ -288,11 +345,9 @@
                         <h4 style="margin-top:20px;" data-i18n="admin_promo_list_title">Список промокодов</h4>
                         <div id="admin-promos-list" class="loading-block">⏳ Загрузка...</div>
                     </div>
-
                     <div class="admin-content" id="atab-tickets">
                         <div id="admin-tickets-list" class="loading-block">⏳ Загрузка...</div>
                     </div>
-
                     <div class="admin-content" id="atab-broadcast">
                         <div class="admin-field">
                             <label data-i18n="admin_template">Шаблон</label>
@@ -340,11 +395,13 @@
         </div>
 
         <!-- ADMIN TICKET CHAT -->
-        <div id="admin-ticket-chat" class="chat-screen admin-chat" style="display:none;">
+        <div id="admin-ticket-chat" class="chat-screen admin-chat themed" style="display:none;">
             <div class="chat-header">
                 <button class="chat-back" onclick="closeAdminTicketChat()">‹</button>
                 <div class="chat-header-info">
-                    <div class="chat-avatar" id="admin-ticket-avatar">👤</div>
+                    <div class="chat-avatar" id="admin-ticket-avatar">
+                        <span>👤</span>
+                    </div>
                     <div>
                         <div class="chat-title" id="admin-ticket-name">Пользователь</div>
                         <div class="chat-subtitle" id="admin-ticket-sub">ID: —</div>
