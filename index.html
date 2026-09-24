@@ -40,10 +40,6 @@
                 <span class="tab-icon">👁️</span>
                 <span class="tab-label">Отслеж.</span>
             </button>
-            <button class="tab" data-tab="settings">
-                <span class="tab-icon">⚙️</span>
-                <span class="tab-label">Настройки</span>
-            </button>
             <button class="tab admin-only-tab" data-tab="admin" style="display:none;">
                 <span class="tab-icon">👑</span>
                 <span class="tab-label">Админ</span>
@@ -142,57 +138,6 @@
                         <button class="btn-mini" onclick="loadWatchlist()">🔄</button>
                     </div>
                     <div id="watchlist-result" class="result"></div>
-                </div>
-            </section>
-
-            <!-- SETTINGS -->
-            <section class="panel" id="panel-settings">
-                <div class="section-head">
-                    <div class="section-kicker">PREFERENCES</div>
-                    <h2 class="section-title">Настройки</h2>
-                    <p class="section-desc">Персонализация приложения</p>
-                </div>
-                <div class="card">
-                    <div class="card-head"><h3>Оформление</h3></div>
-                    <div class="settings-row">
-                        <div class="settings-label"><div class="settings-name">Тема</div><div class="settings-hint">Как выглядит приложение</div></div>
-                        <div class="segmented" id="theme-seg">
-                            <button data-theme="dark" onclick="setTheme('dark')">🌙 Тёмная</button>
-                            <button data-theme="light" onclick="setTheme('light')">☀️ Светлая</button>
-                        </div>
-                    </div>
-                    <div class="settings-row">
-                        <div class="settings-label"><div class="settings-name">Язык</div><div class="settings-hint">Язык интерфейса</div></div>
-                        <div class="segmented" id="lang-seg">
-                            <button data-lang="ru" onclick="setLanguage('ru')">🇷🇺 RU</button>
-                            <button data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-head"><h3>Уведомления</h3></div>
-                    <div class="settings-row">
-                        <div class="settings-label"><div class="settings-name">Уведомления</div><div class="settings-hint">Сообщения от поддержки</div></div>
-                        <label class="switch"><input type="checkbox" id="set-notifications" onchange="setSetting('notifications', this.checked)"><span></span></label>
-                    </div>
-                    <div class="settings-row">
-                        <div class="settings-label"><div class="settings-name">Оповещения о банах</div><div class="settings-hint">VAC и Game баны</div></div>
-                        <label class="switch"><input type="checkbox" id="set-watch-notifications" onchange="setSetting('watchNotifications', this.checked)"><span></span></label>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-head"><h3>Взаимодействие</h3></div>
-                    <div class="settings-row">
-                        <div class="settings-label"><div class="settings-name">Вибро-отклик</div><div class="settings-hint">Тактильный отклик</div></div>
-                        <label class="switch"><input type="checkbox" id="set-haptic" onchange="setSetting('haptic', this.checked)"><span></span></label>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-head"><h3>Аккаунт</h3></div>
-                    <button class="btn secondary" onclick="openReferral()">🎁 Реферальная ссылка</button>
-                    <button class="btn secondary" style="margin-top:8px" onclick="showPromoInput()">🎟 Активировать промокод</button>
-                    <button class="btn secondary" style="margin-top:8px" onclick="openProfile()">👤 Мой профиль</button>
-                    <button class="btn secondary" style="margin-top:8px" onclick="openSupport()">💬 Помощь</button>
                 </div>
             </section>
 
@@ -344,23 +289,64 @@
                         <div class="sidebar-user-role" id="sidebar-user-role" style="display:none;"></div>
                     </div>
                 </div>
+
                 <div class="sidebar-menu">
                     <button type="button" class="sidebar-item" onclick="openProfile()">
                         <span class="sidebar-icon">👤</span><span>Профиль</span>
                     </button>
-                    <button type="button" class="sidebar-item" onclick="openWatchlistFromSidebar()">
-                        <span class="sidebar-icon">👁️</span><span>Отслеживание</span>
-                    </button>
                     <button type="button" class="sidebar-item" onclick="openSupport()">
                         <span class="sidebar-icon">💬</span><span>Помощь</span>
                     </button>
-                    <div class="sidebar-divider"></div>
                     <button type="button" class="sidebar-item" onclick="openReferral()">
                         <span class="sidebar-icon">🎁</span><span>Реферальная ссылка</span>
                     </button>
                     <button type="button" class="sidebar-item" onclick="showPromoInput()">
                         <span class="sidebar-icon">🎟</span><span>Активировать промокод</span>
                     </button>
+                </div>
+
+                <div class="sidebar-divider"></div>
+
+                <div class="sidebar-section-title">Настройки</div>
+
+                <div class="sidebar-row">
+                    <span class="sidebar-row-label">🌗 Тема</span>
+                    <div class="segmented small" id="theme-seg">
+                        <button data-theme="dark" onclick="setTheme('dark')" title="Тёмная">🌙</button>
+                        <button data-theme="light" onclick="setTheme('light')" title="Светлая">☀️</button>
+                    </div>
+                </div>
+
+                <div class="sidebar-row">
+                    <span class="sidebar-row-label">🌐 Язык</span>
+                    <div class="segmented small" id="lang-seg">
+                        <button data-lang="ru" onclick="setLanguage('ru')">🇷🇺</button>
+                        <button data-lang="en" onclick="setLanguage('en')">🇬🇧</button>
+                    </div>
+                </div>
+
+                <div class="sidebar-row">
+                    <span class="sidebar-row-label">🔔 Уведомления</span>
+                    <label class="switch small">
+                        <input type="checkbox" id="set-notifications" onchange="setSetting('notifications', this.checked)">
+                        <span></span>
+                    </label>
+                </div>
+
+                <div class="sidebar-row">
+                    <span class="sidebar-row-label">🚫 Оповещения о банах</span>
+                    <label class="switch small">
+                        <input type="checkbox" id="set-watch-notifications" onchange="setSetting('watchNotifications', this.checked)">
+                        <span></span>
+                    </label>
+                </div>
+
+                <div class="sidebar-row">
+                    <span class="sidebar-row-label">📳 Вибро-отклик</span>
+                    <label class="switch small">
+                        <input type="checkbox" id="set-haptic" onchange="setSetting('haptic', this.checked)">
+                        <span></span>
+                    </label>
                 </div>
             </div>
         </aside>
@@ -480,6 +466,98 @@
                     <textarea id="admin-ticket-input" rows="1" placeholder="Ответить..." style="resize:none;"></textarea>
                     <button class="chat-send-btn" onclick="sendAdminTicketMessage()">➤</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- ============ ADMIN USER ACTION MODALS ============ -->
+        <!-- Premium to user -->
+        <div id="user-premium-modal" class="modal-screen" style="display:none;">
+            <div class="modal-center-box">
+                <div class="modal-head">
+                    <div class="modal-title">⭐ Выдать премиум</div>
+                    <button class="modal-close" onclick="closeUserPremiumModal()">✕</button>
+                </div>
+                <div class="admin-field">
+                    <label>Пользователь</label>
+                    <input type="text" id="user-premium-name" readonly>
+                </div>
+                <div class="admin-field">
+                    <label>Дней</label>
+                    <div class="premium-presets" id="user-premium-presets">
+                        <button data-days="7" onclick="selectPremiumDays(7)">7</button>
+                        <button data-days="14" onclick="selectPremiumDays(14)">14</button>
+                        <button data-days="30" class="active" onclick="selectPremiumDays(30)">30</button>
+                        <button data-days="90" onclick="selectPremiumDays(90)">90</button>
+                        <button data-days="180" onclick="selectPremiumDays(180)">180</button>
+                        <button data-days="365" onclick="selectPremiumDays(365)">365</button>
+                    </div>
+                </div>
+                <div class="admin-field">
+                    <label>Или своё количество</label>
+                    <input type="number" id="user-premium-days" value="30" min="1" max="3650" oninput="clearPresetActive()">
+                </div>
+                <div class="admin-buttons-row">
+                    <button class="btn primary" onclick="confirmUserPremium()">⭐ Выдать</button>
+                    <button class="btn secondary" onclick="closeUserPremiumModal()">Отмена</button>
+                </div>
+                <div id="user-premium-result" class="result"></div>
+            </div>
+        </div>
+
+        <!-- Bonus to user -->
+        <div id="user-bonus-modal" class="modal-screen" style="display:none;">
+            <div class="modal-center-box">
+                <div class="modal-head">
+                    <div class="modal-title">🎁 Выдать бонусные проверки</div>
+                    <button class="modal-close" onclick="closeUserBonusModal()">✕</button>
+                </div>
+                <div class="admin-field">
+                    <label>Пользователь</label>
+                    <input type="text" id="user-bonus-name" readonly>
+                </div>
+                <div class="admin-field">
+                    <label>Кол-во проверок</label>
+                    <div class="premium-presets" id="user-bonus-presets">
+                        <button data-amount="1" onclick="selectBonusAmount(1)">+1</button>
+                        <button data-amount="3" onclick="selectBonusAmount(3)">+3</button>
+                        <button data-amount="5" class="active" onclick="selectBonusAmount(5)">+5</button>
+                        <button data-amount="10" onclick="selectBonusAmount(10)">+10</button>
+                        <button data-amount="25" onclick="selectBonusAmount(25)">+25</button>
+                        <button data-amount="50" onclick="selectBonusAmount(50)">+50</button>
+                    </div>
+                </div>
+                <div class="admin-field">
+                    <label>Или своё количество</label>
+                    <input type="number" id="user-bonus-amount" value="5" min="1" max="9999" oninput="clearBonusPresetActive()">
+                </div>
+                <div class="admin-buttons-row">
+                    <button class="btn primary" onclick="confirmUserBonus()">🎁 Выдать</button>
+                    <button class="btn secondary" onclick="closeUserBonusModal()">Отмена</button>
+                </div>
+                <div id="user-bonus-result" class="result"></div>
+            </div>
+        </div>
+
+        <!-- DM to user -->
+        <div id="user-dm-modal" class="modal-screen" style="display:none;">
+            <div class="modal-center-box">
+                <div class="modal-head">
+                    <div class="modal-title">📩 Сообщение пользователю</div>
+                    <button class="modal-close" onclick="closeUserDmModal()">✕</button>
+                </div>
+                <div class="admin-field">
+                    <label>Пользователь</label>
+                    <input type="text" id="user-dm-name" readonly>
+                </div>
+                <div class="admin-field">
+                    <label>Текст сообщения (HTML разрешён)</label>
+                    <textarea id="user-dm-text" rows="6" placeholder="Введи текст..."></textarea>
+                </div>
+                <div class="admin-buttons-row">
+                    <button class="btn primary" onclick="confirmUserDm()">📩 Отправить</button>
+                    <button class="btn secondary" onclick="closeUserDmModal()">Отмена</button>
+                </div>
+                <div id="user-dm-result" class="result"></div>
             </div>
         </div>
     </div>
