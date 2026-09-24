@@ -15,7 +15,7 @@
                 <div class="logo">🛡️</div>
                 <div class="header-info">
                     <h1>RUSTGUARD</h1>
-                    <p>v10.0</p>
+                    <p>v1.0</p>
                 </div>
             </div>
             <button class="avatar-btn" id="avatar-btn" onclick="toggleSidebar(event)">
@@ -47,6 +47,10 @@
             <button class="tab admin-only-tab" data-tab="admin" style="display:none;">
                 <span class="tab-icon">👑</span>
                 <span class="tab-label">Админ</span>
+            </button>
+            <button class="tab helper-only-tab" data-tab="helpers" style="display:none;">
+                <span class="tab-icon">🎧</span>
+                <span class="tab-label">Тикеты</span>
             </button>
         </nav>
 
@@ -192,6 +196,16 @@
                 </div>
             </section>
 
+            <!-- HELPERS (для хелперов) -->
+            <section class="panel" id="panel-helpers">
+                <div class="section-head">
+                    <div class="section-kicker">SUPPORT</div>
+                    <h2 class="section-title">🎧 Тикеты</h2>
+                    <p class="section-desc">Отвечай пользователям. Закрывать тикеты может только админ.</p>
+                </div>
+                <div id="helper-tickets-list" class="loading-block">⏳ Загрузка...</div>
+            </section>
+
             <!-- ADMIN -->
             <section class="panel" id="panel-admin">
                 <div class="section-head">
@@ -203,6 +217,8 @@
                 <div class="admin-tabs-pill">
                     <button class="admin-pill active" data-atab="dashboard">📊 Дашборд</button>
                     <button class="admin-pill" data-atab="users">👥 Юзеры</button>
+                    <button class="admin-pill" data-atab="premium">⭐ Премиум</button>
+                    <button class="admin-pill" data-atab="helpers">🎧 Хелперы</button>
                     <button class="admin-pill" data-atab="promos">🎟 Промо</button>
                     <button class="admin-pill" data-atab="tickets">🎫 Тикеты</button>
                     <button class="admin-pill" data-atab="broadcast">📢 Рассылка</button>
@@ -219,6 +235,43 @@
                         <input type="text" id="admin-search-input" placeholder="ID, @ник или имя..." oninput="adminSearchUsers()">
                     </div>
                     <div id="admin-users-content" class="loading-block">⏳ Загрузка...</div>
+                </div>
+
+                <div class="admin-content" id="atab-premium">
+                    <div class="card">
+                        <div class="card-head"><h3>⭐ Выдать / забрать премиум</h3></div>
+                        <div class="admin-field">
+                            <label>ID или @тег</label>
+                            <input type="text" id="admin-premium-target" placeholder="123456789 или @durov">
+                        </div>
+                        <div class="admin-field">
+                            <label>Дней</label>
+                            <input type="number" id="admin-premium-days" value="30" min="1" max="3650">
+                        </div>
+                        <div class="admin-buttons-row">
+                            <button class="btn primary" onclick="adminGivePremium()">⭐ Выдать</button>
+                            <button class="btn danger" onclick="adminRevokePremium()">❌ Забрать</button>
+                        </div>
+                        <div id="admin-premium-result" class="result"></div>
+                    </div>
+                </div>
+
+                <div class="admin-content" id="atab-helpers">
+                    <div class="card">
+                        <div class="card-head"><h3>🎧 Назначить хелпера</h3></div>
+                        <div class="admin-field">
+                            <label>ID или @тег</label>
+                            <input type="text" id="admin-helper-target" placeholder="123456789 или @durov">
+                        </div>
+                        <div class="admin-buttons-row">
+                            <button class="btn primary" onclick="adminAddHelper()">🎧 Назначить</button>
+                        </div>
+                        <div id="admin-helper-result" class="result"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-head"><h3>🎧 Список хелперов</h3></div>
+                        <div id="admin-helpers-list" class="loading-block">⏳ Загрузка...</div>
+                    </div>
                 </div>
 
                 <div class="admin-content" id="atab-promos">
@@ -288,6 +341,7 @@
                     <div class="sidebar-user-info">
                         <div class="sidebar-user-name" id="sidebar-user-name">User</div>
                         <div class="sidebar-user-id" id="sidebar-user-id">ID: —</div>
+                        <div class="sidebar-user-role" id="sidebar-user-role" style="display:none;"></div>
                     </div>
                 </div>
                 <div class="sidebar-menu">
