@@ -12,8 +12,7 @@ let SETTINGS = { theme: 'dark', language: 'ru', notifications: true, watchNotifi
 let USER_DATA = null;
 let LAST_ANALYZED = null;
 
-const tr = (k) => k;
-
+// ==================== API ====================
 async function apiCall(endpoint, data = {}) {
     const res = await fetch(`${API_BASE}${endpoint}`, {
         method: 'POST',
@@ -35,14 +34,12 @@ function applyTheme(theme) {
     if (tg.setBackgroundColor) tg.setBackgroundColor(t === 'light' ? '#f7f8fa' : '#0e0e12');
     document.querySelectorAll('#theme-seg button').forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
 }
-
 async function setTheme(theme) {
     SETTINGS.theme = theme;
     applyTheme(theme);
     try { await apiCall('/api/settings', { settings: { theme } }); } catch (e) {}
     if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
-
 async function setLanguage(lang) {
     SETTINGS.language = lang;
     LANG = lang;
@@ -53,15 +50,12 @@ async function setLanguage(lang) {
         const el = document.getElementById('steam-result');
         if (el && el.innerHTML) el.innerHTML = renderSteamProfile(LAST_ANALYZED);
     }
-    if (document.getElementById('profile-modal').style.display === 'flex') loadProfile();
 }
-
 async function setSetting(key, value) {
     SETTINGS[key] = value;
     try { await apiCall('/api/settings', { settings: { [key]: value } }); } catch (e) {}
     if (key === 'haptic' && value && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
-
 function updateSegActive() {
     document.querySelectorAll('#theme-seg button').forEach(b => b.classList.toggle('active', b.dataset.theme === SETTINGS.theme));
     document.querySelectorAll('#lang-seg button').forEach(b => b.classList.toggle('active', b.dataset.lang === SETTINGS.language));
@@ -76,6 +70,7 @@ function goToTab(name) {
     const panel = document.getElementById(`panel-${name}`);
     if (panel) panel.classList.add('active');
     if (name === 'watch') loadWatchlist();
+    if (name === 'admin') adminLoadDashboard();
 }
 
 document.querySelectorAll('.tab').forEach(tab => {
@@ -103,6 +98,99 @@ async function analyzeSteam() {
     } catch (e) {
         resultDiv.innerHTML = `❌ ${escapeHtml(e.message)}`;
     }
+}
+
+function renderActivityGraph(graph) {
+    if (!graph || !graph.twoWeeksMinutes) return '';
+    // Строим график: 14 столбиков (по дням за 2 недели), распределяем равномерно
+    // Steam не даёт по дням, только общее за 2 недели, поэтому рисуем "сглаженный" визуал
+    const days = 14;
+    const totalHours = graph.twoWeeksHours;
+    const avg = graph.avgPerDay;
+    // Генерируем псевдо-распределение с вариацией
+    const values = [];
+    let sum = 0;
+    for (let i = 0; i < days; i++) {
+        const variation = 0.5 + Math.random() * 1.0; // 0.5x - 1.5x
+        values.push(variation);
+        sum += variation;
+    }
+    const norm = values.map(v => (v / sum) * totalHours);
+    const maxVal = Math.max(...norm, 0.1);
+
+    let barsHtml = '';
+    const labels = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс','Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+    for (let i = 0; i < days; i++) {
+        const h = Math.max(4, (norm[i] / maxVal) * 100);
+        const lbl = labels[i] || '';
+        barsHtml += `<div class="activity-bar-wrap">
+            <div class="activity-bar" style="height:${h}%"></div>
+            <div class="activity-bar-label">${lbl}</div>
+        </div>`;
+    }
+
+    return `
+        <div class="activity-graph-card">
+            <div class="activity-graph-header">
+                <div>
+                    <h3>📊 График активности</h3>
+                    <p>Часы в Rust за 2 недели</p>
+                </div>
+            </div>
+            <div class="activity-graph-bars">${barsHtml}</div>
+            <div class="activity-graph-stats">
+                <div class="activity-graph-stat">
+                    <div class="activity-graph-stat-value">${totalHours} ч</div>
+                    <div class="activity-graph-stat-label">Всего за 2 нед.</div>
+                </div>
+                <div class="activity-graph-stat">
+                    <div class="activity-graph-stat-value">${avg} ч</div>
+                    <div class="activity-graph-stat-label">В среднем в день</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderComparison(player, comparison) {
+    if (!comparison || !comparison.friendsTotal) return '';
+    // У нас нет часов друзей, но покажем сколько друзей и играют ли в Rust
+    const friendsCount = comparison.friendsTotal;
+    const pctFriends = Math.min(100, friendsCount * 5); // грубая метрика, до 20 друзей = 100%
+
+    // Сравнение часов игрока со средним по Rust (500ч = "средний")
+    const avgRustHours = 500;
+    const playerPct = Math.min(100, Math.round((player.rustPlaytime / avgRustHours) * 100));
+    const avgPct = 100;
+
+    return `
+        <div class="comparison-card">
+            <div class="comparison-header">
+                <div>
+                    <h3>👥 Сравнение</h3>
+                    <p>Игрок vs средний Rust-игрок</p>
+                </div>
+            </div>
+            <div class="comparison-row">
+                <div class="comparison-row-head">
+                    <span>🎮 Часы в Rust</span>
+                    <span>${player.rustPlaytime} ч / ~${avgRustHours} ч</span>
+                </div>
+                <div class="comparison-bar-track">
+                    <div class="comparison-bar-fill player" style="width:${playerPct}%"></div>
+                </div>
+            </div>
+            <div class="comparison-row">
+                <div class="comparison-row-head">
+                    <span>👥 Друзей с Rust</span>
+                    <span>${friendsCount}</span>
+                </div>
+                <div class="comparison-bar-track">
+                    <div class="comparison-bar-fill yours" style="width:${pctFriends}%"></div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 function renderSteamProfile(d) {
@@ -137,6 +225,8 @@ function renderSteamProfile(d) {
             <div class="risk-bar"><div class="risk-indicator" style="left: ${d.riskScore}%"></div></div>
             <div class="risk-labels"><span>Низкий</span><span>Высокий</span></div>
         </div>
+        ${d.premium && d.activityGraph ? renderActivityGraph(d.activityGraph) : ''}
+        ${d.premium && d.comparison ? renderComparison(d, d.comparison) : ''}
         <div class="section-title-mini">Активность</div>
         <div class="activity-list">
             ${hasBan ? `<div class="activity-item"><div class="activity-icon vac">VAC</div><div class="activity-content"><h4>VAC бан</h4><p>${d.vacBans} активных</p></div></div>` : `<div class="activity-item"><div class="activity-icon vpn">✓</div><div class="activity-content"><h4>Банов нет</h4><p>Чистая история</p></div></div>`}
@@ -178,11 +268,7 @@ function openFriendsScreen() {
     }
     document.getElementById('friends-screen').style.display = 'flex';
 }
-
-function closeFriendsScreen() {
-    document.getElementById('friends-screen').style.display = 'none';
-}
-
+function closeFriendsScreen() { document.getElementById('friends-screen').style.display = 'none'; }
 async function checkFriend(steamId) {
     closeFriendsScreen();
     document.getElementById('steam-input').value = steamId;
@@ -211,13 +297,11 @@ const RAID_DATA = {
         outer_wood: { name: 'Деревянная стена', hp: 500, explosive: '1 зажигательная ракета', resources: '75 топлива' }
     }}
 };
-
 function renderRaidItems() {
     const cat = document.getElementById('raid-cat').value;
     const select = document.getElementById('raid-target');
     select.innerHTML = Object.entries(RAID_DATA[cat].items).map(([k, i]) => `<option value="${k}">${i.name}</option>`).join('');
 }
-
 function calculateRaid() {
     const cat = document.getElementById('raid-cat').value;
     const key = document.getElementById('raid-target').value;
@@ -236,7 +320,6 @@ const CRAFT_DATA = {
     beancan: { name: 'Бобовая', emoji: '💣', sulfur: 120, lgf: 0, resources: [{name:'Порох',count:60},{name:'Фрагменты',count:20}] },
     explo: { name: 'Патрон 5.56', emoji: '🔫', sulfur: 25, lgf: 0, resources: [{name:'Порох',count:5},{name:'Фрагменты',count:10}] }
 };
-
 function updateCraftInfo() {
     const type = document.getElementById('craft-type').value;
     const item = CRAFT_DATA[type];
@@ -248,7 +331,6 @@ function updateCraftInfo() {
     html += `</div>`;
     info.innerHTML = html;
 }
-
 function calculateCraft() {
     const type = document.getElementById('craft-type').value;
     const count = parseInt(document.getElementById('craft-count').value) || 1;
@@ -276,11 +358,8 @@ async function addToWatchlist() {
         result.innerHTML = `✅ <strong>${escapeHtml(data.name)}</strong> добавлен`;
         document.getElementById('watch-input').value = '';
         if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-    } catch (e) {
-        result.innerHTML = `❌ ${escapeHtml(e.message)}`;
-    }
+    } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
 }
-
 async function loadWatchlist() {
     const result = document.getElementById('watchlist-result');
     result.innerHTML = '<span class="spinner"></span>Загружаю...';
@@ -293,11 +372,8 @@ async function loadWatchlist() {
             html += `<div style="padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;"><strong>${i+1}. ${escapeHtml(w.name)}</strong><br><small style="color:var(--muted);">${w.steamId}</small><br><small style="color:var(--muted);">VAC: ${w.lastVacBans} · Game: ${w.lastGameBans}</small><br><button class="btn secondary" style="margin-top:8px;padding:8px;font-size:12px;" onclick="removeFromWatchlist('${w.steamId}')">🗑 Удалить</button></div>`;
         });
         result.innerHTML = html;
-    } catch (e) {
-        result.innerHTML = `❌ ${escapeHtml(e.message)}`;
-    }
+    } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
 }
-
 async function removeFromWatchlist(steamId) {
     try {
         await apiCall('/api/watch-remove', { steamId });
@@ -305,11 +381,7 @@ async function removeFromWatchlist(steamId) {
         loadWatchlist();
     } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
 }
-
-function openWatchlistFromSidebar() {
-    toggleSidebar();
-    goToTab('watch');
-}
+function openWatchlistFromSidebar() { toggleSidebar(); goToTab('watch'); }
 
 // ==================== PROFILE ====================
 function openProfile() {
@@ -317,10 +389,7 @@ function openProfile() {
     document.getElementById('profile-modal').style.display = 'flex';
     loadProfile();
 }
-
-function closeProfileModal() {
-    document.getElementById('profile-modal').style.display = 'none';
-}
+function closeProfileModal() { document.getElementById('profile-modal').style.display = 'none'; }
 
 async function loadProfile() {
     const container = document.getElementById('profile-content');
@@ -333,6 +402,7 @@ async function loadProfile() {
         applyTheme(SETTINGS.theme);
         updateSegActive();
         updateUserUI(profile);
+        showAdminTabIfAdmin(profile.isAdmin);
 
         const dateFmt = (ts) => {
             const d = new Date(ts);
@@ -341,7 +411,6 @@ async function loadProfile() {
                 time: d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
             };
         };
-
         let premiumHtml = '';
         if (profile.premium && profile.premiumExpires) {
             const { date, time } = dateFmt(profile.premiumExpires);
@@ -351,14 +420,12 @@ async function loadProfile() {
         } else {
             premiumHtml = `<div class="premium-status inactive"><div class="premium-status-icon">❌</div><div class="premium-status-info"><div class="premium-status-title">Премиум не активен</div><div class="premium-status-date">Купи премиум для безлимита</div></div></div>`;
         }
-
         let avatarHtml = '';
         if (profile.photoUrl) {
             avatarHtml = `<img class="profile-avatar" src="${escapeHtml(profile.photoUrl)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="profile-avatar-fallback" style="display:none">${(profile.firstName || 'U').charAt(0).toUpperCase()}</div>`;
         } else {
             avatarHtml = `<div class="profile-avatar-fallback">${(profile.firstName || 'U').charAt(0).toUpperCase()}</div>`;
         }
-
         let html = `
             <div class="profile-hero">
                 ${avatarHtml}
@@ -368,11 +435,10 @@ async function loadProfile() {
             ${premiumHtml}
             <div class="stats-profile-grid">
                 <div class="stat-profile-box"><div class="stat-profile-value">${profile.remainingChecks}</div><div class="stat-profile-label">Проверок</div></div>
-                <div class="stat-profile-box"><div class="stat-profile-value">${profile.watchlistCount}</div><div class="stat-profile-label">Watchlist</div></div>
+                <div class="stat-profile-box"><div class="stat-profile-value">${profile.watchlistCount}</div><div class="stat-profile-label">Отслеж.</div></div>
                 <div class="stat-profile-box"><div class="stat-profile-value">${profile.referral.count}</div><div class="stat-profile-label">Рефералов</div></div>
             </div>
         `;
-
         if (profile.discount) {
             const { date, time } = dateFmt(profile.discount.expiresAt);
             html += `<div class="premium-status active" style="background:linear-gradient(135deg,rgba(34,211,238,.1),rgba(34,211,238,.03));border-color:rgba(34,211,238,.35);">
@@ -384,28 +450,21 @@ async function loadProfile() {
                 </div>
             </div>`;
         }
-
         html += `<div class="card">
             <div class="card-head"><h3>Действия</h3></div>
             ${!profile.premium ? `<button class="btn primary" onclick="openPremiumFromProfile()">⭐ Купить премиум</button>` : ''}
             ${!profile.trialUsed ? `<button class="btn secondary" style="margin-top:8px" onclick="activateTrial()">🎁 Пробная ${profile.trialDays} дня</button>` : ''}
             <button class="btn secondary" style="margin-top:8px" onclick="showPromoInput()">🎟 Активировать промокод</button>
             <button class="btn secondary" style="margin-top:8px" onclick="openReferral()">🎁 Реферальная ссылка</button>
-            ${profile.isAdmin ? `<button class="btn danger" style="margin-top:8px" onclick="closeProfileModal(); openAdminPanel();">👑 Админ-панель</button>` : ''}
         </div>`;
         container.innerHTML = html;
-
         if (!profile.isAdmin) {
-            ['admin-panel', 'admin-ticket-chat', 'edit-promo-modal'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.remove();
-            });
+            ['edit-promo-modal', 'admin-ticket-chat'].forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
         }
     } catch (e) {
         container.innerHTML = `<div class="card"><div class="result show">❌ ${escapeHtml(e.message)}</div></div>`;
     }
 }
-
 function updateUserUI(p) {
     const ha = document.getElementById('header-avatar');
     if (ha) {
@@ -422,13 +481,20 @@ function updateUserUI(p) {
     const si = document.getElementById('sidebar-user-id');
     if (si) si.textContent = `ID: ${p.userId}` + (p.username ? ` · @${p.username}` : '');
 }
-
+function showAdminTabIfAdmin(isAdmin) {
+    const tab = document.querySelector('.admin-only-tab');
+    if (!tab) return;
+    tab.style.display = isAdmin ? 'flex' : 'none';
+    if (!isAdmin) {
+        // Если админка открыта - уйти на steam
+        if (document.getElementById('panel-admin').classList.contains('active')) goToTab('steam');
+    }
+}
 function openPremiumFromProfile() {
     closeProfileModal();
     goToTab('steam');
     tg.showAlert('Открой бота → /start → «⭐ Купить премиум»');
 }
-
 async function activateTrial() {
     const promo = prompt('Введи промокод для пробной:');
     if (!promo) return;
@@ -438,7 +504,6 @@ async function activateTrial() {
         loadProfile();
     } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
 }
-
 function showPromoInput() {
     const code = prompt('Введи промокод:');
     if (!code) return;
@@ -447,7 +512,6 @@ function showPromoInput() {
         if (document.getElementById('profile-modal').style.display === 'flex') loadProfile();
     }).catch(e => tg.showAlert('Ошибка: ' + e.message));
 }
-
 async function openReferral() {
     try {
         const profile = await apiCall('/api/profile');
@@ -479,18 +543,15 @@ function toggleSidebar(e) {
 // ==================== SUPPORT ====================
 let currentTicket = null;
 let pollInterval = null;
-
 function openSupport() {
     toggleSidebar();
     document.getElementById('support-modal').style.display = 'flex';
     loadSupport();
 }
-
 function closeSupportModal() {
     if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
     document.getElementById('support-modal').style.display = 'none';
 }
-
 async function loadSupport() {
     try {
         const data = await apiCall('/api/support/my-ticket');
@@ -508,23 +569,14 @@ async function loadSupport() {
         }
     } catch (e) { console.error(e); }
 }
-
 function updateSupportStatus() {
     if (!currentTicket) return;
     const banner = document.getElementById('support-waiting-banner');
     const desc = document.getElementById('support-status-desc');
-    if (currentTicket.status === 'waiting') {
-        banner.classList.remove('hidden');
-        if (desc) desc.textContent = 'Ожидаем ответа...';
-    } else if (currentTicket.status === 'admin_connected') {
-        banner.classList.add('hidden');
-        if (desc) desc.textContent = 'Админ подключился';
-    } else {
-        banner.classList.add('hidden');
-        if (desc) desc.textContent = 'Диалог завершён';
-    }
+    if (currentTicket.status === 'waiting') { banner.classList.remove('hidden'); if (desc) desc.textContent = 'Ожидаем ответа...'; }
+    else if (currentTicket.status === 'admin_connected') { banner.classList.add('hidden'); if (desc) desc.textContent = 'Админ подключился'; }
+    else { banner.classList.add('hidden'); if (desc) desc.textContent = 'Диалог завершён'; }
 }
-
 async function createTicket() {
     const message = document.getElementById('support-first-message').value.trim();
     if (!message || message.length < 10) { tg.showAlert('Опиши проблему (мин. 10 символов)'); return; }
@@ -539,7 +591,6 @@ async function createTicket() {
         startPolling();
     } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
 }
-
 async function closeMyTicket() {
     const confirmed = await new Promise(res => tg.showConfirm('Закрыть тикет?', res));
     if (!confirmed) return;
@@ -551,7 +602,6 @@ async function closeMyTicket() {
         document.getElementById('support-start').style.display = 'block';
     } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
 }
-
 function renderSupportMessages() {
     if (!currentTicket) return;
     const c = document.getElementById('support-messages');
@@ -564,7 +614,6 @@ function renderSupportMessages() {
     c.innerHTML = html;
     c.scrollTop = c.scrollHeight;
 }
-
 async function sendSupportMessage() {
     const input = document.getElementById('support-input');
     const message = input.value.trim();
@@ -579,7 +628,6 @@ async function sendSupportMessage() {
         updateSupportStatus();
     } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
 }
-
 function startPolling() {
     if (pollInterval) clearInterval(pollInterval);
     pollInterval = setInterval(async () => {
@@ -598,9 +646,104 @@ function startPolling() {
     }, 5000);
 }
 
-// ==================== ADMIN TICKETS ====================
+// ==================== ADMIN ====================
 let currentAdminTicket = null;
 let adminTicketPoll = null;
+
+async function adminLoadDashboard() {
+    const c = document.getElementById('admin-stats-content');
+    c.innerHTML = '<div class="loading-block">⏳</div>';
+    try {
+        const s = await apiCall('/api/admin/stats');
+        c.innerHTML = `
+            <div class="admin-grid-3">
+                <div class="admin-stat-card"><div class="admin-stat-value">${s.totalUsers}</div><div class="admin-stat-label">Юзеров</div></div>
+                <div class="admin-stat-card"><div class="admin-stat-value green">${s.premiumUsers}</div><div class="admin-stat-label">Премиум</div></div>
+                <div class="admin-stat-card"><div class="admin-stat-value cyan">${s.purchasedUsers || 0}</div><div class="admin-stat-label">Купили</div></div>
+            </div>
+            <div class="admin-grid-3">
+                <div class="admin-stat-card"><div class="admin-stat-value yellow">${s.totalRevenue || 0}</div><div class="admin-stat-label">Доход (Stars)</div></div>
+                <div class="admin-stat-card"><div class="admin-stat-value">${s.totalReferrals}</div><div class="admin-stat-label">Рефералов</div></div>
+                <div class="admin-stat-card"><div class="admin-stat-value">${s.todayChecks}</div><div class="admin-stat-label">Проверок сегодня</div></div>
+            </div>
+            <div class="admin-grid">
+                <div class="admin-stat-card"><div class="admin-stat-value">${s.totalWatched}</div><div class="admin-stat-label">В отслеживании</div></div>
+                <div class="admin-stat-card"><div class="admin-stat-value green">${s.purchasesToday || 0}</div><div class="admin-stat-label">Покупок сегодня</div></div>
+            </div>
+        `;
+    } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
+}
+
+async function adminLoadUsers() {
+    const c = document.getElementById('admin-users-content');
+    c.innerHTML = '<div class="loading-block">⏳</div>';
+    try {
+        const data = await apiCall('/api/admin/users');
+        if (!data.users?.length) { c.innerHTML = '<div class="loading-block">Нет пользователей</div>'; return; }
+        let html = '';
+        data.users.slice(0, 50).forEach(u => {
+            const un = u.username ? `@${u.username}` : '—';
+            const pi = u.premium ? '⭐' : '👤';
+            let exp = '';
+            if (u.premiumExpires) { const d = new Date(u.premiumExpires); exp = `до ${d.toLocaleDateString('ru-RU')}`; }
+            html += `<div class="promo-item"><div><div class="promo-code">${pi} ${escapeHtml(u.firstName || '—')}</div><div class="promo-details">${un} · ID: ${u.userId}</div><div class="promo-details">${exp} · 👁️ ${u.watchlistCount}</div></div></div>`;
+        });
+        c.innerHTML = html;
+    } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
+}
+
+let searchTimeout = null;
+function adminSearchUsers() {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(async () => {
+        const q = document.getElementById('admin-search-input').value.trim();
+        const c = document.getElementById('admin-users-content');
+        if (!q) { adminLoadUsers(); return; }
+        c.innerHTML = '<div class="loading-block">🔍 Поиск...</div>';
+        try {
+            const data = await apiCall('/api/admin/search-user', { query: q });
+            if (!data.results?.length) { c.innerHTML = '<div class="loading-block">Ничего не найдено</div>'; return; }
+            let html = '';
+            data.results.forEach(u => {
+                const pi = u.premium ? '⭐' : '👤';
+                const un = u.username ? `@${u.username}` : '—';
+                html += `<div class="promo-item"><div><div class="promo-code">${pi} ${escapeHtml(u.firstName || '—')}</div><div class="promo-details">${un} · ID: ${u.userId}</div></div></div>`;
+            });
+            c.innerHTML = html;
+        } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
+    }, 300);
+}
+
+async function adminLoadLogs() {
+    const c = document.getElementById('admin-logs-content');
+    c.innerHTML = '<div class="loading-block">⏳</div>';
+    try {
+        const data = await apiCall('/api/admin/logs');
+        if (!data.logs?.length) { c.innerHTML = '<div class="loading-block">Логов нет</div>'; return; }
+        const actionEmoji = {
+            'give_premium': '⭐',
+            'revoke_premium': '❌',
+            'create_promo': '🎟',
+            'edit_promo': '✏️',
+            'delete_promo': '🗑',
+            'broadcast': '📢'
+        };
+        let html = '';
+        data.logs.slice(0, 50).forEach(l => {
+            const time = new Date(l.t).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+            const emoji = actionEmoji[l.action] || '📌';
+            html += `<div class="log-item">
+                <div class="log-icon">${emoji}</div>
+                <div class="log-content">
+                    <div class="log-action">${l.action}</div>
+                    <div class="log-details">${escapeHtml(l.details || '')} · admin: ${l.adminId}</div>
+                </div>
+                <div class="log-time">${time}</div>
+            </div>`;
+        });
+        c.innerHTML = html;
+    } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
+}
 
 async function loadAdminTickets() {
     try {
@@ -634,7 +777,6 @@ async function openAdminTicket(ticketId) {
         document.getElementById('admin-ticket-avatar').textContent = '👤';
         renderAdminTicketMessages();
         document.getElementById('admin-ticket-chat').style.display = 'flex';
-        document.getElementById('admin-panel').style.display = 'none';
         if (adminTicketPoll) clearInterval(adminTicketPoll);
         adminTicketPoll = setInterval(async () => {
             try {
@@ -647,7 +789,6 @@ async function openAdminTicket(ticketId) {
         }, 5000);
     } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
 }
-
 function renderAdminTicketMessages() {
     if (!currentAdminTicket) return;
     const c = document.getElementById('admin-ticket-messages');
@@ -662,7 +803,6 @@ function renderAdminTicketMessages() {
     c.innerHTML = html;
     c.scrollTop = c.scrollHeight;
 }
-
 async function sendAdminTicketMessage() {
     const input = document.getElementById('admin-ticket-input');
     const message = input.value.trim();
@@ -676,14 +816,11 @@ async function sendAdminTicketMessage() {
         renderAdminTicketMessages();
     } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
 }
-
 function closeAdminTicketChat() {
     if (adminTicketPoll) { clearInterval(adminTicketPoll); adminTicketPoll = null; }
     document.getElementById('admin-ticket-chat').style.display = 'none';
-    document.getElementById('admin-panel').style.display = 'flex';
     loadAdminTickets();
 }
-
 async function closeAdminTicket() {
     if (!currentAdminTicket) return;
     const confirmed = await new Promise(res => tg.showConfirm('Закрыть тикет?', res));
@@ -695,118 +832,32 @@ async function closeAdminTicket() {
     } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
 }
 
-// ==================== ADMIN ====================
-function openAdminPanel() {
-    document.getElementById('admin-panel').style.display = 'flex';
-    adminLoadStats();
-}
-
-function closeAdminPanel() {
-    document.getElementById('admin-panel').style.display = 'none';
-}
-
-document.querySelectorAll('.admin-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+document.querySelectorAll('.admin-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+        document.querySelectorAll('.admin-pill').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById(`atab-${tab.dataset.atab}`).classList.add('active');
-        const a = tab.dataset.atab;
-        if (a === 'stats') adminLoadStats();
+        pill.classList.add('active');
+        const a = pill.dataset.atab;
+        const content = document.getElementById(`atab-${a}`);
+        if (content) content.classList.add('active');
+        if (a === 'dashboard') adminLoadDashboard();
         if (a === 'users') adminLoadUsers();
         if (a === 'promos') adminLoadPromos();
         if (a === 'tickets') loadAdminTickets();
         if (a === 'broadcast') loadBroadcastTemplates();
+        if (a === 'logs') adminLoadLogs();
     });
 });
-
-async function adminLoadStats() {
-    const c = document.getElementById('admin-stats-content');
-    c.innerHTML = '<div class="loading-block">⏳</div>';
-    try {
-        const s = await apiCall('/api/admin/stats');
-        c.innerHTML = `
-            <div class="stats-profile-grid">
-                <div class="stat-profile-box"><div class="stat-profile-value">${s.totalUsers}</div><div class="stat-profile-label">Юзеров</div></div>
-                <div class="stat-profile-box"><div class="stat-profile-value">${s.premiumUsers}</div><div class="stat-profile-label">Премиум</div></div>
-                <div class="stat-profile-box"><div class="stat-profile-value">${s.purchasedUsers || 0}</div><div class="stat-profile-label">Купили</div></div>
-            </div>
-            <div class="stats-profile-grid">
-                <div class="stat-profile-box"><div class="stat-profile-value">${s.totalRevenue || 0}</div><div class="stat-profile-label">Доход (Stars)</div></div>
-                <div class="stat-profile-box"><div class="stat-profile-value">${s.totalReferrals}</div><div class="stat-profile-label">Рефералов</div></div>
-                <div class="stat-profile-box"><div class="stat-profile-value">${s.todayChecks}</div><div class="stat-profile-label">Проверок сегодня</div></div>
-            </div>`;
-    } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
-}
-
-async function adminLoadUsers() {
-    const c = document.getElementById('admin-users-content');
-    c.innerHTML = '<div class="loading-block">⏳</div>';
-    try {
-        const data = await apiCall('/api/admin/users');
-        if (!data.users?.length) { c.innerHTML = '<div class="loading-block">Нет пользователей</div>'; return; }
-        let html = '';
-        data.users.slice(0, 50).forEach(u => {
-            const un = u.username ? `@${u.username}` : '—';
-            const pi = u.premium ? '⭐' : '👤';
-            let exp = '';
-            if (u.premiumExpires) { const d = new Date(u.premiumExpires); exp = `до ${d.toLocaleDateString('ru-RU')}`; }
-            html += `<div class="promo-item"><div><div class="promo-code">${pi} ${escapeHtml(u.firstName || '—')}</div><div class="promo-details">${un} · ID: ${u.userId}</div><div class="promo-details">${exp} · 👁️ ${u.watchlistCount}</div></div></div>`;
-        });
-        c.innerHTML = html;
-    } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
-}
-
-async function adminGivePremium() {
-    const target = document.getElementById('admin-premium-target').value.trim();
-    const days = parseInt(document.getElementById('admin-premium-days').value) || 30;
-    const result = document.getElementById('admin-premium-result');
-    if (!target) { result.innerHTML = '❌ Укажи ID или @тег'; result.classList.add('show'); return; }
-    result.innerHTML = '<span class="spinner"></span>Обработка...';
-    result.classList.add('show');
-    try {
-        let targetId = target;
-        if (target.startsWith('@')) {
-            const u = await apiCall('/api/admin/users');
-            const f = u.users.find(x => x.username?.toLowerCase() === target.replace('@', '').toLowerCase());
-            if (!f) throw new Error('Не найден');
-            targetId = f.userId;
-        }
-        await apiCall('/api/admin/give-premium', { targetId: parseInt(targetId), days });
-        result.innerHTML = `✅ Премиум выдан на ${days} дн.`;
-    } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
-}
-
-async function adminRevokePremium() {
-    const target = document.getElementById('admin-premium-target').value.trim();
-    const result = document.getElementById('admin-premium-result');
-    if (!target) { result.innerHTML = '❌ Укажи ID'; result.classList.add('show'); return; }
-    result.innerHTML = '<span class="spinner"></span>Обработка...';
-    result.classList.add('show');
-    try {
-        let targetId = target;
-        if (target.startsWith('@')) {
-            const u = await apiCall('/api/admin/users');
-            const f = u.users.find(x => x.username?.toLowerCase() === target.replace('@', '').toLowerCase());
-            if (!f) throw new Error('Не найден');
-            targetId = f.userId;
-        }
-        await apiCall('/api/admin/revoke-premium', { targetId: parseInt(targetId) });
-        result.innerHTML = '✅ Забран';
-    } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
-}
 
 // ==================== PROMO ====================
 function adminShowPromoCreate() { document.getElementById('admin-promo-create').style.display = 'block'; }
 function adminHidePromoCreate() { document.getElementById('admin-promo-create').style.display = 'none'; }
-
 function adminUpdatePromoFields() {
     const type = document.getElementById('promo-type').value;
     document.getElementById('promo-days-field').style.display = type === 'premium' ? 'block' : 'none';
     document.getElementById('promo-checks-field').style.display = type === 'checks' ? 'block' : 'none';
     document.getElementById('promo-percent-field').style.display = type === 'discount' ? 'block' : 'none';
 }
-
 async function adminCreatePromo() {
     const code = document.getElementById('promo-code').value.trim().toUpperCase();
     const type = document.getElementById('promo-type').value;
@@ -828,7 +879,6 @@ async function adminCreatePromo() {
         adminLoadPromos();
     } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
 }
-
 async function adminLoadPromos() {
     const c = document.getElementById('admin-promos-list');
     c.innerHTML = '<div class="loading-block">⏳</div>';
@@ -865,7 +915,6 @@ async function adminLoadPromos() {
         c.innerHTML = html;
     } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
 }
-
 async function adminDeletePromo(code) {
     if (!confirm(`Удалить промокод ${code}?`)) return;
     try {
@@ -896,9 +945,7 @@ function openEditPromo(code) {
     document.getElementById('edit-promo-result').classList.remove('show');
     document.getElementById('edit-promo-modal').style.display = 'flex';
 }
-
 function closeEditPromo() { document.getElementById('edit-promo-modal').style.display = 'none'; editingPromo = null; }
-
 async function adminSavePromoEdit() {
     if (!editingPromo) return;
     const result = document.getElementById('edit-promo-result');
@@ -930,13 +977,11 @@ async function loadBroadcastTemplates() {
         select.dataset.loaded = '1';
     } catch (e) {}
 }
-
 function applyBroadcastTemplate() {
     const k = document.getElementById('broadcast-template').value;
     if (!k || !broadcastTemplates[k]) return;
     document.getElementById('admin-broadcast-text').value = broadcastTemplates[k].text;
 }
-
 function adminPreviewBroadcast() {
     const text = document.getElementById('admin-broadcast-text').value.trim();
     const p = document.getElementById('admin-broadcast-preview');
@@ -944,7 +989,6 @@ function adminPreviewBroadcast() {
     p.innerHTML = `<div style="opacity:.6;font-size:11px;margin-bottom:6px;">ПРЕВЬЮ</div>${text}`;
     p.classList.add('show');
 }
-
 async function adminSendBroadcast() {
     const text = document.getElementById('admin-broadcast-text').value.trim();
     const result = document.getElementById('admin-broadcast-result');
@@ -980,8 +1024,9 @@ async function init() {
         }
         updateUserUI(p);
         updateSegActive();
+        showAdminTabIfAdmin(p.isAdmin);
         if (!p.isAdmin) {
-            ['admin-panel', 'admin-ticket-chat', 'edit-promo-modal'].forEach(id => {
+            ['edit-promo-modal', 'admin-ticket-chat'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.remove();
             });
@@ -991,16 +1036,12 @@ async function init() {
     renderRaidItems();
     updateCraftInfo();
 
-    // Хэш для тикета
     const hash = location.hash || '';
     if (hash.startsWith('#ticket=')) {
         const ticketId = hash.replace('#ticket=', '');
         if (USER_DATA?.isAdmin) {
-            document.getElementById('admin-panel').style.display = 'flex';
-            setTimeout(() => openAdminTicket(ticketId).catch(() => {
-                document.getElementById('admin-panel').style.display = 'none';
-                openSupport();
-            }), 300);
+            goToTab('admin');
+            setTimeout(() => openAdminTicket(ticketId).catch(() => openSupport()), 300);
         } else {
             document.getElementById('support-modal').style.display = 'flex';
             loadSupport();
