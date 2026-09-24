@@ -191,20 +191,33 @@ function renderSteamProfile(d) {
             </div>
 
             ${d.friendsWithRust && d.friendsWithRust.length > 0 ? `
-                <div class="activity-item">
+                <div class="activity-item activity-expandable" onclick="toggleFriends(this)">
                     <div class="activity-icon friend">👥</div>
                     <div class="activity-content">
                         <h4>Друзей с Rust: ${d.friendsWithRust.length}</h4>
-                        <p>${d.friendsWithRust.slice(0, 3).map(f => escapeHtml(f.name)).join(', ')}${d.friendsWithRust.length > 3 ? ` и ещё ${d.friendsWithRust.length - 3}` : ''}</p>
+                        <p>Нажми, чтобы раскрыть список</p>
                     </div>
+                    <div class="activity-arrow activity-arrow-rotate">›</div>
+                </div>
+                <div class="friends-list" style="display:none;">
+                    ${d.friendsWithRust.map(f => `
+                        <div class="friend-row" onclick="event.stopPropagation(); window.open('${escapeHtml(f.profileUrl)}', '_blank')">
+                            <div class="friend-avatar">${escapeHtml(f.name.substring(0, 1).toUpperCase())}</div>
+                            <div class="friend-info">
+                                <div class="friend-name">${escapeHtml(f.name)}</div>
+                                <div class="friend-link">Открыть профиль ›</div>
+                            </div>
+                        </div>
+                    `).join('')}
                 </div>
             ` : `
-                <div class="activity-item">
+                <div class="activity-item" onclick="window.open('${escapeHtml(d.profileUrl)}friends/', '_blank')">
                     <div class="activity-icon friend">👥</div>
                     <div class="activity-content">
                         <h4>Друзей всего: ${d.friendsCount}</h4>
                         <p>Steam API скрывает список друзей для чужих профилей</p>
                     </div>
+                    <div class="activity-arrow">›</div>
                 </div>
             `}
 
@@ -218,6 +231,23 @@ function renderSteamProfile(d) {
             </div>
         </div>
     `;
+}
+
+// ==================== FRIENDS TOGGLE ====================
+function toggleFriends(el) {
+    const list = el.nextElementSibling;
+    const arrow = el.querySelector('.activity-arrow');
+    if (!list || !list.classList.contains('friends-list')) return;
+
+    if (list.style.display === 'none' || !list.style.display) {
+        list.style.display = 'flex';
+        if (arrow) arrow.classList.add('rotated');
+    } else {
+        list.style.display = 'none';
+        if (arrow) arrow.classList.remove('rotated');
+    }
+
+    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 }
 
 // ==================== RAID ====================
