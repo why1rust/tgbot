@@ -1389,5 +1389,367 @@ async function init() {
         history.replaceState(null, '', location.pathname);
     }
 }
+// ==================== HOME TAB ====================
+async function loadHome() {
+    // Статистика
+    try {
+        const stats = await apiCall('/api/public/stats');
+        const el1 = document.getElementById('home-stat-premium');
+        const el2 = document.getElementById('home-stat-users');
+        const el3 = document.getElementById('home-stat-rating');
+        if (el1) el1.textContent = stats.purchasedUsers || 0;
+        if (el2) el2.textContent = stats.totalUsers || 0;
+        if (el3) el3.textContent = stats.avgRating ? stats.avgRating.toFixed(1) : '—';
+    } catch (e) {
+        console.warn('home stats failed', e);
+    }
+    loadHomeGiveaways();
+    loadHomeReviews();
+}
 
+async function loadHomeGiveaways() {
+    const c = document.getElementById('home-giveaways');
+    if (!c) return;
+    c.innerHTML = '<div class="loading-block">⏳ Загрузка...</div>';
+    try {
+        const data = await apiCall('/api/giveaways');
+        const list = data.giveaways || [];
+        if (!list.length) {
+            c.innerHTML = '<div class="loading-block">Пока нет активных розыгрышей</div>';
+            return;
+        }
+        let html = '';
+        list.forEach(g => {
+            const untilText = g.endsAt ? new Date(g.endsAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Бессрочно';
+            const condText = g.condition === 'premium' ? '⭐ Только премиум' : g.condition === 'channel' ? '📢 Подписка на канал' : '🆓 Без условий';
+            html += `<div class="home-giveaway-item">
+                <div class="home-giveaway-head">
+                    <div style="flex:1;min-width:0;">
+                        <div class="home-giveaway-title">🎁 ${escapeHtml(g.title)}</div>
+                        <div class="home-giveaway-desc">${escapeHtml(g.description || '')}</div>
+                    </div>
+                </div>
+                <div class="home-giveaway-meta">
+                    <span>🏆 ${escapeHtml(g.prize || '—')}</span>
+                    <span>${condText}</span>
+                    <span>👥 ${g.participantsCount || 0}</span>
+                    <span>⏰ ${untilText}</span>
+                </div>
+                <div class="home-giveaway-actions">
+                    ${g.joined
+                        ? `<button class="btn secondary" onclick="leaveGiveaway('${g.id}')">❌ Выйти</button>`
+                        : `<button class="btn primary" onclick="joinGiveaway('${g.id}')">✅ Участвовать</button>`
+                    }
+                </div>
+            </div>`;
+        });
+        c.innerHTML = html;
+    } catch (e) {
+        c.innerHTML = `<div class="loading-block">❌ ${escapeHtml(e.message)}</div>`;
+    }
+}
+
+async function joinGiveaway(id) {
+    try {
+        await apiCall('/api/giveaways/join', { id });
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        loadHomeGiveaways();
+    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+}
+
+async function leaveGiveaway(id) {
+    try {
+        await apiCall('/api/giveaways/leave', { id });
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        loadHomeGiveaways();
+    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+}
+
+async function loadHomeReviews() {
+    const c = document.getElementById('home-reviews');
+    if (!c) return;
+    c.innerHTML = '<div class="loading-block">⏳ Загрузка...</div>';
+    try {
+        const data = await apiCall('/api/reviews');
+        const list = data.reviews || [];
+        if (!list.length) {
+            c.innerHTML = '<div class="loading-block">Пока нет отзывов. Будь первым! ✏️</div>';
+            return;
+        }
+        let html = '';
+        list.forEach(r => {
+            const initials = (r.firstName || 'U').charAt(0).toUpperCase();
+            const av = r.photoUrl
+                ? `<div class="home-review-avatar"><img src="${escapeHtml(r.photoUrl)}" onerror="this.parentNode.textContent='${initials}';"></div>`
+                : `<div class="home-review-avatar">${initials}</div>`;
+            const stars = '★'.repeat(r.rating || 5) + '☆'.repeat(5 - (r.rating || 5));
+            const dateStr = new Date(r.timestamp).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            html += `<div class="home-review-item">
+                <div class="home-review-head">
+                    ${av}
+                    <div style="flex:1;min-width:0;">
+                        <div class="home-review-name">${escapeHtml(r.firstName || 'User')}${r.username ? ' · @' + escapeHtml(r.username) : ''}</div>
+                        <div class="home-review-stars">${stars}</div>
+                    </div>
+                </div>
+                <div class="home-review-text">${escapeHtml(r.text)}</div>
+                <div class="home-review-date">${dateStr}</div>
+            </div>`;
+        });
+        c.innerHTML = html;
+    } catch (e) {
+        c.innerHTML = `<div class="loading-block">❌ ${escapeHtml(e.message)}</div>`;
+    }
+}
+
+// ==================== REVIEW ADD ====================
+let reviewRating = 5;
+function openReviewModal() {
+    reviewRating = 5;
+    document.getElementById('review-text').value = '';
+    setReviewRating(5);
+    document.getElementById('review-result').classList.remove('show');
+    document.getElementById('review-modal').style.display = 'flex';
+}
+function closeReviewModal() {
+    document.getElementById('review-modal').style.display = 'none';
+}
+function setReviewRating(v) {
+    reviewRating = v;
+    document.querySelectorAll('#review-stars span').forEach(s => {
+        s.classList.toggle('active', parseInt(s.dataset.v) <= v);
+    });
+    if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+}
+async function submitReview() {
+    const text = document.getElementById('review-text').value.trim();
+    const result = document.getElementById('review-result');
+    if (text.length < 5) { result.innerHTML = '❌ Минимум 5 символов'; result.classList.add('show'); return; }
+    if (text.length > 500) { result.innerHTML = '❌ Максимум 500 символов'; result.classList.add('show'); return; }
+    result.innerHTML = '<span class="spinner"></span>Отправка...';
+    result.classList.add('show');
+    try {
+        await apiCall('/api/reviews/add', { text, rating: reviewRating });
+        result.innerHTML = '✅ Спасибо за отзыв!';
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        setTimeout(() => {
+            closeReviewModal();
+            loadHomeReviews();
+        }, 900);
+    } catch (e) {
+        result.innerHTML = `❌ ${escapeHtml(e.message)}`;
+    }
+}
+
+// ==================== ADMIN: REVIEWS ====================
+async function adminLoadReviews() {
+    const c = document.getElementById('admin-reviews-list');
+    if (!c) return;
+    c.innerHTML = '<div class="loading-block">⏳</div>';
+    try {
+        const data = await apiCall('/api/reviews');
+        const list = data.reviews || [];
+        if (!list.length) { c.innerHTML = '<div class="loading-block">Отзывов нет</div>'; return; }
+        let html = '';
+        list.forEach(r => {
+            const stars = '★'.repeat(r.rating || 5) + '☆'.repeat(5 - (r.rating || 5));
+            const dateStr = new Date(r.timestamp).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+            html += `<div class="admin-review-item">
+                <div class="admin-review-body">
+                    <div class="admin-review-head">
+                        <div class="admin-review-name">${escapeHtml(r.firstName || 'User')}${r.username ? ' · @' + escapeHtml(r.username) : ''} · <code>${r.userId}</code></div>
+                        <div class="admin-review-stars">${stars}</div>
+                    </div>
+                    <div class="admin-review-text">${escapeHtml(r.text)}</div>
+                    <div class="admin-review-date">${dateStr}</div>
+                </div>
+                <button class="admin-review-delete" onclick="adminDeleteReview(${r.userId}, ${r.timestamp})">🗑</button>
+            </div>`;
+        });
+        c.innerHTML = html;
+    } catch (e) {
+        c.innerHTML = `<div class="loading-block">❌ ${escapeHtml(e.message)}</div>`;
+    }
+}
+async function adminDeleteReview(userId, timestamp) {
+    const confirmed = await new Promise(res => tg.showConfirm('Удалить этот отзыв?', res));
+    if (!confirmed) return;
+    try {
+        await apiCall('/api/admin/reviews/delete', { userId, timestamp });
+        adminLoadReviews();
+        loadHomeReviews();
+    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+}
+
+// ==================== ADMIN: GIVEAWAYS ====================
+async function adminLoadGiveaways() {
+    const c = document.getElementById('admin-giveaways-list');
+    if (!c) return;
+    c.innerHTML = '<div class="loading-block">⏳</div>';
+    try {
+        const data = await apiCall('/api/admin/giveaways/list');
+        const list = data.giveaways || [];
+        if (!list.length) { c.innerHTML = '<div class="loading-block">Розыгрышей нет</div>'; return; }
+        let html = '';
+        list.forEach(g => {
+            const participants = (g.participants || []).length;
+            const untilText = g.endsAt ? new Date(g.endsAt).toLocaleString('ru-RU') : 'Бессрочно';
+            html += `<div class="admin-giveaway-item">
+                <div class="admin-giveaway-head">
+                    <div>
+                        <div class="admin-giveaway-title">🎁 ${escapeHtml(g.title)}</div>
+                        <div class="admin-giveaway-status ${g.status}">${g.status === 'active' ? 'Активен' : 'Завершён'}</div>
+                    </div>
+                </div>
+                <div class="admin-giveaway-meta">
+                    🏆 ${escapeHtml(g.prize || '—')}<br>
+                    👥 Участников: <b>${participants}</b><br>
+                    ⏰ ${untilText}
+                </div>
+                <div class="admin-giveaway-actions">
+                    <button onclick="openGiveawayModal('${g.id}')">✏️ Редакт.</button>
+                    ${g.status === 'active' ? `<button class="finish" onclick="adminFinishGiveaway('${g.id}')">🏆 Завершить</button>` : ''}
+                    <button class="danger" onclick="adminDeleteGiveaway('${g.id}')">🗑 Удалить</button>
+                </div>
+            </div>`;
+        });
+        c.innerHTML = html;
+    } catch (e) {
+        c.innerHTML = `<div class="loading-block">❌ ${escapeHtml(e.message)}</div>`;
+    }
+}
+
+let currentGiveawayId = null;
+let currentGiveawayFull = null;
+async function openGiveawayModal(id) {
+    currentGiveawayId = id || null;
+    document.getElementById('giveaway-id').value = id || '';
+    document.getElementById('giveaway-title').textContent = id ? '✏️ Редактировать розыгрыш' : '🎁 Создать розыгрыш';
+    document.getElementById('giveaway-modal-title').textContent = id ? '✏️ Редактировать розыгрыш' : '🎁 Создать розыгрыш';
+    document.getElementById('giveaway-result').classList.remove('show');
+
+    if (id) {
+        const data = await apiCall('/api/admin/giveaways/list');
+        const g = (data.giveaways || []).find(x => x.id === id);
+        if (!g) { tg.showAlert('Не найден'); return; }
+        currentGiveawayFull = g;
+        document.getElementById('giveaway-title').value = g.title || '';
+        document.getElementById('giveaway-description').value = g.description || '';
+        document.getElementById('giveaway-prize').value = g.prize || '';
+        document.getElementById('giveaway-condition').value = g.condition || 'none';
+        if (g.endsAt) {
+            const d = new Date(g.endsAt);
+            const iso = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            document.getElementById('giveaway-ends').value = iso;
+        } else {
+            document.getElementById('giveaway-ends').value = '';
+        }
+    } else {
+        currentGiveawayFull = null;
+        document.getElementById('giveaway-title').value = '';
+        document.getElementById('giveaway-description').value = '';
+        document.getElementById('giveaway-prize').value = '';
+        document.getElementById('giveaway-condition').value = 'none';
+        document.getElementById('giveaway-ends').value = '';
+    }
+    document.getElementById('giveaway-modal').style.display = 'flex';
+}
+function closeGiveawayModal() {
+    document.getElementById('giveaway-modal').style.display = 'none';
+    currentGiveawayId = null;
+    currentGiveawayFull = null;
+}
+async function saveGiveaway() {
+    const title = document.getElementById('giveaway-title').value.trim();
+    const description = document.getElementById('giveaway-description').value.trim();
+    const prize = document.getElementById('giveaway-prize').value.trim();
+    const condition = document.getElementById('giveaway-condition').value;
+    const endsVal = document.getElementById('giveaway-ends').value;
+    const endsAt = endsVal ? new Date(endsVal).getTime() : 0;
+    const result = document.getElementById('giveaway-result');
+    if (!title || !description) { result.innerHTML = '❌ Заполни название и описание'; result.classList.add('show'); return; }
+    result.innerHTML = '<span class="spinner"></span>Сохранение...';
+    result.classList.add('show');
+    try {
+        if (currentGiveawayId) {
+            await apiCall('/api/admin/giveaways/update', { id: currentGiveawayId, title, description, prize, condition, endsAt });
+        } else {
+            await apiCall('/api/admin/giveaways/create', { title, description, prize, condition, endsAt });
+        }
+        result.innerHTML = '✅ Сохранено';
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        setTimeout(() => { closeGiveawayModal(); adminLoadGiveaways(); loadHomeGiveaways(); }, 800);
+    } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
+}
+async function adminDeleteGiveaway(id) {
+    const confirmed = await new Promise(res => tg.showConfirm('Удалить розыгрыш?', res));
+    if (!confirmed) return;
+    try {
+        await apiCall('/api/admin/giveaways/delete', { id });
+        adminLoadGiveaways();
+        loadHomeGiveaways();
+    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+}
+async function adminFinishGiveaway(id) {
+    const confirmed = await new Promise(res => tg.showConfirm('Завершить розыгрыш и выбрать победителя?', res));
+    if (!confirmed) return;
+    try {
+        const r = await apiCall('/api/admin/giveaways/finish', { id });
+        tg.showAlert('🏆 Победитель: ' + r.winner);
+        adminLoadGiveaways();
+        loadHomeGiveaways();
+    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+}
+
+// ==================== ADMIN: BAN ====================
+let currentBanId = null;
+let currentBanName = '';
+function openUserBanModal(userId, name, banned) {
+    if (banned) {
+        // Разбан
+        tg.showConfirm('Разбанить пользователя?', async (ok) => {
+            if (!ok) return;
+            try {
+                await apiCall('/api/admin/unban', { targetId: userId });
+                tg.showAlert('✅ Разбанен');
+                adminLoadUsers();
+            } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+        });
+        return;
+    }
+    currentBanId = userId;
+    currentBanName = name;
+    document.getElementById('user-ban-name').value = `${name} · ID: ${userId}`;
+    document.getElementById('user-ban-minutes').value = 10080;
+    document.getElementById('user-ban-reason').value = '';
+    document.querySelectorAll('#user-ban-presets button').forEach(b => b.classList.toggle('active', b.dataset.min === '10080'));
+    document.getElementById('user-ban-result').classList.remove('show');
+    document.getElementById('user-ban-modal').style.display = 'flex';
+}
+function closeUserBanModal() {
+    document.getElementById('user-ban-modal').style.display = 'none';
+    currentBanId = null;
+}
+function selectBanDuration(minutes) {
+    document.getElementById('user-ban-minutes').value = minutes;
+    document.querySelectorAll('#user-ban-presets button').forEach(b => b.classList.toggle('active', parseInt(b.dataset.min) === minutes));
+    if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+}
+function clearBanPresetActive() {
+    document.querySelectorAll('#user-ban-presets button').forEach(b => b.classList.remove('active'));
+}
+async function confirmUserBan() {
+    if (!currentBanId) return;
+    const minutes = parseInt(document.getElementById('user-ban-minutes').value) || 0;
+    const reason = document.getElementById('user-ban-reason').value.trim();
+    const result = document.getElementById('user-ban-result');
+    result.innerHTML = '<span class="spinner"></span>Применяю...';
+    result.classList.add('show');
+    try {
+        await apiCall('/api/admin/ban', { targetId: currentBanId, minutes, reason });
+        result.innerHTML = '✅ Забанен';
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        setTimeout(() => { closeUserBanModal(); adminLoadUsers(); }, 800);
+    } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
+}
 init();
