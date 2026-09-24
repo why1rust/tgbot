@@ -11,6 +11,7 @@ let LANG = 'ru';
 let SETTINGS = { theme: 'dark', language: 'ru', notifications: true, watchNotifications: true, haptic: true };
 let USER_DATA = null;
 let LAST_ANALYZED = null;
+let PERMS = {};
 
 // ==================== API ====================
 async function apiCall(endpoint, data = {}) {
@@ -365,6 +366,7 @@ async function loadProfile() {
         USER_DATA = profile;
         LANG = profile.settings?.language || LANG;
         SETTINGS = { ...SETTINGS, ...(profile.settings || {}) };
+        PERMS = profile.permissions || {};
         applyTheme(SETTINGS.theme);
         updateSegActive();
         updateUserUI(profile);
@@ -570,7 +572,16 @@ async function createTicket() {
         renderSupportMessages();
         updateSupportStatus();
         startPolling();
-    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+    } catch (e) {
+        // Уже есть открытый тикет — просто грузим его
+        if (e.message && e.message.toLowerCase().includes('already open')) {
+            await loadSupport();
+            if (currentTicket) tg.showAlert('У тебя уже есть открытый тикет — открываем его');
+            else tg.showAlert('Ошибка загрузки тикета. Попробуй ещё раз.');
+            return;
+        }
+        tg.showAlert('Ошибка: ' + e.message);
+    }
 }
 async function closeMyTicket() {
     const confirmed = await new Promise(res => tg.showConfirm('Закрыть тикет?', res));
@@ -633,21 +644,7 @@ async function helperLoadTickets() {
     c.innerHTML = '<div class="loading-block">⏳ Загрузка...</div>';
     try {
         const data = await apiCall('/api/support/admin/tickets');
-        if (!data.tickets?.length) { c.innerHTML = '<div class="loading-block">Нет открытых тикетов</div>'; return; }
-        let html = '';
-        data.tickets.forEach(t => {
-            const st = { 'waiting': '⏳', 'admin_connected': '💬', 'closed': '✅' }[t.status];
-            const un = t.username ? `@${t.username}` : '—';
-            html += `<div class="ticket-item ${t.status === 'waiting' ? 'unread' : ''}" onclick="openHelperTicket('${t.id}')">
-                <div class="ticket-icon">${t.status === 'waiting' ? '🔴' : '💬'}</div>
-                <div class="ticket-info">
-                    <div class="ticket-name">${escapeHtml(t.firstName)} · ${un}</div>
-                    <div class="ticket-preview">${escapeHtml(t.lastMessage.substring(0, 60))}</div>
-                </div>
-                <div class="ticket-status ${t.status}">${st}</div>
-            </div>`;
-        });
-        c.innerHTML = html;
+        renderTicketsList(data.tickets, c, 'helper');
     } catch (e) { c.innerHTML = `<div class="loading-block">❌ ${escapeHtml(e.message)}</div>`; }
 }
 
@@ -671,6 +668,33 @@ async function openHelperTicket(ticketId) {
             } catch (e) {}
         }, 5000);
     } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+}
+
+// ==================== Общий рендер списка тикетов ====================
+function renderTicketsList(tickets, container, context) {
+    if (!tickets || !tickets.length) {
+        container.innerHTML = '<div class="loading-block">Нет открытых тикетов</div>';
+        return;
+    }
+    let html = '';
+    tickets.forEach(t => {
+        const statusEmoji = { 'waiting': '⏳', 'admin_connected': '💬', 'closed': '✅' }[t.status] || '💬';
+        const isUnread = t.status === 'waiting';
+        const firstName = (t.firstName || '').trim() || 'User';
+        const username = t.username ? `@${t.username}` : '';
+        const nameLine = username ? `${firstName} · ${username}` : firstName;
+        const preview = (t.lastMessage || '').replace(/\s+/g, ' ').trim().substring(0, 60) || '—';
+        const handler = context === 'helper' ? 'openHelperTicket' : 'openAdminTicket';
+        html += `<div class="ticket-item ${isUnread ? 'unread' : ''}" onclick="${handler}('${t.id}')">
+            <div class="ticket-icon">${isUnread ? '🔴' : '💬'}</div>
+            <div class="ticket-info">
+                <div class="ticket-name">${escapeHtml(nameLine)}</div>
+                <div class="ticket-preview">${escapeHtml(preview)}</div>
+            </div>
+            <div class="ticket-status ${t.status}">${statusEmoji}</div>
+        </div>`;
+    });
+    container.innerHTML = html;
 }
 
 // ==================== ADMIN ====================
@@ -897,6 +921,40 @@ async function confirmUserDm() {
     } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
 }
 
+// ==================== ADMIN: PERMISSIONS ====================
+async function adminLoadPerms() {
+    const permList = document.getElementById('perm-list');
+    const result = document.getElementById('perms-result');
+    result.classList.remove('show');
+    try {
+        const data = await apiCall('/api/admin/perms');
+        const perms = data.perms || {};
+        document.querySelectorAll('#perm-list input[data-perm]').forEach(input => {
+            input.checked = perms[input.dataset.perm] === true;
+        });
+    } catch (e) {
+        permList.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`;
+    }
+}
+
+async function savePerms() {
+    const result = document.getElementById('perms-result');
+    const newPerms = {};
+    document.querySelectorAll('#perm-list input[data-perm]').forEach(input => {
+        newPerms[input.dataset.perm] = input.checked;
+    });
+    result.innerHTML = '<span class="spinner"></span>Сохранение...';
+    result.classList.add('show');
+    try {
+        await apiCall('/api/admin/perms/save', { perms: newPerms });
+        result.innerHTML = '✅ Права сохранены';
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        setTimeout(() => result.classList.remove('show'), 1500);
+    } catch (e) {
+        result.innerHTML = `❌ ${escapeHtml(e.message)}`;
+    }
+}
+
 // ==================== ADMIN: LOGS ====================
 async function adminLoadLogs() {
     const c = document.getElementById('admin-logs-content');
@@ -914,7 +972,8 @@ async function adminLoadLogs() {
             'add_helper': '🎧',
             'remove_helper': '❌',
             'give_bonus': '🎁',
-            'send_dm': '📩'
+            'send_dm': '📩',
+            'edit_perms': '🛡️'
         };
         let html = '';
         data.logs.slice(0, 50).forEach(l => {
@@ -933,7 +992,7 @@ async function adminLoadLogs() {
     } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
 }
 
-// ==================== ADMIN: PREMIUM (форма вкладки) ====================
+// ==================== ADMIN: PREMIUM ====================
 async function adminGivePremium() {
     const target = document.getElementById('admin-premium-target').value.trim();
     const days = parseInt(document.getElementById('admin-premium-days').value) || 30;
@@ -1026,23 +1085,11 @@ async function loadAdminTickets() {
     try {
         const data = await apiCall('/api/support/admin/tickets');
         const c = document.getElementById('admin-tickets-list');
-        if (!data.tickets?.length) { c.innerHTML = `<p style="text-align:center;opacity:.5;padding:20px;">Нет открытых тикетов</p>`; return; }
-        let html = '';
-        data.tickets.forEach(t => {
-            const isUnread = t.status === 'waiting';
-            const st = { 'waiting': '⏳', 'admin_connected': '💬', 'closed': '✅' }[t.status];
-            const un = t.username ? `@${t.username}` : '—';
-            html += `<div class="ticket-item ${isUnread ? 'unread' : ''}" onclick="openAdminTicket('${t.id}')">
-                <div class="ticket-icon">${isUnread ? '🔴' : '💬'}</div>
-                <div class="ticket-info">
-                    <div class="ticket-name">${escapeHtml(t.firstName)} · ${un}</div>
-                    <div class="ticket-preview">${escapeHtml(t.lastMessage.substring(0, 50))}</div>
-                </div>
-                <div class="ticket-status ${t.status}">${st}</div>
-            </div>`;
-        });
-        c.innerHTML = html;
-    } catch (e) { console.error(e); }
+        renderTicketsList(data.tickets, c, 'admin');
+    } catch (e) {
+        const c = document.getElementById('admin-tickets-list');
+        c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`;
+    }
 }
 
 async function openAdminTicket(ticketId) {
@@ -1110,7 +1157,8 @@ function closeAdminTicketChat() {
 
 async function closeAdminTicket() {
     if (!currentAdminTicket) return;
-    if (!USER_DATA?.isAdmin) { tg.showAlert('Закрывать тикеты может только админ'); return; }
+    const canClose = USER_DATA?.isAdmin || (USER_DATA?.isHelper && PERMS.close_tickets);
+    if (!canClose) { tg.showAlert('Закрывать тикеты может только админ'); return; }
     const confirmed = await new Promise(res => tg.showConfirm('Закрыть тикет?', res));
     if (!confirmed) return;
     try {
@@ -1133,6 +1181,7 @@ document.querySelectorAll('.admin-pill').forEach(pill => {
         if (a === 'users') adminLoadUsers();
         if (a === 'premium') {}
         if (a === 'helpers') adminLoadHelpers();
+        if (a === 'perms') adminLoadPerms();
         if (a === 'promos') adminLoadPromos();
         if (a === 'tickets') loadAdminTickets();
         if (a === 'broadcast') loadBroadcastTemplates();
@@ -1312,6 +1361,7 @@ async function init() {
             LANG = p.settings.language || LANG;
             applyTheme(SETTINGS.theme);
         }
+        PERMS = p.permissions || {};
         updateUserUI(p);
         updateSegActive();
         showRoleTabs(p.isAdmin, p.isHelper);
