@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0e0e12" id="theme-color-meta">
-    <title>RustGuard</title>
+    <title>Rust Guard</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,9 +12,9 @@
     <div class="app">
         <header class="header">
             <div class="header-left">
-                <div class="logo">🛡️</div>
+                <div class="logo"><img src="logo.png" alt="Rust Guard" onerror="this.style.display='none'; this.parentNode.textContent='🛡️';"></div>
                 <div class="header-info">
-                    <h1>RUSTGUARD</h1>
+                    <h1>RUST GUARD</h1>
                     <p>v1.0</p>
                 </div>
             </div>
@@ -24,7 +24,11 @@
         </header>
 
         <nav class="tabs" id="main-tabs">
-            <button class="tab active" data-tab="steam">
+            <button class="tab active" data-tab="home">
+                <span class="tab-icon">🏠</span>
+                <span class="tab-label">Главная</span>
+            </button>
+            <button class="tab" data-tab="steam">
                 <span class="tab-icon">🎮</span>
                 <span class="tab-label">Steam</span>
             </button>
@@ -51,8 +55,49 @@
         </nav>
 
         <main class="content">
+            <!-- HOME -->
+            <section class="panel active" id="panel-home">
+                <div class="hero home-hero">
+                    <img src="logo.png" alt="Rust Guard" class="home-logo" onerror="this.style.display='none';">
+                    <div class="hero-kicker">WELCOME TO</div>
+                    <h1 class="hero-title">Rust Guard</h1>
+                    <p class="hero-desc">Проверка игроков Rust в один клик: анализ Steam, отслеживание, калькуляторы и розыгрыши.</p>
+                </div>
+
+                <div class="home-stats" id="home-stats">
+                    <div class="home-stat">
+                        <div class="home-stat-value" id="home-stat-premium">—</div>
+                        <div class="home-stat-label">Купили премиум</div>
+                    </div>
+                    <div class="home-stat">
+                        <div class="home-stat-value" id="home-stat-users">—</div>
+                        <div class="home-stat-label">Пользователей</div>
+                    </div>
+                    <div class="home-stat">
+                        <div class="home-stat-value" id="home-stat-rating">—</div>
+                        <div class="home-stat-label">Рейтинг</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head">
+                        <h3>🎁 Активные розыгрыши</h3>
+                        <button class="btn-mini" onclick="loadHomeGiveaways()">🔄</button>
+                    </div>
+                    <div id="home-giveaways" class="loading-block">⏳ Загрузка...</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head">
+                        <h3>💬 Отзывы</h3>
+                        <button class="btn-mini" onclick="openReviewModal()">✏️</button>
+                    </div>
+                    <div id="home-reviews" class="loading-block">⏳ Загрузка...</div>
+                </div>
+            </section>
+
             <!-- STEAM -->
-            <section class="panel active" id="panel-steam">
+            <section class="panel" id="panel-steam">
                 <div class="hero">
                     <div class="hero-kicker">STEAM CHECKER</div>
                     <h1 class="hero-title">Проверь игрока</h1>
@@ -60,7 +105,7 @@
                 </div>
                 <div class="search-bar">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="steam-input" placeholder="76561199685927598" inputmode="text">
+                    <input type="text" id="steam-input" placeholder="76561199000000000" inputmode="text">
                     <button class="analyze-btn" onclick="analyzeSteam()">Анализ</button>
                 </div>
                 <div id="steam-result"></div>
@@ -127,7 +172,7 @@
                     <div class="card-head"><h3>Добавить игрока</h3></div>
                     <div class="field">
                         <label>SteamID</label>
-                        <input type="text" id="watch-input" placeholder="76561199685927598" inputmode="text">
+                        <input type="text" id="watch-input" placeholder="76561199000000000" inputmode="text">
                     </div>
                     <button class="btn primary" onclick="addToWatchlist()">Добавить</button>
                     <div id="watch-result" class="result"></div>
@@ -166,6 +211,8 @@
                     <button class="admin-pill" data-atab="helpers">🎧 Хелперы</button>
                     <button class="admin-pill" data-atab="perms">🛡️ Права</button>
                     <button class="admin-pill" data-atab="promos">🎟 Промо</button>
+                    <button class="admin-pill" data-atab="giveaways">🎁 Розыгрыши</button>
+                    <button class="admin-pill" data-atab="reviews">💬 Отзывы</button>
                     <button class="admin-pill" data-atab="tickets">🎫 Тикеты</button>
                     <button class="admin-pill" data-atab="broadcast">📢 Рассылка</button>
                     <button class="admin-pill" data-atab="logs">📜 Логи</button>
@@ -318,6 +365,28 @@
                                     <span></span>
                                 </label>
                             </div>
+
+                            <div class="perm-row">
+                                <div class="perm-info">
+                                    <div class="perm-name">🚫 Банить юзеров</div>
+                                    <div class="perm-desc">Может выдавать баны на срок с причиной</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" data-perm="ban_users">
+                                    <span></span>
+                                </label>
+                            </div>
+
+                            <div class="perm-row">
+                                <div class="perm-info">
+                                    <div class="perm-name">🎁 Управлять розыгрышами</div>
+                                    <div class="perm-desc">Может создавать и редактировать розыгрыши</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" data-perm="manage_giveaways">
+                                    <span></span>
+                                </label>
+                            </div>
                         </div>
 
                         <div class="admin-buttons-row" style="margin-top:20px;">
@@ -354,6 +423,15 @@
                     </div>
                     <h4 style="margin-top:20px;">Список промокодов</h4>
                     <div id="admin-promos-list" class="loading-block">⏳ Загрузка...</div>
+                </div>
+
+                <div class="admin-content" id="atab-giveaways">
+                    <button class="btn primary" onclick="openGiveawayModal()">➕ Создать розыгрыш</button>
+                    <div id="admin-giveaways-list" class="loading-block" style="margin-top:16px;">⏳ Загрузка...</div>
+                </div>
+
+                <div class="admin-content" id="atab-reviews">
+                    <div id="admin-reviews-list" class="loading-block">⏳ Загрузка...</div>
                 </div>
 
                 <div class="admin-content" id="atab-tickets">
@@ -498,9 +576,9 @@
                     <div id="support-chat" class="chat-screen" style="display:none;">
                         <div class="chat-header">
                             <div class="chat-header-info">
-                                <div class="chat-avatar">🎧</div>
+                                <div class="chat-avatar" id="support-chat-avatar">🎧</div>
                                 <div>
-                                    <div class="chat-title">RustGuard</div>
+                                    <div class="chat-title">Rust Guard</div>
                                     <div class="chat-subtitle" id="support-status-desc">—</div>
                                 </div>
                             </div>
@@ -667,6 +745,100 @@
                     <button class="btn secondary" onclick="closeUserDmModal()">Отмена</button>
                 </div>
                 <div id="user-dm-result" class="result"></div>
+            </div>
+        </div>
+
+        <!-- BAN user modal -->
+        <div id="user-ban-modal" class="modal-screen" style="display:none;">
+            <div class="modal-center-box">
+                <div class="modal-head">
+                    <div class="modal-title">🚫 Забанить пользователя</div>
+                    <button class="modal-close" onclick="closeUserBanModal()">✕</button>
+                </div>
+                <div class="admin-field">
+                    <label>Пользователь</label>
+                    <input type="text" id="user-ban-name" readonly>
+                </div>
+                <div class="admin-field">
+                    <label>Срок бана</label>
+                    <div class="premium-presets" id="user-ban-presets">
+                        <button data-min="60" onclick="selectBanDuration(60)">1 час</button>
+                        <button data-min="1440" onclick="selectBanDuration(1440)">1 день</button>
+                        <button data-min="10080" class="active" onclick="selectBanDuration(10080)">7 дней</button>
+                        <button data-min="43200" onclick="selectBanDuration(43200)">30 дней</button>
+                        <button data-min="0" onclick="selectBanDuration(0)">Навсегда</button>
+                    </div>
+                </div>
+                <div class="admin-field">
+                    <label>Или своё количество (минут, 0 = навсегда)</label>
+                    <input type="number" id="user-ban-minutes" value="10080" min="0" oninput="clearBanPresetActive()">
+                </div>
+                <div class="admin-field">
+                    <label>Причина (необязательно)</label>
+                    <textarea id="user-ban-reason" rows="3" placeholder="Например: спам в поддержке"></textarea>
+                </div>
+                <div class="admin-buttons-row">
+                    <button class="btn danger" onclick="confirmUserBan()">🚫 Забанить</button>
+                    <button class="btn secondary" onclick="closeUserBanModal()">Отмена</button>
+                </div>
+                <div id="user-ban-result" class="result"></div>
+            </div>
+        </div>
+
+        <!-- GIVEAWAY create/edit modal -->
+        <div id="giveaway-modal" class="modal-screen" style="display:none;">
+            <div class="modal-center-box">
+                <div class="modal-head">
+                    <div class="modal-title" id="giveaway-modal-title">🎁 Создать розыгрыш</div>
+                    <button class="modal-close" onclick="closeGiveawayModal()">✕</button>
+                </div>
+                <input type="hidden" id="giveaway-id">
+                <div class="admin-field"><label>Название</label><input type="text" id="giveaway-title" placeholder="Розыгрыш премиума"></div>
+                <div class="admin-field"><label>Описание</label><textarea id="giveaway-description" rows="3" placeholder="Условия участия..."></textarea></div>
+                <div class="admin-field"><label>Приз</label><input type="text" id="giveaway-prize" placeholder="Премиум на 30 дней"></div>
+                <div class="admin-field">
+                    <label>Условие</label>
+                    <select id="giveaway-condition">
+                        <option value="none">Без условий</option>
+                        <option value="premium">Только премиум</option>
+                        <option value="channel">Подписка на канал</option>
+                    </select>
+                </div>
+                <div class="admin-field"><label>Дата окончания (пусто = бессрочно)</label><input type="datetime-local" id="giveaway-ends"></div>
+                <div class="admin-buttons-row">
+                    <button class="btn primary" onclick="saveGiveaway()">💾 Сохранить</button>
+                    <button class="btn secondary" onclick="closeGiveawayModal()">Отмена</button>
+                </div>
+                <div id="giveaway-result" class="result"></div>
+            </div>
+        </div>
+
+        <!-- REVIEW add modal -->
+        <div id="review-modal" class="modal-screen" style="display:none;">
+            <div class="modal-center-box">
+                <div class="modal-head">
+                    <div class="modal-title">✏️ Оставить отзыв</div>
+                    <button class="modal-close" onclick="closeReviewModal()">✕</button>
+                </div>
+                <div class="admin-field">
+                    <label>Оценка</label>
+                    <div class="rating-stars" id="review-stars">
+                        <span data-v="1" onclick="setReviewRating(1)">★</span>
+                        <span data-v="2" onclick="setReviewRating(2)">★</span>
+                        <span data-v="3" onclick="setReviewRating(3)">★</span>
+                        <span data-v="4" onclick="setReviewRating(4)">★</span>
+                        <span data-v="5" class="active" onclick="setReviewRating(5)">★</span>
+                    </div>
+                </div>
+                <div class="admin-field">
+                    <label>Текст отзыва (5-500 символов)</label>
+                    <textarea id="review-text" rows="5" placeholder="Поделись впечатлением..."></textarea>
+                </div>
+                <div class="admin-buttons-row">
+                    <button class="btn primary" onclick="submitReview()">📤 Отправить</button>
+                    <button class="btn secondary" onclick="closeReviewModal()">Отмена</button>
+                </div>
+                <div id="review-result" class="result"></div>
             </div>
         </div>
     </div>
