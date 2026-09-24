@@ -62,7 +62,11 @@ function renderSteamProfile(d) {
         return `
             <div class="player-card">
                 <div class="player-top">
-                    <div class="player-avatar">🔒</div>
+                    ${d.avatar 
+                        ? `<img class="player-avatar-img" src="${escapeHtml(d.avatar)}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` 
+                        : ''
+                    }
+                    <div class="player-avatar" style="${d.avatar ? 'display:none;' : ''}">🔒</div>
                     <div class="player-info">
                         <h3>${escapeHtml(d.name)}</h3>
                         <span class="player-status offline">Приватный профиль</span>
@@ -81,7 +85,11 @@ function renderSteamProfile(d) {
     return `
         <div class="player-card">
             <div class="player-top">
-                <div class="player-avatar ${isOnline ? 'online' : ''}">${initials}</div>
+                ${d.avatar 
+                    ? `<img class="player-avatar-img ${isOnline ? 'online' : ''}" src="${escapeHtml(d.avatar)}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` 
+                    : ''
+                }
+                <div class="player-avatar ${isOnline ? 'online' : ''}" style="${d.avatar ? 'display:none;' : ''}">${initials}</div>
                 <div class="player-info">
                     <h3>${escapeHtml(d.name)}</h3>
                     <span class="player-status ${isOnline ? 'online' : 'offline'}">Steam ${d.state.replace(/[^\wа-яА-Я\s]/g, '').trim() || 'Оффлайн'}</span>
@@ -140,8 +148,7 @@ function renderSteamProfile(d) {
         </div>
 
         <div class="section-title">
-            <span>Недавняя активность</span>
-            <button class="all-btn">Все</button>
+            <span>Активность</span>
         </div>
 
         <div class="activity-list">
@@ -152,7 +159,6 @@ function renderSteamProfile(d) {
                         <h4>Игрок получил VAC бан</h4>
                         <p>${d.vacBans} активных VAC банов</p>
                     </div>
-                    <div class="activity-arrow">›</div>
                 </div>
             ` : `
                 <div class="activity-item">
@@ -161,7 +167,6 @@ function renderSteamProfile(d) {
                         <h4>Банов не обнаружено</h4>
                         <p>Чистая история аккаунта</p>
                     </div>
-                    <div class="activity-arrow">›</div>
                 </div>
             `}
 
@@ -171,7 +176,14 @@ function renderSteamProfile(d) {
                     <h4>Steam уровень: ${d.steamLevel}</h4>
                     <p>Достижений: ${d.achievementsCount}</p>
                 </div>
-                <div class="activity-arrow">›</div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon friend">📅</div>
+                <div class="activity-content">
+                    <h4>Возраст аккаунта: ${d.accountAgeYears} лет</h4>
+                    <p>${d.accountAgeDays} дней · Игр: ${d.gamesCount}</p>
+                </div>
             </div>
 
             ${d.friendsWithRust?.length > 0 ? `
@@ -179,11 +191,27 @@ function renderSteamProfile(d) {
                     <div class="activity-icon friend">👥</div>
                     <div class="activity-content">
                         <h4>Друзей с Rust: ${d.friendsWithRust.length}</h4>
-                        <p>${d.friendsWithRust.slice(0, 2).map(f => f.name).join(', ')}${d.friendsWithRust.length > 2 ? '...' : ''}</p>
+                        <p>${d.friendsWithRust.slice(0, 3).map(f => escapeHtml(f.name)).join(', ')}${d.friendsWithRust.length > 3 ? ` и ещё ${d.friendsWithRust.length - 3}` : ''}</p>
                     </div>
-                    <div class="activity-arrow">›</div>
                 </div>
-            ` : ''}
+            ` : `
+                <div class="activity-item">
+                    <div class="activity-icon friend">👥</div>
+                    <div class="activity-content">
+                        <h4>Друзей с Rust: 0</h4>
+                        <p>Никто из друзей не играет в Rust</p>
+                    </div>
+                </div>
+            `}
+
+            <div class="activity-item" onclick="window.open('${escapeHtml(d.profileUrl)}', '_blank')">
+                <div class="activity-icon vpn">🔗</div>
+                <div class="activity-content">
+                    <h4>Открыть профиль Steam</h4>
+                    <p>${d.steamId}</p>
+                </div>
+                <div class="activity-arrow">›</div>
+            </div>
         </div>
     `;
 }
