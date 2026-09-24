@@ -146,7 +146,7 @@
                 <div class="section-head">
                     <div class="section-kicker">SUPPORT</div>
                     <h2 class="section-title">🎧 Тикеты</h2>
-                    <p class="section-desc">Отвечай пользователям. Закрывать тикеты может только админ.</p>
+                    <p class="section-desc">Отвечай пользователям и закрывай тикеты</p>
                 </div>
                 <div id="helper-tickets-list" class="loading-block">⏳ Загрузка...</div>
             </section>
@@ -164,6 +164,7 @@
                     <button class="admin-pill" data-atab="users">👥 Юзеры</button>
                     <button class="admin-pill" data-atab="premium">⭐ Премиум</button>
                     <button class="admin-pill" data-atab="helpers">🎧 Хелперы</button>
+                    <button class="admin-pill" data-atab="perms">🛡️ Права</button>
                     <button class="admin-pill" data-atab="promos">🎟 Промо</button>
                     <button class="admin-pill" data-atab="tickets">🎫 Тикеты</button>
                     <button class="admin-pill" data-atab="broadcast">📢 Рассылка</button>
@@ -216,6 +217,114 @@
                     <div class="card">
                         <div class="card-head"><h3>🎧 Список хелперов</h3></div>
                         <div id="admin-helpers-list" class="loading-block">⏳ Загрузка...</div>
+                    </div>
+                </div>
+
+                <!-- ============ ПРАВА ============ -->
+                <div class="admin-content" id="atab-perms">
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <h3>🛡️ Права роли «Хелпер»</h3>
+                                <p class="desc">Включи или выключи права для всех хелперов</p>
+                            </div>
+                        </div>
+
+                        <div class="perm-list" id="perm-list">
+                            <div class="perm-row">
+                                <div class="perm-info">
+                                    <div class="perm-name">🎧 Отвечать в тикетах</div>
+                                    <div class="perm-desc">Может открывать тикеты и писать ответы</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" data-perm="reply_tickets">
+                                    <span></span>
+                                </label>
+                            </div>
+
+                            <div class="perm-row">
+                                <div class="perm-info">
+                                    <div class="perm-name">🔒 Закрывать тикеты</div>
+                                    <div class="perm-desc">Может закрывать обращения пользователей</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" data-perm="close_tickets">
+                                    <span></span>
+                                </label>
+                            </div>
+
+                            <div class="perm-row">
+                                <div class="perm-info">
+                                    <div class="perm-name">🎁 Выдавать бонусы</div>
+                                    <div class="perm-desc">Может выдавать бонусные проверки юзерам</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" data-perm="give_bonus">
+                                    <span></span>
+                                </label>
+                            </div>
+
+                            <div class="perm-row">
+                                <div class="perm-info">
+                                    <div class="perm-name">📩 Отправлять ЛС</div>
+                                    <div class="perm-desc">Может писать юзерам от имени бота</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" data-perm="send_dm">
+                                    <span></span>
+                                </label>
+                            </div>
+
+                            <div class="perm-row">
+                                <div class="perm-info">
+                                    <div class="perm-name">⭐ Выдавать премиум</div>
+                                    <div class="perm-desc">Может выдавать премиум-подписку</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" data-perm="give_premium">
+                                    <span></span>
+                                </label>
+                            </div>
+
+                            <div class="perm-row">
+                                <div class="perm-info">
+                                    <div class="perm-name">🎟 Создавать промокоды</div>
+                                    <div class="perm-desc">Может создавать и удалять промокоды</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" data-perm="create_promo">
+                                    <span></span>
+                                </label>
+                            </div>
+
+                            <div class="perm-row">
+                                <div class="perm-info">
+                                    <div class="perm-name">📢 Делать рассылки</div>
+                                    <div class="perm-desc">Может рассылать сообщения всем юзерам</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" data-perm="broadcast">
+                                    <span></span>
+                                </label>
+                            </div>
+
+                            <div class="perm-row">
+                                <div class="perm-info">
+                                    <div class="perm-name">📜 Смотреть логи</div>
+                                    <div class="perm-desc">Может видеть журнал действий админов</div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" data-perm="view_logs">
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="admin-buttons-row" style="margin-top:20px;">
+                            <button class="btn primary" onclick="savePerms()">💾 Сохранить права</button>
+                            <button class="btn secondary" onclick="adminLoadPerms()">🔄 Сбросить</button>
+                        </div>
+                        <div id="perms-result" class="result"></div>
                     </div>
                 </div>
 
