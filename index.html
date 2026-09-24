@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0e0e12" id="theme-color-meta">
-    <title>Rust Toolkit</title>
+    <title>RustGuard</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,10 +12,10 @@
     <div class="app">
         <header class="header">
             <div class="header-left">
-                <div class="logo">R</div>
+                <div class="logo">🛡️</div>
                 <div class="header-info">
-                    <h1>Rust Toolkit</h1>
-                    <p>v9.0</p>
+                    <h1>RUSTGUARD</h1>
+                    <p>v10.0</p>
                 </div>
             </div>
             <button class="avatar-btn" id="avatar-btn" onclick="toggleSidebar(event)">
@@ -23,7 +23,7 @@
             </button>
         </header>
 
-        <nav class="tabs">
+        <nav class="tabs" id="main-tabs">
             <button class="tab active" data-tab="steam">
                 <span class="tab-icon">🎮</span>
                 <span class="tab-label">Steam</span>
@@ -44,13 +44,17 @@
                 <span class="tab-icon">⚙️</span>
                 <span class="tab-label">Настройки</span>
             </button>
+            <button class="tab admin-only-tab" data-tab="admin" style="display:none;">
+                <span class="tab-icon">👑</span>
+                <span class="tab-label">Админ</span>
+            </button>
         </nav>
 
         <main class="content">
             <!-- STEAM -->
             <section class="panel active" id="panel-steam">
                 <div class="hero">
-                    <div class="hero-kicker">RUST CHECKER</div>
+                    <div class="hero-kicker">STEAM CHECKER</div>
                     <h1 class="hero-title">Проверь игрока</h1>
                     <p class="hero-desc">Введи SteamID или ссылку — получи полный отчёт за секунду</p>
                 </div>
@@ -78,10 +82,7 @@
                             <option value="outer_walls">🛡️ Внешние стены</option>
                         </select>
                     </div>
-                    <div class="field">
-                        <label>Цель</label>
-                        <select id="raid-target"></select>
-                    </div>
+                    <div class="field"><label>Цель</label><select id="raid-target"></select></div>
                     <button class="btn primary" onclick="calculateRaid()">Рассчитать</button>
                     <div id="raid-result" class="result"></div>
                 </div>
@@ -105,10 +106,7 @@
                             <option value="explo">🔫 Патрон 5.56</option>
                         </select>
                     </div>
-                    <div class="field">
-                        <label>Количество</label>
-                        <input type="number" id="craft-count" value="1" min="1" inputmode="numeric">
-                    </div>
+                    <div class="field"><label>Количество</label><input type="number" id="craft-count" value="1" min="1" inputmode="numeric"></div>
                     <button class="btn primary" onclick="calculateCraft()">Рассчитать</button>
                     <div id="craft-result" class="result"></div>
                 </div>
@@ -123,7 +121,7 @@
                 <div class="section-head">
                     <div class="section-kicker">TRACKING</div>
                     <h2 class="section-title">Отслеживание</h2>
-                    <p class="section-desc">Следи за игроками и получай уведомления о банах</p>
+                    <p class="section-desc">Следи за игроками и получай уведомления о банах и смене имён</p>
                 </div>
                 <div class="card">
                     <div class="card-head"><h3>Добавить игрока</h3></div>
@@ -150,66 +148,132 @@
                     <h2 class="section-title">Настройки</h2>
                     <p class="section-desc">Персонализация приложения</p>
                 </div>
-
                 <div class="card">
                     <div class="card-head"><h3>Оформление</h3></div>
                     <div class="settings-row">
-                        <div class="settings-label">
-                            <div class="settings-name">Тема</div>
-                            <div class="settings-hint">Как выглядит приложение</div>
-                        </div>
+                        <div class="settings-label"><div class="settings-name">Тема</div><div class="settings-hint">Как выглядит приложение</div></div>
                         <div class="segmented" id="theme-seg">
                             <button data-theme="dark" onclick="setTheme('dark')">🌙 Тёмная</button>
                             <button data-theme="light" onclick="setTheme('light')">☀️ Светлая</button>
                         </div>
                     </div>
                     <div class="settings-row">
-                        <div class="settings-label">
-                            <div class="settings-name">Язык</div>
-                            <div class="settings-hint">Язык интерфейса</div>
-                        </div>
+                        <div class="settings-label"><div class="settings-name">Язык</div><div class="settings-hint">Язык интерфейса</div></div>
                         <div class="segmented" id="lang-seg">
                             <button data-lang="ru" onclick="setLanguage('ru')">🇷🇺 RU</button>
                             <button data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
                         </div>
                     </div>
                 </div>
-
                 <div class="card">
                     <div class="card-head"><h3>Уведомления</h3></div>
                     <div class="settings-row">
-                        <div class="settings-label">
-                            <div class="settings-name">Уведомления</div>
-                            <div class="settings-hint">Сообщения от поддержки</div>
-                        </div>
+                        <div class="settings-label"><div class="settings-name">Уведомления</div><div class="settings-hint">Сообщения от поддержки</div></div>
                         <label class="switch"><input type="checkbox" id="set-notifications" onchange="setSetting('notifications', this.checked)"><span></span></label>
                     </div>
                     <div class="settings-row">
-                        <div class="settings-label">
-                            <div class="settings-name">Оповещения о банах</div>
-                            <div class="settings-hint">Когда у отслеживаемого появляется бан</div>
-                        </div>
+                        <div class="settings-label"><div class="settings-name">Оповещения о банах</div><div class="settings-hint">VAC и Game баны</div></div>
                         <label class="switch"><input type="checkbox" id="set-watch-notifications" onchange="setSetting('watchNotifications', this.checked)"><span></span></label>
                     </div>
                 </div>
-
                 <div class="card">
                     <div class="card-head"><h3>Взаимодействие</h3></div>
                     <div class="settings-row">
-                        <div class="settings-label">
-                            <div class="settings-name">Вибро-отклик</div>
-                            <div class="settings-hint">Тактильный отклик при действиях</div>
-                        </div>
+                        <div class="settings-label"><div class="settings-name">Вибро-отклик</div><div class="settings-hint">Тактильный отклик</div></div>
                         <label class="switch"><input type="checkbox" id="set-haptic" onchange="setSetting('haptic', this.checked)"><span></span></label>
                     </div>
                 </div>
-
                 <div class="card">
                     <div class="card-head"><h3>Аккаунт</h3></div>
                     <button class="btn secondary" onclick="openReferral()">🎁 Реферальная ссылка</button>
                     <button class="btn secondary" style="margin-top:8px" onclick="showPromoInput()">🎟 Активировать промокод</button>
                     <button class="btn secondary" style="margin-top:8px" onclick="openProfile()">👤 Мой профиль</button>
                     <button class="btn secondary" style="margin-top:8px" onclick="openSupport()">💬 Помощь</button>
+                </div>
+            </section>
+
+            <!-- ADMIN -->
+            <section class="panel" id="panel-admin">
+                <div class="section-head">
+                    <div class="section-kicker">ADMIN</div>
+                    <h2 class="section-title">Панель управления</h2>
+                    <p class="section-desc">Только для администраторов</p>
+                </div>
+
+                <div class="admin-tabs-pill">
+                    <button class="admin-pill active" data-atab="dashboard">📊 Дашборд</button>
+                    <button class="admin-pill" data-atab="users">👥 Юзеры</button>
+                    <button class="admin-pill" data-atab="promos">🎟 Промо</button>
+                    <button class="admin-pill" data-atab="tickets">🎫 Тикеты</button>
+                    <button class="admin-pill" data-atab="broadcast">📢 Рассылка</button>
+                    <button class="admin-pill" data-atab="logs">📜 Логи</button>
+                </div>
+
+                <div class="admin-content active" id="atab-dashboard">
+                    <div id="admin-stats-content" class="loading-block">⏳ Загрузка...</div>
+                </div>
+
+                <div class="admin-content" id="atab-users">
+                    <div class="search-bar" style="margin-bottom:12px;">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="admin-search-input" placeholder="ID, @ник или имя..." oninput="adminSearchUsers()">
+                    </div>
+                    <div id="admin-users-content" class="loading-block">⏳ Загрузка...</div>
+                </div>
+
+                <div class="admin-content" id="atab-promos">
+                    <button class="btn primary" onclick="adminShowPromoCreate()">➕ Создать промокод</button>
+                    <div id="admin-promo-create" style="display:none; margin-top:16px;">
+                        <div class="admin-field"><label>Код</label><input type="text" id="promo-code" placeholder="RUST30"></div>
+                        <div class="admin-field">
+                            <label>Тип</label>
+                            <select id="promo-type" onchange="adminUpdatePromoFields()">
+                                <option value="premium">⭐ Дни премиума</option>
+                                <option value="checks">🎮 Бонусные проверки</option>
+                                <option value="discount">💰 Скидка на покупку</option>
+                            </select>
+                        </div>
+                        <div class="admin-field" id="promo-days-field"><label>Дней премиума</label><input type="number" id="promo-days" value="30" min="1"></div>
+                        <div class="admin-field" id="promo-checks-field" style="display:none;"><label>Кол-во проверок</label><input type="number" id="promo-checks" value="10" min="1"></div>
+                        <div class="admin-field" id="promo-percent-field" style="display:none;"><label>Скидка (%)</label><input type="number" id="promo-percent" value="50" min="1" max="100"></div>
+                        <div class="admin-field"><label>Лимит использований</label><input type="number" id="promo-max-uses" placeholder="100"></div>
+                        <div class="admin-field"><label>Срок действия (дней)</label><input type="number" id="promo-valid-days" placeholder="30"></div>
+                        <div class="admin-checkbox"><input type="checkbox" id="promo-only-new"><label for="promo-only-new">Только для новых</label></div>
+                        <div class="admin-checkbox"><input type="checkbox" id="promo-broadcast"><label for="promo-broadcast">📢 Рассылка об этом промокоде</label></div>
+                        <div class="admin-buttons-row">
+                            <button class="btn primary" onclick="adminCreatePromo()">Создать</button>
+                            <button class="btn secondary" onclick="adminHidePromoCreate()">Отмена</button>
+                        </div>
+                    </div>
+                    <h4 style="margin-top:20px;">Список промокодов</h4>
+                    <div id="admin-promos-list" class="loading-block">⏳ Загрузка...</div>
+                </div>
+
+                <div class="admin-content" id="atab-tickets">
+                    <div id="admin-tickets-list" class="loading-block">⏳ Загрузка...</div>
+                </div>
+
+                <div class="admin-content" id="atab-broadcast">
+                    <div class="admin-field">
+                        <label>Шаблон</label>
+                        <select id="broadcast-template" onchange="applyBroadcastTemplate()">
+                            <option value="">— Выбери шаблон —</option>
+                        </select>
+                    </div>
+                    <div class="admin-field">
+                        <label>Текст (HTML разрешён)</label>
+                        <textarea id="admin-broadcast-text" rows="8" placeholder="Введи текст рассылки..."></textarea>
+                    </div>
+                    <div class="admin-buttons-row">
+                        <button class="btn primary" onclick="adminSendBroadcast()">Отправить</button>
+                        <button class="btn secondary" onclick="adminPreviewBroadcast()">Превью</button>
+                    </div>
+                    <div id="admin-broadcast-preview" class="result"></div>
+                    <div id="admin-broadcast-result" class="result"></div>
+                </div>
+
+                <div class="admin-content" id="atab-logs">
+                    <div id="admin-logs-content" class="loading-block">⏳ Загрузка...</div>
                 </div>
             </section>
         </main>
@@ -226,28 +290,22 @@
                         <div class="sidebar-user-id" id="sidebar-user-id">ID: —</div>
                     </div>
                 </div>
-
                 <div class="sidebar-menu">
                     <button type="button" class="sidebar-item" onclick="openProfile()">
-                        <span class="sidebar-icon">👤</span>
-                        <span>Профиль</span>
+                        <span class="sidebar-icon">👤</span><span>Профиль</span>
                     </button>
                     <button type="button" class="sidebar-item" onclick="openWatchlistFromSidebar()">
-                        <span class="sidebar-icon">👁️</span>
-                        <span>Отслеживание</span>
+                        <span class="sidebar-icon">👁️</span><span>Отслеживание</span>
                     </button>
                     <button type="button" class="sidebar-item" onclick="openSupport()">
-                        <span class="sidebar-icon">💬</span>
-                        <span>Помощь</span>
+                        <span class="sidebar-icon">💬</span><span>Помощь</span>
                     </button>
                     <div class="sidebar-divider"></div>
                     <button type="button" class="sidebar-item" onclick="openReferral()">
-                        <span class="sidebar-icon">🎁</span>
-                        <span>Реферальная ссылка</span>
+                        <span class="sidebar-icon">🎁</span><span>Реферальная ссылка</span>
                     </button>
                     <button type="button" class="sidebar-item" onclick="showPromoInput()">
-                        <span class="sidebar-icon">🎟</span>
-                        <span>Активировать промокод</span>
+                        <span class="sidebar-icon">🎟</span><span>Активировать промокод</span>
                     </button>
                 </div>
             </div>
@@ -293,7 +351,7 @@
                             <div class="chat-header-info">
                                 <div class="chat-avatar">🎧</div>
                                 <div>
-                                    <div class="chat-title">Rust Toolkit</div>
+                                    <div class="chat-title">RustGuard</div>
                                     <div class="chat-subtitle" id="support-status-desc">—</div>
                                 </div>
                             </div>
@@ -322,90 +380,6 @@
                     <div style="width:36px"></div>
                 </div>
                 <div class="modal-body" id="friends-body"></div>
-            </div>
-        </div>
-
-        <!-- Admin Panel -->
-        <div id="admin-panel" class="modal-screen" style="display:none;">
-            <div class="modal-fullscreen">
-                <div class="modal-topbar">
-                    <button class="chat-back" onclick="closeAdminPanel()">‹</button>
-                    <div class="modal-title-c">Админ-панель</div>
-                    <div style="width:36px"></div>
-                </div>
-                <div class="admin-tabs-text">
-                    <button class="admin-tab active" data-atab="stats">Статистика</button>
-                    <button class="admin-tab" data-atab="users">Юзеры</button>
-                    <button class="admin-tab" data-atab="premium">Премиум</button>
-                    <button class="admin-tab" data-atab="promos">Промокоды</button>
-                    <button class="admin-tab" data-atab="tickets">Тикеты</button>
-                    <button class="admin-tab" data-atab="broadcast">Рассылка</button>
-                </div>
-                <div class="modal-body">
-                    <div class="admin-content active" id="atab-stats">
-                        <div id="admin-stats-content" class="loading-block">⏳ Загрузка...</div>
-                    </div>
-                    <div class="admin-content" id="atab-users">
-                        <div id="admin-users-content" class="loading-block">⏳ Загрузка...</div>
-                    </div>
-                    <div class="admin-content" id="atab-premium">
-                        <div class="admin-field"><label>ID или @тег</label><input type="text" id="admin-premium-target" placeholder="123456789 или @durov"></div>
-                        <div class="admin-field"><label>Дней</label><input type="number" id="admin-premium-days" value="30" min="1" max="3650"></div>
-                        <div class="admin-buttons-row">
-                            <button class="btn primary" onclick="adminGivePremium()">Выдать</button>
-                            <button class="btn danger" onclick="adminRevokePremium()">Забрать</button>
-                        </div>
-                        <div id="admin-premium-result" class="result"></div>
-                    </div>
-                    <div class="admin-content" id="atab-promos">
-                        <button class="btn primary" onclick="adminShowPromoCreate()">➕ Создать промокод</button>
-                        <div id="admin-promo-create" style="display:none; margin-top:16px;">
-                            <div class="admin-field"><label>Код</label><input type="text" id="promo-code" placeholder="RUST30"></div>
-                            <div class="admin-field">
-                                <label>Тип</label>
-                                <select id="promo-type" onchange="adminUpdatePromoFields()">
-                                    <option value="premium">⭐ Дни премиума</option>
-                                    <option value="checks">🎮 Бонусные проверки</option>
-                                    <option value="discount">💰 Скидка на покупку</option>
-                                </select>
-                            </div>
-                            <div class="admin-field" id="promo-days-field"><label>Дней премиума</label><input type="number" id="promo-days" value="30" min="1"></div>
-                            <div class="admin-field" id="promo-checks-field" style="display:none;"><label>Кол-во проверок</label><input type="number" id="promo-checks" value="10" min="1"></div>
-                            <div class="admin-field" id="promo-percent-field" style="display:none;"><label>Скидка (%)</label><input type="number" id="promo-percent" value="50" min="1" max="100"></div>
-                            <div class="admin-field"><label>Лимит использований</label><input type="number" id="promo-max-uses" placeholder="100"></div>
-                            <div class="admin-field"><label>Срок действия (дней)</label><input type="number" id="promo-valid-days" placeholder="30"></div>
-                            <div class="admin-checkbox"><input type="checkbox" id="promo-only-new"><label for="promo-only-new">Только для новых</label></div>
-                            <div class="admin-checkbox"><input type="checkbox" id="promo-broadcast"><label for="promo-broadcast">📢 Рассылка об этом промокоде</label></div>
-                            <div class="admin-buttons-row">
-                                <button class="btn primary" onclick="adminCreatePromo()">Создать</button>
-                                <button class="btn secondary" onclick="adminHidePromoCreate()">Отмена</button>
-                            </div>
-                        </div>
-                        <h4 style="margin-top:20px;">Список промокодов</h4>
-                        <div id="admin-promos-list" class="loading-block">⏳ Загрузка...</div>
-                    </div>
-                    <div class="admin-content" id="atab-tickets">
-                        <div id="admin-tickets-list" class="loading-block">⏳ Загрузка...</div>
-                    </div>
-                    <div class="admin-content" id="atab-broadcast">
-                        <div class="admin-field">
-                            <label>Шаблон</label>
-                            <select id="broadcast-template" onchange="applyBroadcastTemplate()">
-                                <option value="">— Выбери шаблон —</option>
-                            </select>
-                        </div>
-                        <div class="admin-field">
-                            <label>Текст (HTML разрешён)</label>
-                            <textarea id="admin-broadcast-text" rows="8" placeholder="Введи текст рассылки..."></textarea>
-                        </div>
-                        <div class="admin-buttons-row">
-                            <button class="btn primary" onclick="adminSendBroadcast()">Отправить</button>
-                            <button class="btn secondary" onclick="adminPreviewBroadcast()">Превью</button>
-                        </div>
-                        <div id="admin-broadcast-preview" class="result"></div>
-                        <div id="admin-broadcast-result" class="result"></div>
-                    </div>
-                </div>
             </div>
         </div>
 
