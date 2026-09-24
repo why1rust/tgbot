@@ -1481,10 +1481,9 @@ async function loadHomeReviews() {
         }
         let html = '';
         list.forEach(r => {
-            const initials = (r.firstName || 'U').charAt(0).toUpperCase();
-            const av = r.photoUrl
-            ? `<div class="home-review-avatar"><img src="${API_BASE}/api/tg-avatar?url=${encodeURIComponent(r.photoUrl)}" onerror="this.parentNode.textContent='${initials}';"></div>`
-            : `<div class="home-review-avatar">${initials}</div>`;
+           const rawName = (r.firstName || '').trim() || (r.username || 'U');
+const initials = rawName.charAt(0).toUpperCase() || 'U';
+const av = `<div class="home-review-avatar">${initials}</div>`;
             const stars = '★'.repeat(r.rating || 5) + '☆'.repeat(5 - (r.rating || 5));
             const dateStr = new Date(r.timestamp).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
             html += `<div class="home-review-item">
