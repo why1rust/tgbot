@@ -277,6 +277,25 @@ body {
     box-shadow: 0 0 8px var(--green);
 }
 
+/* Стили для аватарки Steam */
+.player-avatar-img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    flex-shrink: 0;
+    object-fit: cover;
+    box-shadow: 0 0 16px var(--glow);
+    position: relative;
+    background: var(--bg-2);
+    display: block;
+}
+
+.player-avatar-img.online {
+    border-color: var(--green);
+    box-shadow: 0 0 16px var(--green);
+}
+
 .player-info {
     flex: 1;
     min-width: 0;
@@ -564,6 +583,9 @@ body {
     margin: 0;
     font-size: 12px;
     color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .activity-arrow {
@@ -749,6 +771,7 @@ select {
     to { transform: rotate(360deg); }
 }
 
+/* ===== SCROLL ===== */
 ::-webkit-scrollbar {
     width: 6px;
 }
