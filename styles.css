@@ -1446,11 +1446,14 @@ select {
     padding: 20px 0 24px;
 }
 .home-logo {
-    width: 96px;
-    height: 96px;
+    width: 96px !important;
+    height: 96px !important;
+    max-width: 96px !important;
+    max-height: 96px !important;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 16px;
+    display: block;
+    margin: 0 auto 16px;
     box-shadow: 0 8px 32px rgba(124, 92, 255, 0.35);
     border: 3px solid var(--accent);
 }
