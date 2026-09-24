@@ -9,193 +9,145 @@
 </head>
 <body>
     <div class="app">
-        <div class="bg-orb orb-1"></div>
-        <div class="bg-orb orb-2"></div>
-        <div class="bg-orb orb-3"></div>
-
+        <!-- HEADER -->
         <header class="header">
-            <div class="logo-ring">
-                <span class="logo">🦀</span>
+            <div class="header-left">
+                <div class="logo">
+                    <span>R</span>
+                </div>
+                <div class="header-info">
+                    <h1>HelperRust</h1>
+                    <p>Rust Toolkit <span class="version">v3.0</span></p>
+                </div>
             </div>
-            <h1>Rust Toolkit</h1>
-            <p class="subtitle">Steam · Рейд · Крафт</p>
+            <button class="settings-btn" onclick="openSettings()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </button>
         </header>
 
+        <!-- TABS -->
         <nav class="tabs">
-            <button class="tab active" data-tab="steam">
-                <span class="tab-icon">🎮</span>
-                <span class="tab-label">Steam</span>
-            </button>
-            <button class="tab" data-tab="raid">
-                <span class="tab-icon">💥</span>
-                <span class="tab-label">Рейд</span>
-            </button>
-            <button class="tab" data-tab="craft">
-                <span class="tab-icon">🧨</span>
-                <span class="tab-label">Крафт</span>
-            </button>
-            <button class="tab" data-tab="watch">
-                <span class="tab-icon">👁️</span>
-                <span class="tab-label">Отслеживание</span>
-            </button>
+            <button class="tab active" data-tab="steam">Steam</button>
+            <button class="tab" data-tab="raid">Рейд</button>
+            <button class="tab" data-tab="craft">Крафт</button>
+            <button class="tab" data-tab="watch">Отслеж.</button>
         </nav>
 
-        <!-- STEAM -->
-        <section class="panel active" id="panel-steam">
-            <div class="card">
-                <div class="card-head">
-                    <div>
-                        <h2>Проверка Steam</h2>
-                        <p class="desc">Часы в Rust, баны, друзья, риск читерства</p>
-                    </div>
-                    <div class="chip">🎮</div>
-                </div>
+        <!-- PANELS -->
+        <main class="content">
 
-                <div class="field">
-                    <label>SteamID или ссылка на профиль</label>
+            <!-- STEAM -->
+            <section class="panel active" id="panel-steam">
+                <div class="search-bar">
+                    <div class="search-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                    </div>
                     <input type="text" id="steam-input" placeholder="76561199685927598" inputmode="text">
+                    <button class="analyze-btn" onclick="analyzeSteam()">Анализировать</button>
                 </div>
 
-                <button class="btn primary" onclick="analyzeSteam()">
-                    <span class="btn-icon">🔍</span>
-                    <span>Анализировать</span>
-                </button>
+                <div id="steam-result"></div>
+            </section>
 
-                <div id="steam-result" class="result"></div>
-            </div>
-        </section>
-
-        <!-- RAID -->
-        <section class="panel" id="panel-raid">
-            <div class="card">
-                <div class="card-head">
-                    <div>
+            <!-- RAID -->
+            <section class="panel" id="panel-raid">
+                <div class="card">
+                    <div class="card-head">
                         <h2>Калькулятор рейда</h2>
-                        <p class="desc">Что нужно для рейда конкретной цели</p>
+                        <span class="chip-icon">💥</span>
                     </div>
-                    <div class="chip">💥</div>
-                </div>
 
-                <div class="field">
-                    <label>Категория</label>
-                    <div class="select-wrap">
+                    <div class="field">
+                        <label>Категория</label>
                         <select id="raid-cat" onchange="renderRaidItems()">
                             <option value="doors">🚪 Двери</option>
                             <option value="walls">🧱 Стены</option>
                             <option value="outer_walls">🛡️ Внешние стены</option>
                         </select>
                     </div>
-                </div>
 
-                <div class="field">
-                    <label>Цель</label>
-                    <div class="select-wrap">
+                    <div class="field">
+                        <label>Цель</label>
                         <select id="raid-target"></select>
                     </div>
+
+                    <button class="btn primary" onclick="calculateRaid()">Рассчитать</button>
+
+                    <div id="raid-result" class="result"></div>
                 </div>
+            </section>
 
-                <button class="btn primary" onclick="calculateRaid()">
-                    <span class="btn-icon">🔢</span>
-                    <span>Рассчитать</span>
-                </button>
-
-                <div id="raid-result" class="result"></div>
-            </div>
-        </section>
-
-        <!-- CRAFT -->
-        <section class="panel" id="panel-craft">
-            <div class="card">
-                <div class="card-head">
-                    <div>
+            <!-- CRAFT -->
+            <section class="panel" id="panel-craft">
+                <div class="card">
+                    <div class="card-head">
                         <h2>Калькулятор крафта</h2>
-                        <p class="desc">Сколько ресурсов нужно на партию</p>
+                        <span class="chip-icon">🧨</span>
                     </div>
-                    <div class="chip">🧨</div>
-                </div>
 
-                <div class="field">
-                    <label>Взрывчатка</label>
-                    <div class="select-wrap">
+                    <div class="field">
+                        <label>Взрывчатка</label>
                         <select id="craft-type" onchange="updateCraftInfo()">
-                            <option value="c4">💥 C4 (взрывчатка с таймером)</option>
+                            <option value="c4">💥 C4</option>
                             <option value="rocket">🚀 Ракета</option>
-                            <option value="satchel">🎒 Сатчел (связка)</option>
+                            <option value="satchel">🎒 Сатчел</option>
                             <option value="beancan">💣 Бобовая граната</option>
-                            <option value="explo">🔫 Патрон 5.56 (взрывной)</option>
+                            <option value="explo">🔫 Патрон 5.56</option>
                         </select>
                     </div>
+
+                    <div class="field">
+                        <label>Количество</label>
+                        <input type="number" id="craft-count" value="1" min="1" inputmode="numeric">
+                    </div>
+
+                    <button class="btn primary" onclick="calculateCraft()">Рассчитать ресурсы</button>
+
+                    <div id="craft-result" class="result"></div>
                 </div>
 
-                <div class="field">
-                    <label>Количество</label>
-                    <input type="number" id="craft-count" value="1" min="1" inputmode="numeric">
-                </div>
-
-                <button class="btn primary" onclick="calculateCraft()">
-                    <span class="btn-icon">🔢</span>
-                    <span>Рассчитать ресурсы</span>
-                </button>
-
-                <div id="craft-result" class="result"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-head">
-                    <div>
+                <div class="card">
+                    <div class="card-head">
                         <h2>Стоимость на 1 шт.</h2>
-                        <p class="desc">Базовые ресурсы</p>
                     </div>
+                    <div id="craft-info" class="craft-info"></div>
                 </div>
-                <div id="craft-info" class="craft-info"></div>
-            </div>
-        </section>
+            </section>
 
-        <!-- WATCH -->
-        <section class="panel" id="panel-watch">
-            <div class="card">
-                <div class="card-head">
-                    <div>
+            <!-- WATCH -->
+            <section class="panel" id="panel-watch">
+                <div class="card">
+                    <div class="card-head">
                         <h2>Добавить в отслеживание</h2>
-                        <p class="desc">Бот сообщит, если появится бан</p>
+                        <span class="chip-icon">👁️</span>
                     </div>
-                    <div class="chip">➕</div>
+
+                    <div class="field">
+                        <label>SteamID</label>
+                        <input type="text" id="watch-input" placeholder="76561199685927598" inputmode="text">
+                    </div>
+
+                    <button class="btn primary" onclick="addToWatchlist()">Добавить</button>
+
+                    <div id="watch-result" class="result"></div>
                 </div>
 
-                <div class="field">
-                    <label>SteamID игрока</label>
-                    <input type="text" id="watch-input" placeholder="76561199685927598" inputmode="text">
-                </div>
-
-                <button class="btn primary" onclick="addToWatchlist()">
-                    <span class="btn-icon">➕</span>
-                    <span>Добавить</span>
-                </button>
-
-                <div id="watch-result" class="result"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-head">
-                    <div>
+                <div class="card">
+                    <div class="card-head">
                         <h2>Список отслеживания</h2>
-                        <p class="desc">Игроки, за которыми следит бот</p>
                     </div>
-                    <div class="chip">👁️</div>
+                    <button class="btn secondary" onclick="loadWatchlist()">🔄 Обновить</button>
+                    <div id="watchlist-result" class="result"></div>
                 </div>
+            </section>
 
-                <button class="btn secondary" onclick="loadWatchlist()">
-                    <span class="btn-icon">🔄</span>
-                    <span>Обновить список</span>
-                </button>
-
-                <div id="watchlist-result" class="result"></div>
-            </div>
-        </section>
-
-        <footer class="footer">
-            <span>🦀 Rust Toolkit · v3.0</span>
-        </footer>
+        </main>
     </div>
 
     <script src="app.js"></script>
