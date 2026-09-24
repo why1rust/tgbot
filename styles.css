@@ -163,24 +163,21 @@ body {
 /* HERO */
 .hero { padding: 16px 0 24px; }
 .hero-kicker {
-    font-size: 11px;
-    font-weight: 800;
+    font-size: 11px; font-weight: 800;
     letter-spacing: 2px;
     color: var(--accent-2);
     margin-bottom: 8px;
 }
 .hero-title {
     margin: 0 0 8px;
-    font-size: 30px;
-    font-weight: 900;
+    font-size: 30px; font-weight: 900;
     line-height: 1.1;
     color: var(--text);
     letter-spacing: -0.8px;
 }
 .hero-desc {
     margin: 0;
-    font-size: 14px;
-    color: var(--muted);
+    font-size: 14px; color: var(--muted);
     line-height: 1.5;
     max-width: 420px;
 }
@@ -188,24 +185,21 @@ body {
 /* SECTION */
 .section-head { padding: 4px 0 16px; }
 .section-kicker {
-    font-size: 11px;
-    font-weight: 800;
+    font-size: 11px; font-weight: 800;
     letter-spacing: 2px;
     color: var(--accent-2);
     margin-bottom: 6px;
 }
 .section-title {
     margin: 0 0 6px;
-    font-size: 24px;
-    font-weight: 900;
+    font-size: 24px; font-weight: 900;
     color: var(--text);
     letter-spacing: -0.5px;
     line-height: 1.15;
 }
 .section-desc {
     margin: 0;
-    font-size: 13px;
-    color: var(--muted);
+    font-size: 13px; color: var(--muted);
     line-height: 1.5;
 }
 
@@ -348,7 +342,7 @@ body {
 }
 .risk-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--muted); }
 
-/* ACTIVITY STATS (2 карточки) */
+/* ACTIVITY STATS */
 .activity-graph-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -357,17 +351,10 @@ body {
     margin-bottom: 12px;
     box-shadow: var(--shadow-card);
 }
-.activity-graph-header {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    margin-bottom: 16px;
-}
+.activity-graph-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
 .activity-graph-header h3 { margin: 0 0 4px; font-size: 15px; font-weight: 800; }
 .activity-graph-header p { margin: 0; font-size: 12px; color: var(--muted); }
-.activity-graph-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
+.activity-graph-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .activity-graph-stat {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -455,6 +442,7 @@ body {
     margin-bottom: 16px;
 }
 .card-head h3 { margin: 0; font-size: 15px; font-weight: 800; }
+.card-head .desc { margin: 4px 0 0; font-size: 12px; color: var(--muted); font-weight: 500; text-transform: none; letter-spacing: 0; }
 .btn-mini {
     width: 36px; height: 36px;
     border: 1px solid var(--border-strong);
@@ -982,6 +970,40 @@ select {
 .admin-buttons-row { display: flex; gap: 8px; margin-top: 12px; }
 .admin-buttons-row .btn { flex: 1; }
 
+/* ============ PERMISSIONS ============ */
+.perm-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+.perm-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--divider);
+    transition: background 0.15s;
+}
+.perm-row:last-child { border-bottom: none; }
+.perm-row:active { background: var(--card-hover); }
+.perm-info { flex: 1; min-width: 0; }
+.perm-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 3px;
+}
+.perm-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.35;
+}
+
 /* Dashboard grid */
 .admin-grid {
     display: grid;
@@ -1197,6 +1219,55 @@ select {
     border-color: transparent;
     box-shadow: var(--shadow-btn);
 }
+
+/* TICKETS */
+.ticket-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.ticket-item:active { transform: scale(0.98); }
+.ticket-item.unread { border-color: rgba(124, 92, 255, 0.5); }
+.ticket-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--bg-3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+}
+.ticket-info { flex: 1; min-width: 0; }
+.ticket-name {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text);
+}
+.ticket-preview {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ticket-status {
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.ticket-status.waiting { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+.ticket-status.admin_connected { background: var(--accent-soft); color: var(--accent-2); }
+.ticket-status.closed { background: rgba(122, 122, 142, 0.15); color: var(--muted); }
 
 /* FLOAT */
 .float-chat {
