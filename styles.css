@@ -1440,3 +1440,370 @@ select {
     .section-title { font-size: 28px; }
     .user-actions { grid-template-columns: repeat(4, 1fr); }
 }
+/* ============ HOME TAB ============ */
+.home-hero {
+    text-align: center;
+    padding: 20px 0 24px;
+}
+.home-logo {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 32px rgba(124, 92, 255, 0.35);
+    border: 3px solid var(--accent);
+}
+.home-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.home-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 8px;
+    text-align: center;
+    box-shadow: var(--shadow-card);
+}
+.home-stat-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--accent-2);
+    margin-bottom: 4px;
+    line-height: 1;
+}
+.home-stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ============ HOME: GIVEAWAYS ============ */
+.home-giveaway-item {
+    padding: 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+.home-giveaway-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.home-giveaway-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+.home-giveaway-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+}
+.home-giveaway-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+}
+.home-giveaway-meta span {
+    padding: 3px 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-weight: 600;
+}
+.home-giveaway-actions {
+    margin-top: 10px;
+}
+
+/* ============ HOME: REVIEWS ============ */
+.home-review-item {
+    padding: 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+.home-review-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.home-review-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+.home-review-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.home-review-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+.home-review-stars {
+    font-size: 12px;
+    color: var(--yellow);
+    letter-spacing: 1px;
+}
+.home-review-text {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+.home-review-date {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 6px;
+}
+
+/* ============ RATING STARS INPUT ============ */
+.rating-stars {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    padding: 8px 0;
+}
+.rating-stars span {
+    font-size: 34px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.15s, transform 0.1s;
+    line-height: 1;
+    user-select: none;
+}
+.rating-stars span.active,
+.rating-stars span:hover {
+    color: var(--yellow);
+}
+.rating-stars span:active {
+    transform: scale(0.9);
+}
+
+/* ============ ADMIN REVIEWS ============ */
+.admin-review-item {
+    padding: 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+.admin-review-body {
+    flex: 1;
+    min-width: 0;
+}
+.admin-review-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 10px;
+}
+.admin-review-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+.admin-review-stars {
+    font-size: 12px;
+    color: var(--yellow);
+}
+.admin-review-text {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.5;
+    margin-top: 4px;
+    word-wrap: break-word;
+}
+.admin-review-date {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 6px;
+}
+.admin-review-delete {
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.08);
+    color: var(--red);
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.admin-review-delete:active {
+    transform: scale(0.92);
+}
+
+/* ============ ADMIN GIVEAWAYS ============ */
+.admin-giveaway-item {
+    padding: 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+.admin-giveaway-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.admin-giveaway-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+}
+.admin-giveaway-status {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+.admin-giveaway-status.active {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--green);
+}
+.admin-giveaway-status.ended {
+    background: rgba(122, 122, 142, 0.15);
+    color: var(--muted);
+}
+.admin-giveaway-meta {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+.admin-giveaway-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.admin-giveaway-actions button {
+    padding: 8px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--bg-3);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+}
+.admin-giveaway-actions button:active {
+    transform: scale(0.96);
+}
+.admin-giveaway-actions button.danger {
+    color: var(--red);
+    border-color: rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.08);
+}
+.admin-giveaway-actions button.finish {
+    color: var(--yellow);
+    border-color: rgba(251, 191, 36, 0.35);
+    background: rgba(251, 191, 36, 0.08);
+}
+
+/* ============ BAN BUTTON ============ */
+.user-btn.ban {
+    color: var(--orange);
+    border-color: rgba(249, 115, 22, 0.35);
+    background: rgba(249, 115, 22, 0.08);
+}
+.user-btn.unban {
+    color: var(--green);
+    border-color: rgba(34, 197, 94, 0.35);
+    background: rgba(34, 197, 94, 0.08);
+}
+.user-ban-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ============ CHAT AVATAR (support) ============ */
+.chat-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.chat-msg-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    font-size: 12px;
+    font-weight: 800;
+    color: #fff;
+    margin-right: 6px;
+}
+.chat-msg-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.chat-msg-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    max-width: 85%;
+}
+.chat-msg-row.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+.chat-msg-row.admin,
+.chat-msg-row.helper {
+    align-self: flex-start;
+}
+.chat-msg-row .chat-msg {
+    max-width: 100%;
+}
