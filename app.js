@@ -1,8 +1,8 @@
 const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
-if (tg.setHeaderColor) tg.setHeaderColor('#0a0a0f');
-if (tg.setBackgroundColor) tg.setBackgroundColor('#0a0a0f');
+if (tg.setHeaderColor) tg.setHeaderColor('#1a1d2e');
+if (tg.setBackgroundColor) tg.setBackgroundColor('#1a1d2e');
 
 const API_BASE = 'https://rust-bot.sdadawqdqdasda.workers.dev';
 const INIT_DATA = tg.initData || '';
@@ -11,37 +11,33 @@ const INIT_DATA = tg.initData || '';
 const I18N = {
     ru: {
         tab_steam: 'Steam', tab_raid: 'Рейд', tab_craft: 'Крафт', tab_watch: 'Watch', tab_profile: 'Профиль', tab_support: 'Помощь', tab_settings: 'Настройки',
-        btn_analyze: 'Анализ', btn_calc: 'Рассчитать', btn_add: 'Добавить', btn_refresh: '🔄 Обновить', btn_create: '✅ Создать', btn_cancel: 'Отмена', btn_save: '💾 Сохранить', btn_send: '📢 Отправить', btn_preview: '👁 Превью', btn_close: 'Закрыть',
-        raid_title: 'Калькулятор рейда', raid_category: 'Категория', raid_target: 'Цель',
+        hero_kicker: 'RUST CHECKER', hero_title: 'Проверь игрока', hero_desc: 'Введи SteamID или ссылку на профиль — получи полный отчёт за секунду',
+        btn_analyze: 'Анализ',
+        raid_kicker: 'CALCULATOR', raid_title_big: 'Калькулятор рейда', raid_category: 'Категория', raid_target: 'Цель',
         raid_doors_opt: '🚪 Двери', raid_walls_opt: '🧱 Стены', raid_outer_opt: '🛡️ Внешние стены',
-        craft_title: 'Калькулятор крафта', craft_explosive: 'Взрывчатка', craft_count: 'Количество', craft_per_unit: 'Стоимость на 1 шт.',
+        craft_kicker: 'CALCULATOR', craft_title_big: 'Калькулятор крафта', craft_explosive: 'Взрывчатка', craft_count: 'Количество', craft_per_unit: 'Стоимость на 1 шт.',
         craft_rocket: 'Ракета', craft_satchel: 'Сатчел', craft_beancan: 'Бобовая граната', craft_bullet: 'Патрон 5.56',
-        watch_add_title: 'Добавить в Watchlist', watch_steamid: 'SteamID', watch_list_title: 'Список отслеживания',
-        support_title: '💬 Техподдержка', support_desc: 'Наши админы помогут решить проблему',
-        support_hero: 'Нужна помощь?', support_hero_desc: 'Опиши свою проблему — администратор ответит в ближайшее время',
-        support_problem: 'Опиши проблему', support_placeholder: 'Подробно опиши, что случилось...',
-        support_call: 'Позвать поддержку', support_time: 'Ответ обычно в течение 1-2 часов',
-        support_here: 'Отвечаем прямо здесь, в Mini App', support_notify: 'Уведомление придёт в Telegram',
-        chat_support: 'Поддержка', chat_called: 'Поддержка вызвана', chat_wait_hint: 'Ожидайте ответа, админ уже уведомлён',
-        chat_input_ph: 'Написать сообщение...', chat_reply_ph: 'Ответить...', chat_close: 'Закрыть тикет',
-        settings_title: '⚙️ Настройки',
+        watch_kicker: 'TRACKING', watch_title_big: 'Список отслеживания', watch_add_title: 'Добавить игрока', watch_steamid: 'SteamID', watch_list_title: 'Отслеживаемые',
+        support_title: 'Техподдержка', support_desc: 'Опишите проблему — админ ответит', support_hero: 'Нужна помощь?', support_hero_desc: 'Опишите ситуацию как можно подробнее — мы ответим быстрее',
+        support_problem: 'Опиши проблему', support_call_upper: 'ПОЗВАТЬ ПОДДЕРЖКУ',
+        chat_support: 'Поддержка', chat_called: 'Поддержка вызвана', chat_wait_hint: 'Ожидайте ответа', chat_close: 'Закрыть тикет',
+        settings_kicker: 'PREFERENCES', settings_title_big: 'Настройки',
         settings_theme: 'Тема оформления', settings_theme_hint: 'Как выглядит приложение',
         settings_language: 'Язык', settings_language_hint: 'Язык интерфейса',
-        settings_notifications: 'Уведомления в Telegram', settings_notifications_hint: 'Ответы поддержки, баны watchlist',
+        settings_notifications: 'Уведомления', settings_notifications_hint: 'Сообщения от поддержки',
         settings_watch_notif: 'Оповещения о банах', settings_watch_notif_hint: 'Когда у отслеживаемого появляется бан',
         settings_haptic: 'Вибро-отклик', settings_haptic_hint: 'Тактильный отклик при действиях',
-        settings_about: 'ℹ️ О приложении', settings_version: 'Версия', settings_bot: 'Бот', settings_api: 'API',
-        theme_dark: 'Тёмная', theme_light: 'Светлая', theme_auto: 'Система',
-        admin_title: '👑 Админ-панель', admin_stats: '📊 Статистика', admin_users: '👥 Пользователи', admin_premium: '⭐ Управление премиумом',
-        admin_promos: '🎟 Промокоды', admin_promo_create: '➕ Создать промокод', admin_promo_list_title: 'Список промокодов',
-        admin_tickets: '🎫 Тикеты поддержки', admin_broadcast: '📢 Рассылка', admin_template: 'Шаблон', admin_choose_template: 'Выбери шаблон',
-        admin_broadcast_text: 'Текст (HTML разрешён)', admin_broadcast_ph: 'Введи текст рассылки...',
-        admin_target: 'ID или @тег', admin_days: 'Дней', admin_give: '⭐ Выдать', admin_revoke: '❌ Забрать',
+        admin_title_upper: 'АДМИН-ПАНЕЛЬ',
+        admin_tab_stats: 'Статистика', admin_tab_users: 'Юзеры', admin_tab_premium: 'Премиум', admin_tab_promos: 'Промокоды', admin_tab_tickets: 'Тикеты', admin_tab_broadcast: 'Рассылка',
+        admin_target: 'ID или @тег', admin_days: 'Дней', admin_give_upper: 'ВЫДАТЬ', admin_revoke_upper: 'ЗАБРАТЬ',
+        admin_promo_create_upper: '➕ СОЗДАТЬ ПРОМОКОД', admin_promo_list_title: 'Список промокодов',
+        admin_template: 'Шаблон', admin_choose_template: 'Выбери шаблон', admin_broadcast_text: 'Текст (HTML разрешён)',
         promo_code: 'Код', promo_type: 'Тип', promo_type_premium: '⭐ Дни премиума', promo_type_checks: '🎮 Бонусные проверки', promo_type_discount: '💰 Скидка на покупку',
         promo_days: 'Дней премиума', promo_checks: 'Кол-во проверок', promo_percent: 'Скидка (%)',
-        promo_max_uses: 'Лимит использований (пусто = безлимит)', promo_valid_days: 'Срок действия (дней, пусто = бессрочный)',
-        promo_only_new: 'Только для новых пользователей', promo_broadcast: '📢 Сделать рассылку об этом промокоде',
+        promo_max_uses: 'Лимит использований', promo_valid_days: 'Срок действия (дней)',
+        promo_only_new: 'Только для новых', promo_broadcast: '📢 Рассылка об этом промокоде',
         edit_promo_title: '✏️ Редактировать промокод',
+        btn_calc_upper: 'РАССЧИТАТЬ', btn_add_upper: 'ДОБАВИТЬ', btn_refresh: '🔄', btn_create_upper: 'СОЗДАТЬ', btn_cancel_upper: 'ОТМЕНА', btn_save_upper: 'СОХРАНИТЬ', btn_send_upper: 'ОТПРАВИТЬ', btn_preview_upper: 'ПРЕВЬЮ',
         steam_private: 'Приватный профиль', hours_rust: 'часов Rust', friends_lbl: 'друзей', bans_lbl: 'банов',
         risk_title: 'Риск читерства', risk_sub: 'Анализ VAC, часов и активности', risk_low: 'Низкий', risk_high: 'Высокий',
         activity_title: 'Активность', vac_ban: 'VAC бан', vac_active: 'активных', no_bans: 'Банов нет', clean_history: 'Чистая история',
@@ -51,75 +47,59 @@ const I18N = {
         profile_premium_active: 'Премиум активен', profile_premium_admin: 'Администратор', profile_premium_inactive: 'Премиум не активен',
         profile_premium_hint: 'Купи премиум для безлимита', profile_admin_perm: 'Постоянный доступ',
         until_lbl: 'до', at_lbl: 'в', days_left: 'Осталось', discount_lbl: 'Скидка', on_premium_buy: 'На покупку премиума',
-        actions_title: 'Действия', btn_buy_premium: '⭐ Купить премиум', btn_trial: '🎁 Пробная', days_suffix: 'дня',
+        actions_title: 'Действия', btn_buy_premium: '⭐ Купить премиум', btn_trial: '🎁 Пробная', days_word: 'дня',
         btn_activate_promo: '🎟 Активировать промокод', btn_ref_link: '🎁 Реферальная ссылка', btn_admin_panel: '👑 Админ-панель',
         checks_lbl: 'Проверок', watchlist_lbl: 'Watchlist', refs_lbl: 'Рефералов',
-        err_steamid: '❌ Введи SteamID (17 цифр)',
-        analyzing: 'Анализирую...',
+        err_steamid: '❌ Введи SteamID (17 цифр)', analyzing: 'Анализирую...',
         watchlist_empty: '📊 Список пуст', watching_lbl: '📊 Отслеживается',
         ref_title: '🎁 Реферальная ссылка', ref_invited: 'Приглашено', ref_bonus: 'Бонусов',
-        ref_hint: 'За каждого друга +1 проверка!', ref_copy: '📋 Скопировать', ref_share: '📤 Поделиться',
-        ref_copied: '✅ Ссылка скопирована',
-        err_creating: 'Ошибка: ', err_deleting: 'Ошибка: ',
-        open_bot: 'Открой бота → /start → «⭐ Купить премиум»',
-        trial_activated: '🎉 Пробная активирована на', days_word: 'дня',
-        promo_activated: '✅ Промокод активирован',
-        sending_lbl: 'Отправка', sending_bg: 'Рассылка запущена в фоне', users_word: 'юзеров',
-        sending_run: 'Отправка запущена...', broadcast_sent: '✅ Рассылка запущена в фоне для',
-        preview_lbl: '👁 ПРЕВЬЮ',
-        empty_lbl: '❌ Пусто',
-        confirm_broadcast: 'Отправить всем пользователям?',
-        confirm_delete_promo: 'Удалить промокод',
-        confirm_close_ticket: 'Закрыть тикет?',
+        ref_hint: 'За каждого друга +1 проверка!', ref_copy: '📋 Скопировать', ref_share: '📤 Поделиться', ref_copied: '✅ Ссылка скопирована',
+        err_prefix: 'Ошибка: ', open_bot: 'Открой бота → /start → «⭐ Купить премиум»',
+        trial_activated: '🎉 Пробная активирована на', promo_activated: '✅ Промокод активирован',
+        sending_bg: '📢 Рассылка запущена в фоне', sending_run: 'Отправка запущена...', broadcast_sent: '✅ Рассылка запущена для',
+        preview_lbl: '👁 ПРЕВЬЮ', empty_lbl: '❌ Пусто',
+        confirm_broadcast: 'Отправить всем пользователям?', confirm_delete_promo: 'Удалить промокод', confirm_close_ticket: 'Закрыть тикет?',
         premium_given: '✅ Премиум выдан на', days_short: 'дн.',
-        ticket_closed: '✅ Тикет закрыт',
-        admin_close_ok: '✅ Тикет закрыт',
-        promo_updated: '✅ Промокод обновлён',
-        settings_saved: '✅ Настройки сохранены',
+        ticket_closed: '✅ Тикет закрыт', admin_close_ok: '✅ Тикет закрыт', promo_updated: '✅ Промокод обновлён',
         no_users: 'Нет пользователей', no_promos: 'Промокодов нет', no_tickets: 'Нет тикетов',
-        loading_short: '⏳', loading_lbl: '⏳ Загрузка...',
+        loading_lbl: '⏳ Загрузка...', loading_short: '⏳',
         promo_uses_lbl: 'Использований', promo_until_lbl: 'До', promo_forever_lbl: '♾ Бессрочный',
         promo_expired_lbl: '⏰ Истёк', promo_temp_lbl: 'Временный', promo_active_lbl: 'Активный',
         promo_limit_lbl: 'Лимит', promo_only_new_lbl: 'Только новые', promo_days_badge: 'Дней',
         refs_short: 'Рефералов', watch_short: 'В watchlist', income_lbl: 'Доход', today_checks: 'Проверок сегодня',
         users_short: 'Юзеров', premium_short: 'Премиум',
         chat_waiting: 'Ожидаем ответа администратора...', chat_connected: 'Админ подключился', chat_finished: 'Диалог завершён',
-        chat_waiting_sys: '⏳ Ожидаем ответа администратора', chat_closed_sys: '✅ Тикет закрыт', chat_need_reply: '⏳ Ждём ответа... (юзер вызвал поддержку)',
-        unread_lbl: 'непрочитано'
+        chat_waiting_sys: '⏳ Ожидаем ответа администратора', chat_closed_sys: '✅ Тикет закрыт', chat_need_reply: '⏳ Ждём ответа...'
     },
     en: {
         tab_steam: 'Steam', tab_raid: 'Raid', tab_craft: 'Craft', tab_watch: 'Watch', tab_profile: 'Profile', tab_support: 'Help', tab_settings: 'Settings',
-        btn_analyze: 'Analyze', btn_calc: 'Calculate', btn_add: 'Add', btn_refresh: '🔄 Refresh', btn_create: '✅ Create', btn_cancel: 'Cancel', btn_save: '💾 Save', btn_send: '📢 Send', btn_preview: '👁 Preview', btn_close: 'Close',
-        raid_title: 'Raid Calculator', raid_category: 'Category', raid_target: 'Target',
+        hero_kicker: 'RUST CHECKER', hero_title: 'Check a player', hero_desc: 'Enter SteamID or profile link — get a full report in a second',
+        btn_analyze: 'Analyze',
+        raid_kicker: 'CALCULATOR', raid_title_big: 'Raid Calculator', raid_category: 'Category', raid_target: 'Target',
         raid_doors_opt: '🚪 Doors', raid_walls_opt: '🧱 Walls', raid_outer_opt: '🛡️ Outer Walls',
-        craft_title: 'Craft Calculator', craft_explosive: 'Explosive', craft_count: 'Amount', craft_per_unit: 'Cost per 1 unit',
+        craft_kicker: 'CALCULATOR', craft_title_big: 'Craft Calculator', craft_explosive: 'Explosive', craft_count: 'Amount', craft_per_unit: 'Cost per unit',
         craft_rocket: 'Rocket', craft_satchel: 'Satchel', craft_beancan: 'Beancan', craft_bullet: 'Bullet 5.56',
-        watch_add_title: 'Add to Watchlist', watch_steamid: 'SteamID', watch_list_title: 'Watchlist',
-        support_title: '💬 Support', support_desc: 'Our admins will help you',
-        support_hero: 'Need help?', support_hero_desc: 'Describe your problem — admin will reply soon',
-        support_problem: 'Describe problem', support_placeholder: 'Describe in detail what happened...',
-        support_call: 'Call Support', support_time: 'Usually reply within 1-2 hours',
-        support_here: 'We reply right here in Mini App', support_notify: 'You will get a Telegram notification',
-        chat_support: 'Support', chat_called: 'Support called', chat_wait_hint: 'Wait for admin reply, admin is notified',
-        chat_input_ph: 'Write a message...', chat_reply_ph: 'Reply...', chat_close: 'Close ticket',
-        settings_title: '⚙️ Settings',
+        watch_kicker: 'TRACKING', watch_title_big: 'Watchlist', watch_add_title: 'Add player', watch_steamid: 'SteamID', watch_list_title: 'Tracked',
+        support_title: 'Support', support_desc: 'Describe your problem — admin will reply', support_hero: 'Need help?', support_hero_desc: 'Describe the situation in detail — we will answer faster',
+        support_problem: 'Describe problem', support_call_upper: 'CALL SUPPORT',
+        chat_support: 'Support', chat_called: 'Support called', chat_wait_hint: 'Wait for reply', chat_close: 'Close ticket',
+        settings_kicker: 'PREFERENCES', settings_title_big: 'Settings',
         settings_theme: 'Theme', settings_theme_hint: 'App appearance',
         settings_language: 'Language', settings_language_hint: 'Interface language',
-        settings_notifications: 'Telegram notifications', settings_notifications_hint: 'Support replies, watchlist bans',
-        settings_watch_notif: 'Ban alerts', settings_watch_notif_hint: 'When a tracked player gets banned',
+        settings_notifications: 'Notifications', settings_notifications_hint: 'Support replies',
+        settings_watch_notif: 'Ban alerts', settings_watch_notif_hint: 'When a tracked player is banned',
         settings_haptic: 'Haptic feedback', settings_haptic_hint: 'Vibration on actions',
-        settings_about: 'ℹ️ About', settings_version: 'Version', settings_bot: 'Bot', settings_api: 'API',
-        theme_dark: 'Dark', theme_light: 'Light', theme_auto: 'System',
-        admin_title: '👑 Admin panel', admin_stats: '📊 Stats', admin_users: '👥 Users', admin_premium: '⭐ Premium',
-        admin_promos: '🎟 Promos', admin_promo_create: '➕ Create promo', admin_promo_list_title: 'Promo list',
-        admin_tickets: '🎫 Support tickets', admin_broadcast: '📢 Broadcast', admin_template: 'Template', admin_choose_template: 'Choose template',
-        admin_broadcast_text: 'Text (HTML allowed)', admin_broadcast_ph: 'Enter broadcast text...',
-        admin_target: 'ID or @tag', admin_days: 'Days', admin_give: '⭐ Give', admin_revoke: '❌ Revoke',
+        admin_title_upper: 'ADMIN PANEL',
+        admin_tab_stats: 'Stats', admin_tab_users: 'Users', admin_tab_premium: 'Premium', admin_tab_promos: 'Promos', admin_tab_tickets: 'Tickets', admin_tab_broadcast: 'Broadcast',
+        admin_target: 'ID or @tag', admin_days: 'Days', admin_give_upper: 'GIVE', admin_revoke_upper: 'REVOKE',
+        admin_promo_create_upper: '➕ CREATE PROMO', admin_promo_list_title: 'Promo list',
+        admin_template: 'Template', admin_choose_template: 'Choose template', admin_broadcast_text: 'Text (HTML allowed)',
         promo_code: 'Code', promo_type: 'Type', promo_type_premium: '⭐ Premium days', promo_type_checks: '🎮 Bonus checks', promo_type_discount: '💰 Discount',
         promo_days: 'Premium days', promo_checks: 'Checks amount', promo_percent: 'Discount (%)',
-        promo_max_uses: 'Max uses (empty = unlimited)', promo_valid_days: 'Valid days (empty = forever)',
-        promo_only_new: 'New users only', promo_broadcast: '📢 Send broadcast about this promo',
+        promo_max_uses: 'Max uses', promo_valid_days: 'Valid days',
+        promo_only_new: 'New users only', promo_broadcast: '📢 Broadcast about this promo',
         edit_promo_title: '✏️ Edit promo',
+        btn_calc_upper: 'CALCULATE', btn_add_upper: 'ADD', btn_refresh: '🔄', btn_create_upper: 'CREATE', btn_cancel_upper: 'CANCEL', btn_save_upper: 'SAVE', btn_send_upper: 'SEND', btn_preview_upper: 'PREVIEW',
         steam_private: 'Private profile', hours_rust: 'hours Rust', friends_lbl: 'friends', bans_lbl: 'bans',
         risk_title: 'Cheat risk', risk_sub: 'VAC, hours, activity analysis', risk_low: 'Low', risk_high: 'High',
         activity_title: 'Activity', vac_ban: 'VAC ban', vac_active: 'active', no_bans: 'No bans', clean_history: 'Clean history',
@@ -129,48 +109,36 @@ const I18N = {
         profile_premium_active: 'Premium active', profile_premium_admin: 'Administrator', profile_premium_inactive: 'Premium inactive',
         profile_premium_hint: 'Buy premium for unlimited', profile_admin_perm: 'Permanent access',
         until_lbl: 'until', at_lbl: 'at', days_left: 'Left', discount_lbl: 'Discount', on_premium_buy: 'On premium purchase',
-        actions_title: 'Actions', btn_buy_premium: '⭐ Buy premium', btn_trial: '🎁 Trial', days_suffix: 'days',
+        actions_title: 'Actions', btn_buy_premium: '⭐ Buy premium', btn_trial: '🎁 Trial', days_word: 'days',
         btn_activate_promo: '🎟 Activate promo', btn_ref_link: '🎁 Referral link', btn_admin_panel: '👑 Admin panel',
         checks_lbl: 'Checks', watchlist_lbl: 'Watchlist', refs_lbl: 'Referrals',
-        err_steamid: '❌ Enter SteamID (17 digits)',
-        analyzing: 'Analyzing...',
+        err_steamid: '❌ Enter SteamID (17 digits)', analyzing: 'Analyzing...',
         watchlist_empty: '📊 List is empty', watching_lbl: '📊 Tracking',
         ref_title: '🎁 Referral link', ref_invited: 'Invited', ref_bonus: 'Bonus',
-        ref_hint: '+1 check for each friend!', ref_copy: '📋 Copy', ref_share: '📤 Share',
-        ref_copied: '✅ Link copied',
-        err_creating: 'Error: ', err_deleting: 'Error: ',
-        open_bot: 'Open bot → /start → "⭐ Buy premium"',
-        trial_activated: '🎉 Trial activated for', days_word: 'days',
-        promo_activated: '✅ Promo activated',
-        sending_lbl: 'Sending', sending_bg: 'Broadcast started in background', users_word: 'users',
-        sending_run: 'Sending started...', broadcast_sent: '✅ Broadcast started in background for',
-        preview_lbl: '👁 PREVIEW',
-        empty_lbl: '❌ Empty',
-        confirm_broadcast: 'Send to all users?',
-        confirm_delete_promo: 'Delete promo',
-        confirm_close_ticket: 'Close ticket?',
+        ref_hint: '+1 check for each friend!', ref_copy: '📋 Copy', ref_share: '📤 Share', ref_copied: '✅ Link copied',
+        err_prefix: 'Error: ', open_bot: 'Open bot → /start → "⭐ Buy premium"',
+        trial_activated: '🎉 Trial activated for', promo_activated: '✅ Promo activated',
+        sending_bg: '📢 Broadcast started', sending_run: 'Sending started...', broadcast_sent: '✅ Broadcast started for',
+        preview_lbl: '👁 PREVIEW', empty_lbl: '❌ Empty',
+        confirm_broadcast: 'Send to all users?', confirm_delete_promo: 'Delete promo', confirm_close_ticket: 'Close ticket?',
         premium_given: '✅ Premium given for', days_short: 'days',
-        ticket_closed: '✅ Ticket closed',
-        admin_close_ok: '✅ Ticket closed',
-        promo_updated: '✅ Promo updated',
-        settings_saved: '✅ Settings saved',
+        ticket_closed: '✅ Ticket closed', admin_close_ok: '✅ Ticket closed', promo_updated: '✅ Promo updated',
         no_users: 'No users', no_promos: 'No promos', no_tickets: 'No tickets',
-        loading_short: '⏳', loading_lbl: '⏳ Loading...',
+        loading_lbl: '⏳ Loading...', loading_short: '⏳',
         promo_uses_lbl: 'Uses', promo_until_lbl: 'Until', promo_forever_lbl: '♾ Forever',
         promo_expired_lbl: '⏰ Expired', promo_temp_lbl: 'Temporary', promo_active_lbl: 'Active',
         promo_limit_lbl: 'Limit', promo_only_new_lbl: 'New only', promo_days_badge: 'Days',
         refs_short: 'Referrals', watch_short: 'In watchlist', income_lbl: 'Income', today_checks: 'Checks today',
         users_short: 'Users', premium_short: 'Premium',
         chat_waiting: 'Waiting for admin reply...', chat_connected: 'Admin connected', chat_finished: 'Dialog finished',
-        chat_waiting_sys: '⏳ Waiting for admin reply', chat_closed_sys: '✅ Ticket closed', chat_need_reply: '⏳ Waiting... (user called support)',
-        unread_lbl: 'unread'
+        chat_waiting_sys: '⏳ Waiting for admin reply', chat_closed_sys: '✅ Ticket closed', chat_need_reply: '⏳ Waiting...'
     }
 };
 
 let LANG = 'ru';
 let SETTINGS = { theme: 'dark', language: 'ru', notifications: true, watchNotifications: true, haptic: true };
 
-function tr(key) { return (I18N[LANG] && I18N[LANG][key]) || (I18N.ru[key]) || key; }
+function tr(key) { return (I18N[LANG] && I18N[LANG][key]) || I18N.ru[key] || key; }
 
 // ==================== API ====================
 async function apiCall(endpoint, data = {}) {
@@ -190,20 +158,17 @@ function applyTheme(theme) {
         ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
         : theme;
     document.documentElement.setAttribute('data-theme', t);
-    document.getElementById('theme-color-meta').setAttribute('content', t === 'light' ? '#f5f5f8' : '#0a0a0f');
-    if (tg.setHeaderColor) tg.setHeaderColor(t === 'light' ? '#f5f5f8' : '#0a0a0f');
-    if (tg.setBackgroundColor) tg.setBackgroundColor(t === 'light' ? '#f5f5f8' : '#0a0a0f');
+    document.getElementById('theme-color-meta').setAttribute('content', t === 'light' ? '#f2f3f7' : '#1a1d2e');
+    if (tg.setHeaderColor) tg.setHeaderColor(t === 'light' ? '#f2f3f7' : '#1a1d2e');
+    if (tg.setBackgroundColor) tg.setBackgroundColor(t === 'light' ? '#f2f3f7' : '#1a1d2e');
     const btn = document.getElementById('theme-toggle');
     if (btn) btn.textContent = t === 'light' ? '☀️' : '🌙';
-    document.querySelectorAll('#theme-seg button').forEach(b => {
-        b.classList.toggle('active', b.dataset.theme === theme);
-    });
+    document.querySelectorAll('#theme-seg button').forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
 }
 
 function toggleTheme() {
     const cur = document.documentElement.getAttribute('data-theme') || 'dark';
-    const next = cur === 'dark' ? 'light' : 'dark';
-    setTheme(next);
+    setTheme(cur === 'dark' ? 'light' : 'dark');
 }
 
 async function setTheme(theme) {
@@ -217,10 +182,9 @@ async function setLanguage(lang) {
     SETTINGS.language = lang;
     LANG = lang;
     applyI18n();
-    updateThemeSegActive();
+    updateSegActive();
     try { await apiCall('/api/settings', { settings: { language: lang } }); } catch (e) {}
     if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-    // Перерисовать динамические секции
     if (document.getElementById('panel-profile').classList.contains('active')) loadProfile();
     if (document.getElementById('panel-support').classList.contains('active')) loadSupport();
     if (document.querySelector('.tab[data-tab="watch"]').classList.contains('active')) loadWatchlist();
@@ -232,7 +196,7 @@ async function setSetting(key, value) {
     if (key === 'haptic' && value && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
 
-function updateThemeSegActive() {
+function updateSegActive() {
     document.querySelectorAll('#theme-seg button').forEach(b => b.classList.toggle('active', b.dataset.theme === SETTINGS.theme));
     document.querySelectorAll('#lang-seg button').forEach(b => b.classList.toggle('active', b.dataset.lang === SETTINGS.language));
 }
@@ -250,9 +214,7 @@ function applyI18n() {
         const key = el.getAttribute('data-i18n_title');
         if (key) el.setAttribute('title', tr(key));
     });
-    const apiEl = document.getElementById('about-api');
-    if (apiEl) apiEl.textContent = API_BASE.replace('https://', '').split('.')[0];
-    updateThemeSegActive();
+    updateSegActive();
 }
 
 // ==================== TABS ====================
@@ -263,12 +225,10 @@ document.querySelectorAll('.tab').forEach(tab => {
         document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById(`panel-${name}`).classList.add('active');
-
         if (name === 'profile') loadProfile();
         if (name === 'support') loadSupport();
         if (name === 'watch') loadWatchlist();
         if (name === 'settings') loadSettingsToUI();
-
         if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
     });
 });
@@ -314,9 +274,9 @@ function renderSteamProfile(d) {
                 ${hasBan ? `<div class="vac-badge">⚠ BAN</div>` : `<div class="no-vac-badge">✓ OK</div>`}
             </div>
             <div class="stats-grid">
-                <div class="stat-box"><div class="stat-icon purple">🦀</div><div><div class="stat-value">${d.rustPlaytime.toLocaleString(LANG === 'en' ? 'en-US' : 'ru-RU')}</div><div class="stat-label">${tr('hours_rust')}</div></div></div>
-                <div class="stat-box"><div class="stat-icon cyan">👥</div><div><div class="stat-value">${d.friendsCount}</div><div class="stat-label">${tr('friends_lbl')}</div></div></div>
-                <div class="stat-box"><div class="stat-icon red">!</div><div><div class="stat-value">${totalBans}</div><div class="stat-label">${tr('bans_lbl')}</div></div></div>
+                <div class="stat-box"><div class="stat-icon purple">🦀</div><div class="stat-value">${d.rustPlaytime.toLocaleString(LANG === 'en' ? 'en-US' : 'ru-RU')}</div><div class="stat-label">${tr('hours_rust')}</div></div>
+                <div class="stat-box"><div class="stat-icon cyan">👥</div><div class="stat-value">${d.friendsCount}</div><div class="stat-label">${tr('friends_lbl')}</div></div>
+                <div class="stat-box"><div class="stat-icon red">!</div><div class="stat-value">${totalBans}</div><div class="stat-label">${tr('bans_lbl')}</div></div>
             </div>
         </div>
         <div class="risk-card">
@@ -324,7 +284,7 @@ function renderSteamProfile(d) {
             <div class="risk-bar"><div class="risk-indicator" style="left: ${d.riskScore}%"></div></div>
             <div class="risk-labels"><span>${tr('risk_low')}</span><span>${tr('risk_high')}</span></div>
         </div>
-        <div class="section-title"><span>${tr('activity_title')}</span></div>
+        <div class="section-title">${tr('activity_title')}</div>
         <div class="activity-list">
             ${hasBan ? `<div class="activity-item"><div class="activity-icon vac">VAC</div><div class="activity-content"><h4>${tr('vac_ban')}</h4><p>${d.vacBans} ${tr('vac_active')}</p></div></div>` : `<div class="activity-item"><div class="activity-icon vpn">✓</div><div class="activity-content"><h4>${tr('no_bans')}</h4><p>${tr('clean_history')}</p></div></div>`}
             <div class="activity-item"><div class="activity-icon raid">🔥</div><div class="activity-content"><h4>${tr('steam_level')}: ${d.steamLevel}</h4><p>${tr('achievements')}: ${d.achievementsCount}</p></div></div>
@@ -388,8 +348,8 @@ function updateCraftInfo() {
     const info = document.getElementById('craft-info');
     let html = `<div class="craft-info-list">`;
     item.resources.forEach(r => html += `<div class="craft-row"><span>${r.name}</span><strong>${r.count}</strong></div>`);
-    html += `<div class="craft-row"><span>Sulfur / Сера</span><strong>${item.sulfur}</strong></div>`;
-    if (item.lgf > 0) html += `<div class="craft-row"><span>Fuel (LGF) / Топливо</span><strong>${item.lgf}</strong></div>`;
+    html += `<div class="craft-row"><span>Sulfur</span><strong>${item.sulfur}</strong></div>`;
+    if (item.lgf > 0) html += `<div class="craft-row"><span>Fuel (LGF)</span><strong>${item.lgf}</strong></div>`;
     html += `</div>`;
     info.innerHTML = html;
 }
@@ -448,7 +408,7 @@ async function removeFromWatchlist(steamId) {
         await apiCall('/api/watch-remove', { steamId });
         if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         loadWatchlist();
-    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+    } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
 // ==================== PROFILE ====================
@@ -462,7 +422,6 @@ async function loadProfile() {
         applyI18n();
         applyTheme(SETTINGS.theme);
 
-        let premiumHtml = '';
         const dateFmt = (ts) => {
             const d = new Date(ts);
             return {
@@ -471,6 +430,7 @@ async function loadProfile() {
             };
         };
 
+        let premiumHtml = '';
         if (profile.premium && profile.premiumExpires) {
             const { date, time } = dateFmt(profile.premiumExpires);
             premiumHtml = `<div class="premium-status active"><div class="premium-status-icon">⭐</div><div class="premium-status-info"><div class="premium-status-title">${tr('profile_premium_active')}</div><div class="premium-status-date">${tr('until_lbl')} <b>${date}</b> ${tr('at_lbl')} <b>${time}</b></div><div class="premium-status-days">${tr('days_left')}: <b>${profile.daysLeft} ${tr('days_short')}</b></div></div></div>`;
@@ -503,7 +463,7 @@ async function loadProfile() {
 
         if (profile.discount) {
             const { date, time } = dateFmt(profile.discount.expiresAt);
-            html += `<div class="premium-status active" style="background:linear-gradient(135deg,rgba(6,182,212,.15),rgba(6,182,212,.05));border-color:rgba(6,182,212,.4);">
+            html += `<div class="premium-status active" style="background:linear-gradient(135deg,rgba(34,211,238,.1),rgba(34,211,238,.03));border-color:rgba(34,211,238,.35);">
                 <div class="premium-status-icon">💰</div>
                 <div class="premium-status-info">
                     <div class="premium-status-title">${tr('discount_lbl')} ${profile.discount.percent}%</div>
@@ -514,7 +474,7 @@ async function loadProfile() {
         }
 
         html += `<div class="card">
-            <div class="card-head"><h2>${tr('actions_title')}</h2></div>
+            <div class="card-head"><h3>${tr('actions_title')}</h3></div>
             ${!profile.premium ? `<button class="btn primary" onclick="openPremiumFromProfile()">${tr('btn_buy_premium')}</button>` : ''}
             ${!profile.trialUsed ? `<button class="btn secondary" style="margin-top:8px" onclick="activateTrial()">${tr('btn_trial')} ${profile.trialDays} ${tr('days_word')}</button>` : ''}
             <button class="btn secondary" style="margin-top:8px" onclick="showPromoInput()">${tr('btn_activate_promo')}</button>
@@ -524,12 +484,8 @@ async function loadProfile() {
         container.innerHTML = html;
 
         if (!profile.isAdmin) {
-            const ap = document.getElementById('admin-panel');
-            if (ap) ap.remove();
-            const atc = document.getElementById('admin-ticket-chat');
-            if (atc) atc.remove();
-            const epm = document.getElementById('edit-promo-modal');
-            if (epm) epm.remove();
+            const ids = ['admin-panel', 'admin-ticket-chat', 'edit-promo-modal'];
+            ids.forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
         }
     } catch (e) {
         container.innerHTML = `<div class="card"><div class="result show">❌ ${escapeHtml(e.message)}</div></div>`;
@@ -551,7 +507,7 @@ async function activateTrial() {
         const result = await apiCall('/api/activate-trial', { promo });
         tg.showAlert(`${tr('trial_activated')} ${result.days} ${tr('days_word')}!`);
         loadProfile();
-    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+    } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
 function showPromoInput() {
@@ -560,7 +516,7 @@ function showPromoInput() {
     apiCall('/api/use-promo', { code }).then(result => {
         tg.showAlert(`${tr('promo_activated')}: ${result.message}`);
         loadProfile();
-    }).catch(e => tg.showAlert(tr('err_creating') + e.message));
+    }).catch(e => tg.showAlert(tr('err_prefix') + e.message));
 }
 
 async function showReferral() {
@@ -579,17 +535,17 @@ async function showReferral() {
             if (id === 'copy') { navigator.clipboard.writeText(link); tg.showAlert(tr('ref_copied')); }
             if (id === 'share') { tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}`); }
         });
-    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+    } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
 function loadSettingsToUI() {
     document.getElementById('set-notifications').checked = !!SETTINGS.notifications;
     document.getElementById('set-watch-notifications').checked = !!SETTINGS.watchNotifications;
     document.getElementById('set-haptic').checked = !!SETTINGS.haptic;
-    updateThemeSegActive();
+    updateSegActive();
 }
 
-// ==================== SUPPORT (ЮЗЕР) ====================
+// ==================== SUPPORT ====================
 let currentTicket = null;
 let pollInterval = null;
 
@@ -618,16 +574,16 @@ function updateSupportStatus() {
     const desc = document.getElementById('support-status-desc');
     if (currentTicket.status === 'waiting') {
         banner.classList.remove('hidden');
-        badge.textContent = '⏳';
-        desc.textContent = tr('chat_waiting');
+        if (badge) badge.textContent = '⏳';
+        if (desc) desc.textContent = tr('chat_waiting');
     } else if (currentTicket.status === 'admin_connected') {
         banner.classList.add('hidden');
-        badge.textContent = '💬';
-        desc.textContent = tr('chat_connected');
+        if (badge) badge.textContent = '💬';
+        if (desc) desc.textContent = tr('chat_connected');
     } else {
         banner.classList.add('hidden');
-        badge.textContent = '✅';
-        desc.textContent = tr('chat_finished');
+        if (badge) badge.textContent = '✅';
+        if (desc) desc.textContent = tr('chat_finished');
     }
 }
 
@@ -647,7 +603,7 @@ async function createTicket() {
         updateSupportStatus();
         startPolling();
         if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+    } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
 function closeUserChat() {
@@ -664,7 +620,7 @@ async function closeMyTicket() {
         tg.showAlert(tr('ticket_closed'));
         currentTicket = null;
         closeUserChat();
-    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+    } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
 function renderSupportMessages() {
@@ -693,7 +649,7 @@ async function sendSupportMessage() {
         renderSupportMessages();
         updateSupportStatus();
         if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+    } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
 function startPolling() {
@@ -762,7 +718,7 @@ async function openAdminTicket(ticketId) {
                 }
             } catch (e) {}
         }, 5000);
-    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+    } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
 function renderAdminTicketMessages() {
@@ -791,7 +747,7 @@ async function sendAdminTicketMessage() {
         currentAdminTicket = data.ticket;
         renderAdminTicketMessages();
         if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+    } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
 function closeAdminTicketChat() {
@@ -809,7 +765,7 @@ async function closeAdminTicket() {
         await apiCall('/api/support/admin/close', { ticketId: currentAdminTicket.id });
         tg.showAlert(tr('admin_close_ok'));
         closeAdminTicketChat();
-    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+    } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
 // ==================== ADMIN PANEL ====================
@@ -937,7 +893,7 @@ async function adminCreatePromo() {
     const broadcast = document.getElementById('promo-broadcast').checked;
     if (!code) { tg.showAlert('Code'); return; }
     try {
-        const result = await apiCall('/api/admin/create-promo', { code, type, days, checks, percent, maxUses, validDays, onlyNew, broadcast });
+        await apiCall('/api/admin/create-promo', { code, type, days, checks, percent, maxUses, validDays, onlyNew, broadcast });
         if (broadcast) tg.showAlert(tr('sending_bg'));
         else tg.showAlert('✅');
         adminHidePromoCreate();
@@ -947,7 +903,7 @@ async function adminCreatePromo() {
         document.getElementById('promo-only-new').checked = false;
         document.getElementById('promo-broadcast').checked = false;
         adminLoadPromos();
-    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+    } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
 async function adminLoadPromos() {
@@ -997,7 +953,7 @@ async function adminDeletePromo(code) {
         await apiCall('/api/admin/delete-promo', { code });
         tg.showAlert('✅');
         adminLoadPromos();
-    } catch (e) { tg.showAlert(tr('err_creating') + e.message); }
+    } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
 // ==================== EDIT PROMO ====================
@@ -1082,7 +1038,7 @@ function adminPreviewBroadcast() {
     const text = document.getElementById('admin-broadcast-text').value.trim();
     const preview = document.getElementById('admin-broadcast-preview');
     if (!text) { preview.innerHTML = tr('empty_lbl'); preview.classList.add('show'); return; }
-    preview.innerHTML = `<div style="opacity:.55;font-size:11px;margin-bottom:6px;">${tr('preview_lbl')}</div>${text}`;
+    preview.innerHTML = `<div style="opacity:.55;font-size:11px;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;">${tr('preview_lbl')}</div>${text}`;
     preview.classList.add('show');
 }
 
@@ -1096,7 +1052,7 @@ async function adminSendBroadcast() {
     result.classList.add('show');
     try {
         const data = await apiCall('/api/admin/broadcast', { text });
-        result.innerHTML = `${tr('broadcast_sent')} <b>${data.total}</b> ${tr('users_word')}`;
+        result.innerHTML = `${tr('broadcast_sent')} <b>${data.total}</b>`;
         if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
 }
@@ -1111,16 +1067,13 @@ function escapeHtml(text) {
 
 // ==================== INIT ====================
 async function init() {
-    // Пробуем получить настройки из Telegram
     const tgLang = (tg.initDataUnsafe?.user?.language_code || 'ru').startsWith('en') ? 'en' : 'ru';
     LANG = tgLang;
     SETTINGS.language = tgLang;
 
-    // Системная тема по умолчанию
     applyTheme('dark');
     applyI18n();
 
-    // Подтягиваем профиль (там будут реальные настройки)
     try {
         const p = await apiCall('/api/profile');
         if (p.settings) {
@@ -1130,17 +1083,17 @@ async function init() {
             applyI18n();
         }
         if (!p.isAdmin) {
-            const ap = document.getElementById('admin-panel'); if (ap) ap.remove();
-            const atc = document.getElementById('admin-ticket-chat'); if (atc) atc.remove();
-            const epm = document.getElementById('edit-promo-modal'); if (epm) epm.remove();
+            ['admin-panel', 'admin-ticket-chat', 'edit-promo-modal'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.remove();
+            });
         }
-    } catch (e) { console.warn('init profile failed', e); }
+    } catch (e) { console.warn('init failed', e); }
 
     renderRaidItems();
     updateCraftInfo();
     loadSettingsToUI();
 
-    // Следим за системной темой
     if (window.matchMedia) {
         window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
             if (SETTINGS.theme === 'auto') applyTheme('auto');
