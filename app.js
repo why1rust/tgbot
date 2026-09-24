@@ -12,6 +12,7 @@ let SETTINGS = { theme: 'dark', language: 'ru', notifications: true, watchNotifi
 let USER_DATA = null;
 let LAST_ANALYZED = null;
 
+// ==================== API ====================
 async function apiCall(endpoint, data = {}) {
     const res = await fetch(`${API_BASE}${endpoint}`, {
         method: 'POST',
@@ -347,7 +348,6 @@ async function removeFromWatchlist(steamId) {
         loadWatchlist();
     } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
 }
-function openWatchlistFromSidebar() { toggleSidebar(); goToTab('watch'); }
 
 // ==================== PROFILE ====================
 function openProfile() {
@@ -511,6 +511,13 @@ function toggleSidebar(e) {
     const sb = document.getElementById('profile-sidebar');
     if (!sb) return;
     sb.classList.toggle('open');
+    if (sb.classList.contains('open')) {
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
+        set('set-notifications', SETTINGS.notifications);
+        set('set-watch-notifications', SETTINGS.watchNotifications);
+        set('set-haptic', SETTINGS.haptic);
+        updateSegActive();
+    }
     if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
 
@@ -695,6 +702,41 @@ async function adminLoadDashboard() {
     } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
 }
 
+// ==================== ADMIN: USERS ====================
+function renderUserCard(u) {
+    const pi = u.premium ? '⭐' : (u.helper ? '🎧' : '👤');
+    const un = u.username ? `@${u.username}` : '—';
+    let badges = '';
+    if (u.premium) badges += '<span class="premium-badge">⭐ Премиум</span>';
+    if (u.helper) badges += '<span class="helper-badge">🎧 Хелпер</span>';
+    let exp = '';
+    if (u.premiumExpires) { const d = new Date(u.premiumExpires); exp = ` · до ${d.toLocaleDateString('ru-RU')}`; }
+    const bonus = u.bonusChecks || 0;
+    return `
+        <div class="user-item">
+            <div class="user-head">
+                <div class="user-info">
+                    <div class="user-name">${pi} ${escapeHtml(u.firstName || 'Без имени')}</div>
+                    <div class="user-meta">${un} · ID: ${u.userId}${exp} · 👁️ ${u.watchlistCount || 0}${bonus > 0 ? ` · 🎁 +${bonus}` : ''}</div>
+                    ${badges ? `<div class="user-badges">${badges}</div>` : ''}
+                </div>
+            </div>
+            <div class="user-actions">
+                ${u.premium
+                    ? `<button class="user-btn danger" onclick="quickRevokePremium(${u.userId})">❌ Забрать премиум</button>`
+                    : `<button class="user-btn premium" onclick="openUserPremiumModal(${u.userId}, '${escapeHtml(u.firstName || '—')}')">⭐ Выдать премиум</button>`
+                }
+                ${u.helper
+                    ? `<button class="user-btn danger" onclick="quickRemoveHelper(${u.userId})">❌ Убрать хелпера</button>`
+                    : `<button class="user-btn helper" onclick="quickAddHelper(${u.userId})">🎧 Сделать хелпером</button>`
+                }
+                <button class="user-btn dm" onclick="openUserDmModal(${u.userId}, '${escapeHtml(u.firstName || '—')}')">📩 Написать</button>
+                <button class="user-btn bonus" onclick="openUserBonusModal(${u.userId}, '${escapeHtml(u.firstName || '—')}')">🎁 Бонус</button>
+            </div>
+        </div>
+    `;
+}
+
 async function adminLoadUsers() {
     const c = document.getElementById('admin-users-content');
     c.innerHTML = '<div class="loading-block">⏳</div>';
@@ -702,22 +744,7 @@ async function adminLoadUsers() {
         const data = await apiCall('/api/admin/users');
         if (!data.users?.length) { c.innerHTML = '<div class="loading-block">Нет пользователей</div>'; return; }
         let html = '';
-        data.users.slice(0, 50).forEach(u => {
-            const pi = u.premium ? '⭐' : (u.helper ? '🎧' : '👤');
-            const un = u.username ? `@${u.username}` : '—';
-            let badges = '';
-            if (u.premium) badges += '<span class="helper-badge" style="background:rgba(251,191,36,.12);color:var(--yellow);border-color:rgba(251,191,36,.4);">⭐ Премиум</span> ';
-            if (u.helper) badges += '<span class="helper-badge">🎧 Хелпер</span>';
-            let exp = '';
-            if (u.premiumExpires) { const d = new Date(u.premiumExpires); exp = `до ${d.toLocaleDateString('ru-RU')}`; }
-            html += `<div class="user-item">
-                <div class="user-info">
-                    <div class="user-name">${pi} ${escapeHtml(u.firstName || '—')}</div>
-                    <div class="user-meta">${un} · ID: ${u.userId}${exp ? ' · ' + exp : ''} · 👁️ ${u.watchlistCount}</div>
-                    <div class="user-actions">${badges}</div>
-                </div>
-            </div>`;
-        });
+        data.users.slice(0, 50).forEach(u => { html += renderUserCard(u); });
         c.innerHTML = html;
     } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
 }
@@ -734,21 +761,143 @@ function adminSearchUsers() {
             const data = await apiCall('/api/admin/search-user', { query: q });
             if (!data.results?.length) { c.innerHTML = '<div class="loading-block">Ничего не найдено</div>'; return; }
             let html = '';
-            data.results.forEach(u => {
-                const pi = u.premium ? '⭐' : (u.helper ? '🎧' : '👤');
-                const un = u.username ? `@${u.username}` : '—';
-                html += `<div class="user-item">
-                    <div class="user-info">
-                        <div class="user-name">${pi} ${escapeHtml(u.firstName || '—')}</div>
-                        <div class="user-meta">${un} · ID: ${u.userId}</div>
-                    </div>
-                </div>`;
-            });
+            data.results.forEach(u => { html += renderUserCard(u); });
             c.innerHTML = html;
         } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
     }, 300);
 }
 
+// ==================== ADMIN: QUICK ACTIONS ====================
+// Premium
+let currentUserPremiumId = null;
+function openUserPremiumModal(userId, name) {
+    currentUserPremiumId = userId;
+    document.getElementById('user-premium-name').value = `${name} · ID: ${userId}`;
+    document.getElementById('user-premium-days').value = 30;
+    document.querySelectorAll('#user-premium-presets button').forEach(b => b.classList.toggle('active', b.dataset.days === '30'));
+    document.getElementById('user-premium-result').classList.remove('show');
+    document.getElementById('user-premium-modal').style.display = 'flex';
+}
+function closeUserPremiumModal() {
+    document.getElementById('user-premium-modal').style.display = 'none';
+    currentUserPremiumId = null;
+}
+function selectPremiumDays(days) {
+    document.getElementById('user-premium-days').value = days;
+    document.querySelectorAll('#user-premium-presets button').forEach(b => b.classList.toggle('active', parseInt(b.dataset.days) === days));
+    if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+}
+function clearPresetActive() {
+    document.querySelectorAll('#user-premium-presets button').forEach(b => b.classList.remove('active'));
+}
+async function confirmUserPremium() {
+    if (!currentUserPremiumId) return;
+    const days = parseInt(document.getElementById('user-premium-days').value) || 30;
+    const result = document.getElementById('user-premium-result');
+    result.innerHTML = '<span class="spinner"></span>Обработка...';
+    result.classList.add('show');
+    try {
+        await apiCall('/api/admin/give-premium', { targetId: currentUserPremiumId, days });
+        result.innerHTML = `✅ Премиум выдан на ${days} дн.`;
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        setTimeout(() => { closeUserPremiumModal(); adminLoadUsers(); }, 900);
+    } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
+}
+async function quickRevokePremium(userId) {
+    const confirmed = await new Promise(res => tg.showConfirm('Забрать премиум?', res));
+    if (!confirmed) return;
+    try {
+        await apiCall('/api/admin/revoke-premium', { targetId: userId });
+        tg.showAlert('✅ Премиум забран');
+        adminLoadUsers();
+    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+}
+
+// Helper
+async function quickAddHelper(userId) {
+    const confirmed = await new Promise(res => tg.showConfirm('Назначить пользователя хелпером?', res));
+    if (!confirmed) return;
+    try {
+        await apiCall('/api/admin/add-helper', { targetId: userId });
+        tg.showAlert('✅ Хелпер назначен, уведомление отправлено');
+        adminLoadUsers();
+    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+}
+async function quickRemoveHelper(userId) {
+    const confirmed = await new Promise(res => tg.showConfirm('Убрать роль хелпера?', res));
+    if (!confirmed) return;
+    try {
+        await apiCall('/api/admin/remove-helper', { targetId: userId });
+        tg.showAlert('✅ Роль снята');
+        adminLoadUsers();
+    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
+}
+
+// Bonus
+let currentUserBonusId = null;
+function openUserBonusModal(userId, name) {
+    currentUserBonusId = userId;
+    document.getElementById('user-bonus-name').value = `${name} · ID: ${userId}`;
+    document.getElementById('user-bonus-amount').value = 5;
+    document.querySelectorAll('#user-bonus-presets button').forEach(b => b.classList.toggle('active', b.dataset.amount === '5'));
+    document.getElementById('user-bonus-result').classList.remove('show');
+    document.getElementById('user-bonus-modal').style.display = 'flex';
+}
+function closeUserBonusModal() {
+    document.getElementById('user-bonus-modal').style.display = 'none';
+    currentUserBonusId = null;
+}
+function selectBonusAmount(amount) {
+    document.getElementById('user-bonus-amount').value = amount;
+    document.querySelectorAll('#user-bonus-presets button').forEach(b => b.classList.toggle('active', parseInt(b.dataset.amount) === amount));
+    if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+}
+function clearBonusPresetActive() {
+    document.querySelectorAll('#user-bonus-presets button').forEach(b => b.classList.remove('active'));
+}
+async function confirmUserBonus() {
+    if (!currentUserBonusId) return;
+    const amount = parseInt(document.getElementById('user-bonus-amount').value) || 5;
+    const result = document.getElementById('user-bonus-result');
+    result.innerHTML = '<span class="spinner"></span>Обработка...';
+    result.classList.add('show');
+    try {
+        const data = await apiCall('/api/admin/give-bonus', { targetId: currentUserBonusId, amount });
+        result.innerHTML = `✅ +${amount} проверок. Всего бонусов: ${data.newBonus}`;
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        setTimeout(() => { closeUserBonusModal(); adminLoadUsers(); }, 900);
+    } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
+}
+
+// DM
+let currentUserDmId = null;
+function openUserDmModal(userId, name) {
+    currentUserDmId = userId;
+    document.getElementById('user-dm-name').value = `${name} · ID: ${userId}`;
+    document.getElementById('user-dm-text').value = '';
+    document.getElementById('user-dm-result').classList.remove('show');
+    document.getElementById('user-dm-modal').style.display = 'flex';
+}
+function closeUserDmModal() {
+    document.getElementById('user-dm-modal').style.display = 'none';
+    currentUserDmId = null;
+}
+async function confirmUserDm() {
+    if (!currentUserDmId) return;
+    const text = document.getElementById('user-dm-text').value.trim();
+    const result = document.getElementById('user-dm-result');
+    if (!text) { result.innerHTML = '❌ Введи текст'; result.classList.add('show'); return; }
+    result.innerHTML = '<span class="spinner"></span>Отправка...';
+    result.classList.add('show');
+    try {
+        await apiCall('/api/admin/send-dm', { targetId: currentUserDmId, text });
+        result.innerHTML = '✅ Отправлено';
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        setTimeout(() => { closeUserDmModal(); }, 800);
+    } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
+}
+
+// ==================== ADMIN: LOGS ====================
 async function adminLoadLogs() {
     const c = document.getElementById('admin-logs-content');
     c.innerHTML = '<div class="loading-block">⏳</div>';
@@ -763,7 +912,9 @@ async function adminLoadLogs() {
             'delete_promo': '🗑',
             'broadcast': '📢',
             'add_helper': '🎧',
-            'remove_helper': '❌'
+            'remove_helper': '❌',
+            'give_bonus': '🎁',
+            'send_dm': '📩'
         };
         let html = '';
         data.logs.slice(0, 50).forEach(l => {
@@ -782,7 +933,7 @@ async function adminLoadLogs() {
     } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
 }
 
-// ==================== ADMIN: PREMIUM ====================
+// ==================== ADMIN: PREMIUM (форма вкладки) ====================
 async function adminGivePremium() {
     const target = document.getElementById('admin-premium-target').value.trim();
     const days = parseInt(document.getElementById('admin-premium-days').value) || 30;
@@ -855,27 +1006,19 @@ async function adminLoadHelpers() {
             const un = h.username ? `@${h.username}` : '—';
             const since = new Date(h.since).toLocaleDateString('ru-RU');
             html += `<div class="user-item">
-                <div class="user-info">
-                    <div class="user-name">🎧 ${escapeHtml(h.firstName || '—')}</div>
-                    <div class="user-meta">${un} · ID: ${h.userId} · с ${since}</div>
+                <div class="user-head">
+                    <div class="user-info">
+                        <div class="user-name">🎧 ${escapeHtml(h.firstName || '—')}</div>
+                        <div class="user-meta">${un} · ID: ${h.userId} · с ${since}</div>
+                    </div>
                 </div>
                 <div class="user-actions">
-                    <button class="user-btn danger" onclick="adminRemoveHelper(${h.userId})">❌ Убрать</button>
+                    <button class="user-btn danger" onclick="quickRemoveHelper(${h.userId})">❌ Убрать</button>
                 </div>
             </div>`;
         });
         c.innerHTML = html;
     } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
-}
-
-async function adminRemoveHelper(targetId) {
-    const confirmed = await new Promise(res => tg.showConfirm('Убрать роль хелпера?', res));
-    if (!confirmed) return;
-    try {
-        await apiCall('/api/admin/remove-helper', { targetId });
-        tg.showAlert('✅ Роль снята');
-        adminLoadHelpers();
-    } catch (e) { tg.showAlert('Ошибка: ' + e.message); }
 }
 
 // ==================== ADMIN: TICKETS ====================
@@ -930,16 +1073,11 @@ function renderAdminTicketMessages() {
     let html = '';
     currentAdminTicket.messages.forEach(msg => {
         const time = new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-        // admin/helper — справа, user — слева
         let visualRole;
-        if (msg.role === 'admin') visualRole = 'user';
-        else if (msg.role === 'helper') visualRole = 'helper';
-        else visualRole = 'user'; // сообщение юзера справа? Нет — юзера слева для админа
-        // Логика: в админ-чате «я» = admin/helper, поэтому мои сообщения справа (класс user),
-        // сообщения юзера — слева (класс admin).
         if (msg.role === 'user') visualRole = 'admin';
         else if (msg.role === 'admin') visualRole = 'user';
         else if (msg.role === 'helper') visualRole = 'helper';
+        else visualRole = 'admin';
         html += `<div class="chat-msg ${visualRole}">${escapeHtml(msg.text)}<span class="chat-msg-time">${time}</span></div>`;
     });
     if (currentAdminTicket.status === 'waiting') html += `<div class="chat-msg system">⏳ Ждём ответа</div>`;
@@ -966,7 +1104,6 @@ async function sendAdminTicketMessage() {
 function closeAdminTicketChat() {
     if (adminTicketPoll) { clearInterval(adminTicketPoll); adminTicketPoll = null; }
     document.getElementById('admin-ticket-chat').style.display = 'none';
-    // Обновляем список — если мы админ, вернёмся на админ-тикеты, если хелпер — на helpers
     if (USER_DATA?.isAdmin) loadAdminTickets();
     else if (USER_DATA?.isHelper) helperLoadTickets();
 }
@@ -994,9 +1131,7 @@ document.querySelectorAll('.admin-pill').forEach(pill => {
         if (content) content.classList.add('active');
         if (a === 'dashboard') adminLoadDashboard();
         if (a === 'users') adminLoadUsers();
-        if (a === 'premium') {
-            // Ничего не грузим, форма пустая
-        }
+        if (a === 'premium') {}
         if (a === 'helpers') adminLoadHelpers();
         if (a === 'promos') adminLoadPromos();
         if (a === 'tickets') loadAdminTickets();
