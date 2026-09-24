@@ -40,7 +40,7 @@ async function analyzeSteam() {
         return;
     }
 
-    resultDiv.innerHTML = '<span class="spinner"></span>Анализирую профиль...';
+    resultDiv.innerHTML = '<span class="spinner"></span>Анализирую профиль... Это может занять до 30 секунд';
     resultDiv.classList.add('show');
 
     try {
@@ -201,12 +201,21 @@ function renderSteamProfile(d) {
                 </div>
                 <div class="friends-list" style="display:none;">
                     ${d.friendsWithRust.map(f => `
-                        <div class="friend-row" onclick="event.stopPropagation(); window.open('${escapeHtml(f.profileUrl)}', '_blank')">
-                            <div class="friend-avatar">${escapeHtml(f.name.substring(0, 1).toUpperCase())}</div>
-                            <div class="friend-info">
+                        <div class="friend-row">
+                            <div class="friend-avatar-img-wrap" onclick="event.stopPropagation(); window.open('${escapeHtml(f.profileUrl)}', '_blank')">
+                                ${f.avatar 
+                                    ? `<img class="friend-avatar-img" src="${API_BASE}/api/avatar?url=${encodeURIComponent(f.avatar)}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` 
+                                    : ''
+                                }
+                                <div class="friend-avatar" style="${f.avatar ? 'display:none;' : ''}">${escapeHtml(f.name.substring(0, 1).toUpperCase())}</div>
+                            </div>
+                            <div class="friend-info" onclick="event.stopPropagation(); window.open('${escapeHtml(f.profileUrl)}', '_blank')">
                                 <div class="friend-name">${escapeHtml(f.name)}</div>
                                 <div class="friend-link">Открыть профиль ›</div>
                             </div>
+                            <button class="friend-check-btn" onclick="event.stopPropagation(); checkFriendProfile('${f.steamId}')">
+                                Пробить
+                            </button>
                         </div>
                     `).join('')}
                 </div>
@@ -248,6 +257,26 @@ function toggleFriends(el) {
     }
 
     if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+}
+
+// ==================== CHECK FRIEND PROFILE ====================
+async function checkFriendProfile(steamId) {
+    // Переключаемся на вкладку Steam
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelector('.tab[data-tab="steam"]').classList.add('active');
+    document.getElementById('panel-steam').classList.add('active');
+
+    // Ставим SteamID в поле ввода
+    document.getElementById('steam-input').value = steamId;
+
+    // Запускаем анализ
+    await analyzeSteam();
+
+    // Скроллим наверх
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
 }
 
 // ==================== RAID ====================
