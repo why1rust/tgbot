@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#13161e" id="theme-color-meta">
+    <meta name="theme-color" content="#0e0e12" id="theme-color-meta">
     <title>Rust Toolkit</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="styles.css">
@@ -14,11 +14,11 @@
             <div class="header-left">
                 <div class="logo">R</div>
                 <div class="header-info">
-                    <h1>RUST TOOLKIT</h1>
-                    <p>HelperRust <span class="version">v8.0</span></p>
+                    <h1>Rust Toolkit</h1>
+                    <p>v9.0</p>
                 </div>
             </div>
-            <button class="avatar-btn" id="avatar-btn" onclick="toggleSidebar()" title="Menu">
+            <button class="avatar-btn" id="avatar-btn" onclick="toggleSidebar(event)">
                 <span id="header-avatar">👤</span>
             </button>
         </header>
@@ -38,7 +38,11 @@
             </button>
             <button class="tab" data-tab="watch">
                 <span class="tab-icon">👁️</span>
-                <span class="tab-label">Watchlist</span>
+                <span class="tab-label">Отслеж.</span>
+            </button>
+            <button class="tab" data-tab="settings">
+                <span class="tab-icon">⚙️</span>
+                <span class="tab-label">Настройки</span>
             </button>
         </nav>
 
@@ -51,9 +55,9 @@
                     <p class="hero-desc">Введи SteamID или ссылку — получи полный отчёт за секунду</p>
                 </div>
                 <div class="search-bar">
-                    <div class="search-icon">🔍</div>
+                    <span class="search-icon">🔍</span>
                     <input type="text" id="steam-input" placeholder="76561199685927598" inputmode="text">
-                    <button class="analyze-btn" onclick="analyzeSteam()">АНАЛИЗ</button>
+                    <button class="analyze-btn" onclick="analyzeSteam()">Анализ</button>
                 </div>
                 <div id="steam-result"></div>
             </section>
@@ -62,7 +66,7 @@
             <section class="panel" id="panel-raid">
                 <div class="section-head">
                     <div class="section-kicker">CALCULATOR</div>
-                    <h2 class="section-title-big">Калькулятор рейда</h2>
+                    <h2 class="section-title">Калькулятор рейда</h2>
                     <p class="section-desc">Сколько взрывчатки нужно на объект</p>
                 </div>
                 <div class="card">
@@ -78,7 +82,7 @@
                         <label>Цель</label>
                         <select id="raid-target"></select>
                     </div>
-                    <button class="btn primary pill" onclick="calculateRaid()">РАССЧИТАТЬ</button>
+                    <button class="btn primary" onclick="calculateRaid()">Рассчитать</button>
                     <div id="raid-result" class="result"></div>
                 </div>
             </section>
@@ -87,7 +91,7 @@
             <section class="panel" id="panel-craft">
                 <div class="section-head">
                     <div class="section-kicker">CALCULATOR</div>
-                    <h2 class="section-title-big">Калькулятор крафта</h2>
+                    <h2 class="section-title">Калькулятор крафта</h2>
                     <p class="section-desc">Ресурсы на крафт взрывчатки</p>
                 </div>
                 <div class="card">
@@ -97,7 +101,7 @@
                             <option value="c4">💥 C4</option>
                             <option value="rocket">🚀 Ракета</option>
                             <option value="satchel">🎒 Сатчел</option>
-                            <option value="beancan">💣 Бобовая</option>
+                            <option value="beancan">💣 Бобовая граната</option>
                             <option value="explo">🔫 Патрон 5.56</option>
                         </select>
                     </div>
@@ -105,13 +109,11 @@
                         <label>Количество</label>
                         <input type="number" id="craft-count" value="1" min="1" inputmode="numeric">
                     </div>
-                    <button class="btn primary pill" onclick="calculateCraft()">РАССЧИТАТЬ</button>
+                    <button class="btn primary" onclick="calculateCraft()">Рассчитать</button>
                     <div id="craft-result" class="result"></div>
                 </div>
                 <div class="card">
-                    <div class="card-head">
-                        <h3>Стоимость на 1 шт.</h3>
-                    </div>
+                    <div class="card-head"><h3>Стоимость на 1 шт.</h3></div>
                     <div id="craft-info" class="craft-info"></div>
                 </div>
             </section>
@@ -120,19 +122,16 @@
             <section class="panel" id="panel-watch">
                 <div class="section-head">
                     <div class="section-kicker">TRACKING</div>
-                    <h2 class="section-title-big">Watchlist</h2>
+                    <h2 class="section-title">Отслеживание</h2>
                     <p class="section-desc">Следи за игроками и получай уведомления о банах</p>
                 </div>
                 <div class="card">
-                    <div class="card-head">
-                        <h3>Добавить игрока</h3>
-                        <span class="chip-icon">➕</span>
-                    </div>
+                    <div class="card-head"><h3>Добавить игрока</h3></div>
                     <div class="field">
                         <label>SteamID</label>
                         <input type="text" id="watch-input" placeholder="76561199685927598" inputmode="text">
                     </div>
-                    <button class="btn primary pill" onclick="addToWatchlist()">ДОБАВИТЬ</button>
+                    <button class="btn primary" onclick="addToWatchlist()">Добавить</button>
                     <div id="watch-result" class="result"></div>
                 </div>
                 <div class="card">
@@ -143,15 +142,83 @@
                     <div id="watchlist-result" class="result"></div>
                 </div>
             </section>
+
+            <!-- SETTINGS -->
+            <section class="panel" id="panel-settings">
+                <div class="section-head">
+                    <div class="section-kicker">PREFERENCES</div>
+                    <h2 class="section-title">Настройки</h2>
+                    <p class="section-desc">Персонализация приложения</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-head"><h3>Оформление</h3></div>
+                    <div class="settings-row">
+                        <div class="settings-label">
+                            <div class="settings-name">Тема</div>
+                            <div class="settings-hint">Как выглядит приложение</div>
+                        </div>
+                        <div class="segmented" id="theme-seg">
+                            <button data-theme="dark" onclick="setTheme('dark')">🌙 Тёмная</button>
+                            <button data-theme="light" onclick="setTheme('light')">☀️ Светлая</button>
+                        </div>
+                    </div>
+                    <div class="settings-row">
+                        <div class="settings-label">
+                            <div class="settings-name">Язык</div>
+                            <div class="settings-hint">Язык интерфейса</div>
+                        </div>
+                        <div class="segmented" id="lang-seg">
+                            <button data-lang="ru" onclick="setLanguage('ru')">🇷🇺 RU</button>
+                            <button data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head"><h3>Уведомления</h3></div>
+                    <div class="settings-row">
+                        <div class="settings-label">
+                            <div class="settings-name">Уведомления</div>
+                            <div class="settings-hint">Сообщения от поддержки</div>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="set-notifications" onchange="setSetting('notifications', this.checked)"><span></span></label>
+                    </div>
+                    <div class="settings-row">
+                        <div class="settings-label">
+                            <div class="settings-name">Оповещения о банах</div>
+                            <div class="settings-hint">Когда у отслеживаемого появляется бан</div>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="set-watch-notifications" onchange="setSetting('watchNotifications', this.checked)"><span></span></label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head"><h3>Взаимодействие</h3></div>
+                    <div class="settings-row">
+                        <div class="settings-label">
+                            <div class="settings-name">Вибро-отклик</div>
+                            <div class="settings-hint">Тактильный отклик при действиях</div>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="set-haptic" onchange="setSetting('haptic', this.checked)"><span></span></label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head"><h3>Аккаунт</h3></div>
+                    <button class="btn secondary" onclick="openReferral()">🎁 Реферальная ссылка</button>
+                    <button class="btn secondary" style="margin-top:8px" onclick="showPromoInput()">🎟 Активировать промокод</button>
+                    <button class="btn secondary" style="margin-top:8px" onclick="openProfile()">👤 Мой профиль</button>
+                    <button class="btn secondary" style="margin-top:8px" onclick="openSupport()">💬 Помощь</button>
+                </div>
+            </section>
         </main>
 
-        <button class="float-chat" id="float-chat" onclick="openSupportFromFloat()" title="Support">
-            <span class="float-chat-icon">🎧</span>
-        </button>
+        <button class="float-chat" id="float-chat" onclick="openSupport()" title="Support">🎧</button>
 
         <aside id="profile-sidebar" class="profile-sidebar">
-            <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-            <div class="sidebar-content">
+            <div class="sidebar-overlay" onclick="toggleSidebar(event)"></div>
+            <div class="sidebar-content" onclick="event.stopPropagation()">
                 <div class="sidebar-user">
                     <div class="sidebar-avatar" id="sidebar-avatar">👤</div>
                     <div class="sidebar-user-info">
@@ -160,78 +227,27 @@
                     </div>
                 </div>
 
-                <div class="sidebar-section">
-                    <button class="sidebar-item" onclick="openProfileFromSidebar()">
+                <div class="sidebar-menu">
+                    <button type="button" class="sidebar-item" onclick="openProfile()">
                         <span class="sidebar-icon">👤</span>
                         <span>Профиль</span>
                     </button>
-                    <button class="sidebar-item" onclick="openWatchlistFromSidebar()">
+                    <button type="button" class="sidebar-item" onclick="openWatchlistFromSidebar()">
                         <span class="sidebar-icon">👁️</span>
-                        <span>Watchlist</span>
+                        <span>Отслеживание</span>
                     </button>
-                    <button class="sidebar-item" onclick="openSupportFromSidebar()">
+                    <button type="button" class="sidebar-item" onclick="openSupport()">
                         <span class="sidebar-icon">💬</span>
                         <span>Помощь</span>
                     </button>
-                </div>
-
-                <div class="sidebar-section">
-                    <div class="sidebar-section-title">Настройки</div>
-
-                    <div class="sidebar-row">
-                        <span class="sidebar-row-label">Тема</span>
-                        <div class="segmented small" id="theme-seg">
-                            <button data-theme="dark" onclick="setTheme('dark')" title="Тёмная">🌙</button>
-                            <button data-theme="light" onclick="setTheme('light')" title="Светлая">☀️</button>
-                            <button data-theme="auto" onclick="setTheme('auto')" title="Системная">🌗</button>
-                        </div>
-                    </div>
-
-                    <div class="sidebar-row">
-                        <span class="sidebar-row-label">Язык</span>
-                        <div class="segmented small" id="lang-seg">
-                            <button data-lang="ru" onclick="setLanguage('ru')">🇷🇺</button>
-                            <button data-lang="en" onclick="setLanguage('en')">🇬🇧</button>
-                        </div>
-                    </div>
-
-                    <div class="sidebar-row">
-                        <span class="sidebar-row-label">Уведомления</span>
-                        <label class="switch small">
-                            <input type="checkbox" id="set-notifications" onchange="setSetting('notifications', this.checked)">
-                            <span></span>
-                        </label>
-                    </div>
-
-                    <div class="sidebar-row">
-                        <span class="sidebar-row-label">Уведомления о банах</span>
-                        <label class="switch small">
-                            <input type="checkbox" id="set-watch-notifications" onchange="setSetting('watchNotifications', this.checked)">
-                            <span></span>
-                        </label>
-                    </div>
-
-                    <div class="sidebar-row">
-                        <span class="sidebar-row-label">Вибро-отклик</span>
-                        <label class="switch small">
-                            <input type="checkbox" id="set-haptic" onchange="setSetting('haptic', this.checked)">
-                            <span></span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="sidebar-section">
-                    <button class="sidebar-item" onclick="openReferral()">
+                    <div class="sidebar-divider"></div>
+                    <button type="button" class="sidebar-item" onclick="openReferral()">
                         <span class="sidebar-icon">🎁</span>
                         <span>Реферальная ссылка</span>
                     </button>
-                    <button class="sidebar-item" onclick="showPromoInput()">
+                    <button type="button" class="sidebar-item" onclick="showPromoInput()">
                         <span class="sidebar-icon">🎟</span>
                         <span>Активировать промокод</span>
-                    </button>
-                    <button class="sidebar-item danger" onclick="openBotLink()">
-                        <span class="sidebar-icon">↩️</span>
-                        <span>Вернуться в бот</span>
                     </button>
                 </div>
             </div>
@@ -270,12 +286,12 @@
                             <label>Опиши проблему</label>
                             <textarea id="support-first-message" rows="5" placeholder="Подробно опиши, что случилось..."></textarea>
                         </div>
-                        <button class="btn primary pill" onclick="createTicket()">НАЧАТЬ ДИАЛОГ</button>
+                        <button class="btn primary" onclick="createTicket()">Начать диалог</button>
                     </div>
                     <div id="support-chat" class="chat-screen" style="display:none;">
                         <div class="chat-header">
                             <div class="chat-header-info">
-                                <div class="chat-avatar"><span>🎧</span></div>
+                                <div class="chat-avatar">🎧</div>
                                 <div>
                                     <div class="chat-title">Rust Toolkit</div>
                                     <div class="chat-subtitle" id="support-status-desc">—</div>
@@ -336,13 +352,13 @@
                         <div class="admin-field"><label>ID или @тег</label><input type="text" id="admin-premium-target" placeholder="123456789 или @durov"></div>
                         <div class="admin-field"><label>Дней</label><input type="number" id="admin-premium-days" value="30" min="1" max="3650"></div>
                         <div class="admin-buttons-row">
-                            <button class="btn primary" onclick="adminGivePremium()">ВЫДАТЬ</button>
-                            <button class="btn danger" onclick="adminRevokePremium()">ЗАБРАТЬ</button>
+                            <button class="btn primary" onclick="adminGivePremium()">Выдать</button>
+                            <button class="btn danger" onclick="adminRevokePremium()">Забрать</button>
                         </div>
                         <div id="admin-premium-result" class="result"></div>
                     </div>
                     <div class="admin-content" id="atab-promos">
-                        <button class="btn primary pill" onclick="adminShowPromoCreate()">➕ СОЗДАТЬ ПРОМОКОД</button>
+                        <button class="btn primary" onclick="adminShowPromoCreate()">➕ Создать промокод</button>
                         <div id="admin-promo-create" style="display:none; margin-top:16px;">
                             <div class="admin-field"><label>Код</label><input type="text" id="promo-code" placeholder="RUST30"></div>
                             <div class="admin-field">
@@ -361,8 +377,8 @@
                             <div class="admin-checkbox"><input type="checkbox" id="promo-only-new"><label for="promo-only-new">Только для новых</label></div>
                             <div class="admin-checkbox"><input type="checkbox" id="promo-broadcast"><label for="promo-broadcast">📢 Рассылка об этом промокоде</label></div>
                             <div class="admin-buttons-row">
-                                <button class="btn primary" onclick="adminCreatePromo()">СОЗДАТЬ</button>
-                                <button class="btn secondary" onclick="adminHidePromoCreate()">ОТМЕНА</button>
+                                <button class="btn primary" onclick="adminCreatePromo()">Создать</button>
+                                <button class="btn secondary" onclick="adminHidePromoCreate()">Отмена</button>
                             </div>
                         </div>
                         <h4 style="margin-top:20px;">Список промокодов</h4>
@@ -383,8 +399,8 @@
                             <textarea id="admin-broadcast-text" rows="8" placeholder="Введи текст рассылки..."></textarea>
                         </div>
                         <div class="admin-buttons-row">
-                            <button class="btn primary" onclick="adminSendBroadcast()">ОТПРАВИТЬ</button>
-                            <button class="btn secondary" onclick="adminPreviewBroadcast()">ПРЕВЬЮ</button>
+                            <button class="btn primary" onclick="adminSendBroadcast()">Отправить</button>
+                            <button class="btn secondary" onclick="adminPreviewBroadcast()">Превью</button>
                         </div>
                         <div id="admin-broadcast-preview" class="result"></div>
                         <div id="admin-broadcast-result" class="result"></div>
@@ -410,8 +426,8 @@
                 <div class="admin-field"><label>Срок действия (дней)</label><input type="number" id="edit-promo-valid-days" placeholder="Пусто = бессрочно"></div>
                 <div class="admin-checkbox"><input type="checkbox" id="edit-promo-only-new"><label for="edit-promo-only-new">Только для новых</label></div>
                 <div class="admin-buttons-row">
-                    <button class="btn primary" onclick="adminSavePromoEdit()">СОХРАНИТЬ</button>
-                    <button class="btn secondary" onclick="closeEditPromo()">ОТМЕНА</button>
+                    <button class="btn primary" onclick="adminSavePromoEdit()">Сохранить</button>
+                    <button class="btn secondary" onclick="closeEditPromo()">Отмена</button>
                 </div>
                 <div id="edit-promo-result" class="result"></div>
             </div>
@@ -423,7 +439,7 @@
                 <div class="chat-header">
                     <button class="chat-back" onclick="closeAdminTicketChat()">‹</button>
                     <div class="chat-header-info">
-                        <div class="chat-avatar" id="admin-ticket-avatar"><span>👤</span></div>
+                        <div class="chat-avatar" id="admin-ticket-avatar">👤</div>
                         <div>
                             <div class="chat-title" id="admin-ticket-name">Пользователь</div>
                             <div class="chat-subtitle" id="admin-ticket-sub">ID: —</div>
