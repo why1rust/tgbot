@@ -1,8 +1,8 @@
 const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
-if (tg.setHeaderColor) tg.setHeaderColor('#1a1d24');
-if (tg.setBackgroundColor) tg.setBackgroundColor('#1a1d24');
+if (tg.setHeaderColor) tg.setHeaderColor('#13161e');
+if (tg.setBackgroundColor) tg.setBackgroundColor('#13161e');
 
 const API_BASE = 'https://rust-bot.sdadawqdqdasda.workers.dev';
 const INIT_DATA = tg.initData || '';
@@ -10,37 +10,26 @@ const INIT_DATA = tg.initData || '';
 // ==================== I18N ====================
 const I18N = {
     ru: {
-        tab_steam: 'Steam', tab_raid: 'Рейд', tab_craft: 'Крафт', tab_watch: 'Watch', tab_profile: 'Профиль', tab_support: 'Помощь', tab_settings: 'Настройки',
-        hero_kicker: 'RUST CHECKER', hero_title: 'Проверь игрока', hero_desc: 'Введи SteamID или ссылку — получи полный отчёт',
-        btn_analyze: 'Анализ',
+        btn_analyze: 'АНАЛИЗ', hero_kicker: 'RUST CHECKER', hero_title: 'Проверь игрока',
+        hero_desc: 'Введи SteamID или ссылку — получи полный отчёт за секунду',
         raid_kicker: 'CALCULATOR', raid_title_big: 'Калькулятор рейда', raid_category: 'Категория', raid_target: 'Цель',
         raid_doors_opt: '🚪 Двери', raid_walls_opt: '🧱 Стены', raid_outer_opt: '🛡️ Внешние стены',
-        craft_kicker: 'CALCULATOR', craft_title_big: 'Калькулятор крафта', craft_explosive: 'Взрывчатка', craft_count: 'Количество', craft_per_unit: 'Стоимость на 1 шт.',
-        craft_rocket: 'Ракета', craft_satchel: 'Сатчел', craft_beancan: 'Бобовая', craft_bullet: 'Патрон 5.56',
-        watch_kicker: 'TRACKING', watch_title_big: 'Список отслеживания', watch_add_title: 'Добавить игрока', watch_steamid: 'SteamID', watch_list_title: 'Отслеживаемые',
-        support_title: 'Техподдержка', support_desc: 'Опишите проблему — админ ответит', support_hero: 'Нужна помощь?', support_hero_desc: 'Опишите ситуацию подробнее — ответим быстрее',
+        raid_title_calc: 'Калькулятор рейда', raid_desc: 'Сколько взрывчатки нужно на объект',
+        craft_kicker: 'CALCULATOR', craft_title_big: 'Калькулятор крафта', craft_desc: 'Ресурсы на крафт взрывчатки',
+        craft_explosive: 'Взрывчатка', craft_count: 'Количество', craft_per_unit: 'Стоимость на 1 шт.',
+        watch_kicker: 'TRACKING', watch_title_big: 'Watchlist', watch_desc: 'Следи за игроками и получай уведомления о банах',
+        watch_add_title: 'Добавить игрока', watch_steamid: 'SteamID', watch_list_title: 'Отслеживаемые',
+        btn_calc_upper: 'РАССЧИТАТЬ', btn_add_upper: 'ДОБАВИТЬ',
+        support_title: 'Поддержка', support_hero: 'Нужна помощь?', support_hero_desc: 'Опиши ситуацию подробнее — ответим быстрее',
         support_problem: 'Опиши проблему', support_start_chat: 'НАЧАТЬ ДИАЛОГ',
-        chat_support_title: 'Rust Toolkit', chat_called: 'Поддержка вызвана', chat_wait_hint: 'Ожидайте ответа', chat_close: 'Закрыть тикет',
-        settings_kicker: 'PREFERENCES', settings_title_big: 'Настройки',
-        settings_theme: 'Тема оформления', settings_theme_hint: 'Как выглядит приложение',
-        settings_language: 'Язык', settings_language_hint: 'Язык интерфейса',
-        settings_notifications: 'Уведомления', settings_notifications_hint: 'Сообщения от поддержки',
-        settings_watch_notif: 'Оповещения о банах', settings_watch_notif_hint: 'Когда у отслеживаемого появляется бан',
-        settings_haptic: 'Вибро-отклик', settings_haptic_hint: 'Тактильный отклик при действиях',
-        sidebar_profile: 'Профиль', sidebar_watch: 'Watchlist', sidebar_support: 'Помощь', sidebar_settings: 'Настройки',
-        sidebar_referral: 'Реферальная ссылка', sidebar_promo: 'Активировать промокод', sidebar_back_to_bot: 'Вернуться в бот',
-        friends_title: 'Друзья с Rust',
-        admin_title_upper: 'АДМИН-ПАНЕЛЬ',
-        admin_tab_stats: 'Статистика', admin_tab_users: 'Юзеры', admin_tab_premium: 'Премиум', admin_tab_promos: 'Промокоды', admin_tab_tickets: 'Тикеты', admin_tab_broadcast: 'Рассылка',
-        admin_target: 'ID или @тег', admin_days: 'Дней', admin_give_upper: 'ВЫДАТЬ', admin_revoke_upper: 'ЗАБРАТЬ',
-        admin_promo_create_upper: '➕ СОЗДАТЬ ПРОМОКОД', admin_promo_list_title: 'Список промокодов',
-        admin_template: 'Шаблон', admin_choose_template: 'Выбери шаблон', admin_broadcast_text: 'Текст (HTML разрешён)',
-        promo_code: 'Код', promo_type: 'Тип', promo_type_premium: '⭐ Дни премиума', promo_type_checks: '🎮 Бонусные проверки', promo_type_discount: '💰 Скидка на покупку',
-        promo_days: 'Дней премиума', promo_checks: 'Кол-во проверок', promo_percent: 'Скидка (%)',
-        promo_max_uses: 'Лимит использований', promo_valid_days: 'Срок действия (дней)',
-        promo_only_new: 'Только для новых', promo_broadcast: '📢 Рассылка об этом промокоде',
-        edit_promo_title: '✏️ Редактировать промокод',
-        btn_calc_upper: 'РАССЧИТАТЬ', btn_add_upper: 'ДОБАВИТЬ', btn_refresh: '🔄', btn_create_upper: 'СОЗДАТЬ', btn_cancel_upper: 'ОТМЕНА', btn_save_upper: 'СОХРАНИТЬ', btn_send_upper: 'ОТПРАВИТЬ', btn_preview_upper: 'ПРЕВЬЮ',
+        profile_title_modal: 'Профиль', friends_title_modal: 'Друзья с Rust', admin_title_modal: 'Админ-панель',
+        sidebar_profile: 'Профиль', sidebar_watch: 'Watchlist', sidebar_support: 'Помощь',
+        sidebar_settings: 'Настройки', sidebar_theme: 'Тема', sidebar_lang: 'Язык',
+        sidebar_notifications: 'Уведомления', sidebar_watch_notif: 'Уведомления о банах',
+        sidebar_haptic: 'Вибро-отклик',
+        sidebar_referral: 'Реферальная ссылка', sidebar_promo: 'Активировать промокод',
+        sidebar_back: 'Вернуться в бот', sidebar_close: 'Закрыть',
+        chat_called: 'Поддержка вызвана', chat_wait_hint: 'Ожидайте ответа',
         steam_private: 'Приватный профиль', hours_rust: 'часов Rust', friends_lbl: 'друзей', bans_lbl: 'банов',
         risk_title: 'Риск читерства', risk_sub: 'Анализ VAC, часов и активности', risk_low: 'Низкий', risk_high: 'Высокий',
         activity_title: 'Активность', vac_ban: 'VAC бан', vac_active: 'активных', no_bans: 'Банов нет', clean_history: 'Чистая история',
@@ -52,7 +41,7 @@ const I18N = {
         until_lbl: 'до', at_lbl: 'в', days_left: 'Осталось', discount_lbl: 'Скидка', on_premium_buy: 'На покупку премиума',
         actions_title: 'Действия', btn_buy_premium: '⭐ Купить премиум', btn_trial: '🎁 Пробная', days_word: 'дня',
         btn_activate_promo: '🎟 Активировать промокод', btn_ref_link: '🎁 Реферальная ссылка', btn_admin_panel: '👑 Админ-панель',
-        checks_lbl: 'Проверок', watchlist_lbl: 'Watchlist', refs_lbl: 'Рефералов', premium_days_lbl: 'Дней премиума',
+        checks_lbl: 'Проверок', watchlist_lbl: 'Watchlist', refs_lbl: 'Рефералов',
         err_steamid: '❌ Введи SteamID (17 цифр)', analyzing: 'Анализирую...',
         watchlist_empty: '📊 Список пуст', watching_lbl: '📊 Отслеживается',
         ref_title: '🎁 Реферальная ссылка', ref_invited: 'Приглашено', ref_bonus: 'Бонусов',
@@ -74,42 +63,39 @@ const I18N = {
         chat_waiting: 'Ожидаем ответа администратора...', chat_connected: 'Админ подключился', chat_finished: 'Диалог завершён',
         chat_waiting_sys: '⏳ Ожидаем ответа администратора', chat_closed_sys: '✅ Тикет закрыт', chat_need_reply: '⏳ Ждём ответа...',
         friend_check: 'Проверить', friend_steam: 'Steam',
-        checking_friend: 'Анализирую друга...'
+        admin_stats: 'Статистика', admin_users: 'Юзеры', admin_premium: 'Премиум', admin_promos: 'Промокоды', admin_tickets: 'Тикеты', admin_broadcast: 'Рассылка',
+        promo_code: 'Код', promo_type: 'Тип', promo_type_premium: '⭐ Дни премиума', promo_type_checks: '🎮 Бонусные проверки', promo_type_discount: '💰 Скидка на покупку',
+        promo_days: 'Дней премиума', promo_checks: 'Кол-во проверок', promo_percent: 'Скидка (%)',
+        promo_max_uses: 'Лимит использований', promo_valid_days: 'Срок действия (дней)',
+        promo_only_new: 'Только для новых', promo_broadcast: '📢 Рассылка об этом промокоде',
+        edit_promo_title: '✏️ Редактировать промокод',
+        admin_target: 'ID или @тег', admin_days: 'Дней',
+        admin_template: 'Шаблон', admin_choose_template: 'Выбери шаблон', admin_broadcast_text: 'Текст (HTML разрешён)',
+        settings_saved: '✅ Сохранено'
     },
     en: {
-        tab_steam: 'Steam', tab_raid: 'Raid', tab_craft: 'Craft', tab_watch: 'Watch', tab_profile: 'Profile', tab_support: 'Help', tab_settings: 'Settings',
-        hero_kicker: 'RUST CHECKER', hero_title: 'Check a player', hero_desc: 'Enter SteamID or profile link — get a full report',
-        btn_analyze: 'Analyze',
+        btn_analyze: 'ANALYZE', hero_kicker: 'RUST CHECKER', hero_title: 'Check a player',
+        hero_desc: 'Enter SteamID or link — get a full report in a second',
         raid_kicker: 'CALCULATOR', raid_title_big: 'Raid Calculator', raid_category: 'Category', raid_target: 'Target',
         raid_doors_opt: '🚪 Doors', raid_walls_opt: '🧱 Walls', raid_outer_opt: '🛡️ Outer',
-        craft_kicker: 'CALCULATOR', craft_title_big: 'Craft Calculator', craft_explosive: 'Explosive', craft_count: 'Amount', craft_per_unit: 'Cost per unit',
-        craft_rocket: 'Rocket', craft_satchel: 'Satchel', craft_beancan: 'Beancan', craft_bullet: 'Bullet 5.56',
-        watch_kicker: 'TRACKING', watch_title_big: 'Watchlist', watch_add_title: 'Add player', watch_steamid: 'SteamID', watch_list_title: 'Tracked',
-        support_title: 'Support', support_desc: 'Describe problem — admin will reply', support_hero: 'Need help?', support_hero_desc: 'Describe the situation — we will answer faster',
+        raid_title_calc: 'Raid Calculator', raid_desc: 'How much explosives you need',
+        craft_kicker: 'CALCULATOR', craft_title_big: 'Craft Calculator', craft_desc: 'Resources to craft explosives',
+        craft_explosive: 'Explosive', craft_count: 'Amount', craft_per_unit: 'Cost per unit',
+        watch_kicker: 'TRACKING', watch_title_big: 'Watchlist', watch_desc: 'Track players and get ban alerts',
+        watch_add_title: 'Add player', watch_steamid: 'SteamID', watch_list_title: 'Tracked',
+        btn_calc_upper: 'CALCULATE', btn_add_upper: 'ADD',
+        support_title: 'Support', support_hero: 'Need help?', support_hero_desc: 'Describe the situation — we will answer faster',
         support_problem: 'Describe problem', support_start_chat: 'START CHAT',
-        chat_support_title: 'Rust Toolkit', chat_called: 'Support called', chat_wait_hint: 'Wait for reply', chat_close: 'Close ticket',
-        settings_kicker: 'PREFERENCES', settings_title_big: 'Settings',
-        settings_theme: 'Theme', settings_theme_hint: 'App appearance',
-        settings_language: 'Language', settings_language_hint: 'Interface language',
-        settings_notifications: 'Notifications', settings_notifications_hint: 'Support replies',
-        settings_watch_notif: 'Ban alerts', settings_watch_notif_hint: 'When a tracked player is banned',
-        settings_haptic: 'Haptic feedback', settings_haptic_hint: 'Vibration on actions',
-        sidebar_profile: 'Profile', sidebar_watch: 'Watchlist', sidebar_support: 'Help', sidebar_settings: 'Settings',
-        sidebar_referral: 'Referral link', sidebar_promo: 'Activate promo', sidebar_back_to_bot: 'Back to bot',
-        friends_title: 'Friends with Rust',
-        admin_title_upper: 'ADMIN PANEL',
-        admin_tab_stats: 'Stats', admin_tab_users: 'Users', admin_tab_premium: 'Premium', admin_tab_promos: 'Promos', admin_tab_tickets: 'Tickets', admin_tab_broadcast: 'Broadcast',
-        admin_target: 'ID or @tag', admin_days: 'Days', admin_give_upper: 'GIVE', admin_revoke_upper: 'REVOKE',
-        admin_promo_create_upper: '➕ CREATE PROMO', admin_promo_list_title: 'Promo list',
-        admin_template: 'Template', admin_choose_template: 'Choose template', admin_broadcast_text: 'Text (HTML allowed)',
-        promo_code: 'Code', promo_type: 'Type', promo_type_premium: '⭐ Premium days', promo_type_checks: '🎮 Bonus checks', promo_type_discount: '💰 Discount',
-        promo_days: 'Premium days', promo_checks: 'Checks amount', promo_percent: 'Discount (%)',
-        promo_max_uses: 'Max uses', promo_valid_days: 'Valid days',
-        promo_only_new: 'New users only', promo_broadcast: '📢 Broadcast about this promo',
-        edit_promo_title: '✏️ Edit promo',
-        btn_calc_upper: 'CALCULATE', btn_add_upper: 'ADD', btn_refresh: '🔄', btn_create_upper: 'CREATE', btn_cancel_upper: 'CANCEL', btn_save_upper: 'SAVE', btn_send_upper: 'SEND', btn_preview_upper: 'PREVIEW',
+        profile_title_modal: 'Profile', friends_title_modal: 'Friends with Rust', admin_title_modal: 'Admin Panel',
+        sidebar_profile: 'Profile', sidebar_watch: 'Watchlist', sidebar_support: 'Help',
+        sidebar_settings: 'Settings', sidebar_theme: 'Theme', sidebar_lang: 'Language',
+        sidebar_notifications: 'Notifications', sidebar_watch_notif: 'Ban alerts',
+        sidebar_haptic: 'Haptic',
+        sidebar_referral: 'Referral link', sidebar_promo: 'Activate promo',
+        sidebar_back: 'Back to bot', sidebar_close: 'Close',
+        chat_called: 'Support called', chat_wait_hint: 'Wait for reply',
         steam_private: 'Private profile', hours_rust: 'hours Rust', friends_lbl: 'friends', bans_lbl: 'bans',
-        risk_title: 'Cheat risk', risk_sub: 'VAC, hours, activity analysis', risk_low: 'Low', risk_high: 'High',
+        risk_title: 'Cheat risk', risk_sub: 'VAC, hours, activity', risk_low: 'Low', risk_high: 'High',
         activity_title: 'Activity', vac_ban: 'VAC ban', vac_active: 'active', no_bans: 'No bans', clean_history: 'Clean history',
         steam_level: 'Steam level', achievements: 'Achievements', age_lbl: 'Age', years_lbl: 'years', days_lbl: 'days', games_lbl: 'Games',
         friends_rust: 'Friends with Rust', open_friends: 'Open list', open_profile: 'Open profile',
@@ -119,7 +105,7 @@ const I18N = {
         until_lbl: 'until', at_lbl: 'at', days_left: 'Left', discount_lbl: 'Discount', on_premium_buy: 'On premium purchase',
         actions_title: 'Actions', btn_buy_premium: '⭐ Buy premium', btn_trial: '🎁 Trial', days_word: 'days',
         btn_activate_promo: '🎟 Activate promo', btn_ref_link: '🎁 Referral link', btn_admin_panel: '👑 Admin panel',
-        checks_lbl: 'Checks', watchlist_lbl: 'Watchlist', refs_lbl: 'Referrals', premium_days_lbl: 'Premium days',
+        checks_lbl: 'Checks', watchlist_lbl: 'Watchlist', refs_lbl: 'Referrals',
         err_steamid: '❌ Enter SteamID (17 digits)', analyzing: 'Analyzing...',
         watchlist_empty: '📊 List is empty', watching_lbl: '📊 Tracking',
         ref_title: '🎁 Referral link', ref_invited: 'Invited', ref_bonus: 'Bonus',
@@ -141,7 +127,15 @@ const I18N = {
         chat_waiting: 'Waiting for admin reply...', chat_connected: 'Admin connected', chat_finished: 'Dialog finished',
         chat_waiting_sys: '⏳ Waiting for admin reply', chat_closed_sys: '✅ Ticket closed', chat_need_reply: '⏳ Waiting...',
         friend_check: 'Check', friend_steam: 'Steam',
-        checking_friend: 'Analyzing friend...'
+        admin_stats: 'Stats', admin_users: 'Users', admin_premium: 'Premium', admin_promos: 'Promos', admin_tickets: 'Tickets', admin_broadcast: 'Broadcast',
+        promo_code: 'Code', promo_type: 'Type', promo_type_premium: '⭐ Premium days', promo_type_checks: '🎮 Bonus checks', promo_type_discount: '💰 Discount',
+        promo_days: 'Premium days', promo_checks: 'Checks amount', promo_percent: 'Discount (%)',
+        promo_max_uses: 'Max uses', promo_valid_days: 'Valid days',
+        promo_only_new: 'New users only', promo_broadcast: '📢 Broadcast about this promo',
+        edit_promo_title: '✏️ Edit promo',
+        admin_target: 'ID or @tag', admin_days: 'Days',
+        admin_template: 'Template', admin_choose_template: 'Choose template', admin_broadcast_text: 'Text (HTML allowed)',
+        settings_saved: '✅ Saved'
     }
 };
 
@@ -170,17 +164,11 @@ function applyTheme(theme) {
         ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
         : theme;
     document.documentElement.setAttribute('data-theme', t);
-    document.getElementById('theme-color-meta').setAttribute('content', t === 'light' ? '#f5f5f7' : '#1a1d24');
-    if (tg.setHeaderColor) tg.setHeaderColor(t === 'light' ? '#f5f5f7' : '#1a1d24');
-    if (tg.setBackgroundColor) tg.setBackgroundColor(t === 'light' ? '#f5f5f7' : '#1a1d24');
-    const btn = document.getElementById('theme-toggle');
-    if (btn) btn.textContent = t === 'light' ? '☀️' : '🌙';
+    const meta = document.getElementById('theme-color-meta');
+    if (meta) meta.setAttribute('content', t === 'light' ? '#f4f5f9' : '#13161e');
+    if (tg.setHeaderColor) tg.setHeaderColor(t === 'light' ? '#f4f5f9' : '#13161e');
+    if (tg.setBackgroundColor) tg.setBackgroundColor(t === 'light' ? '#f4f5f9' : '#13161e');
     document.querySelectorAll('#theme-seg button').forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
-}
-
-function toggleTheme() {
-    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
-    setTheme(cur === 'dark' ? 'light' : 'dark');
 }
 
 async function setTheme(theme) {
@@ -197,8 +185,12 @@ async function setLanguage(lang) {
     updateSegActive();
     try { await apiCall('/api/settings', { settings: { language: lang } }); } catch (e) {}
     if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-    if (document.getElementById('panel-profile').classList.contains('active')) loadProfile();
-    if (document.getElementById('panel-support').classList.contains('active')) loadSupport();
+    if (LAST_ANALYZED) {
+        const el = document.getElementById('steam-result');
+        if (el && el.innerHTML) el.innerHTML = renderSteamProfile(LAST_ANALYZED);
+    }
+    if (document.getElementById('profile-modal').style.display === 'flex') loadProfile();
+    if (document.getElementById('support-modal').style.display === 'flex') loadSupport();
     if (document.querySelector('.tab[data-tab="watch"]').classList.contains('active')) loadWatchlist();
 }
 
@@ -214,18 +206,7 @@ function updateSegActive() {
 }
 
 function applyI18n() {
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const k = el.getAttribute('data-i18n');
-        if (k) el.textContent = tr(k);
-    });
-    document.querySelectorAll('[data-i18n_placeholder]').forEach(el => {
-        const k = el.getAttribute('data-i18n_placeholder');
-        if (k) el.setAttribute('placeholder', tr(k));
-    });
-    document.querySelectorAll('[data-i18n_title]').forEach(el => {
-        const k = el.getAttribute('data-i18n_title');
-        if (k) el.setAttribute('title', tr(k));
-    });
+    // Тексты в HTML пока без data-i18n кроме заголовков секций — их обновляем вручную
     updateSegActive();
 }
 
@@ -237,10 +218,7 @@ function goToTab(name) {
     if (tab) tab.classList.add('active');
     const panel = document.getElementById(`panel-${name}`);
     if (panel) panel.classList.add('active');
-    if (name === 'profile') loadProfile();
-    if (name === 'support') loadSupport();
     if (name === 'watch') loadWatchlist();
-    if (name === 'settings') loadSettingsToUI();
 }
 
 document.querySelectorAll('.tab').forEach(tab => {
@@ -334,7 +312,7 @@ function openFriendsScreen() {
                     <div class="friend-id">${f.steamId}</div>
                 </div>
                 <div class="friend-actions">
-                    <button class="friend-btn steam" onclick="window.open('${escapeHtml(f.profileUrl)}','_blank')" title="Steam">🌐</button>
+                    <button class="friend-btn steam" onclick="window.open('${escapeHtml(f.profileUrl)}','_blank')" title="${tr('friend_steam')}">🌐</button>
                     <button class="friend-btn check" onclick="checkFriend('${f.steamId}')" title="${tr('friend_check')}">🔍</button>
                 </div>
             </div>`;
@@ -455,7 +433,7 @@ async function loadWatchlist() {
         if (!list?.length) { result.innerHTML = tr('watchlist_empty'); return; }
         let html = `<strong>${tr('watching_lbl')}: ${list.length}</strong><br><br>`;
         list.forEach((w, i) => {
-            html += `<div class="watch-item"><strong>${i+1}. ${escapeHtml(w.name)}</strong><br><small>${w.steamId}</small><br><small>VAC: ${w.lastVacBans} · Game: ${w.lastGameBans}</small><br><button class="btn secondary" style="margin-top:8px;padding:8px;font-size:12px;" onclick="removeFromWatchlist('${w.steamId}')">🗑 ${LANG === 'en' ? 'Remove' : 'Удалить'}</button></div>`;
+            html += `<div style="padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;"><strong>${i+1}. ${escapeHtml(w.name)}</strong><br><small style="color:var(--muted);">${w.steamId}</small><br><small style="color:var(--muted);">VAC: ${w.lastVacBans} · Game: ${w.lastGameBans}</small><br><button class="btn secondary" style="margin-top:8px;padding:8px;font-size:11px;" onclick="removeFromWatchlist('${w.steamId}')">🗑 ${LANG === 'en' ? 'Remove' : 'Удалить'}</button></div>`;
         });
         result.innerHTML = html;
     } catch (e) {
@@ -471,7 +449,17 @@ async function removeFromWatchlist(steamId) {
     } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
-// ==================== PROFILE ====================
+// ==================== PROFILE MODAL ====================
+function openProfileFromSidebar() {
+    toggleSidebar();
+    document.getElementById('profile-modal').style.display = 'flex';
+    loadProfile();
+}
+
+function closeProfileModal() {
+    document.getElementById('profile-modal').style.display = 'none';
+}
+
 async function loadProfile() {
     const container = document.getElementById('profile-content');
     container.innerHTML = `<div class="loading-block">${tr('profile_loading')}</div>`;
@@ -480,10 +468,7 @@ async function loadProfile() {
         USER_DATA = profile;
         LANG = profile.settings?.language || LANG;
         SETTINGS = { ...SETTINGS, ...(profile.settings || {}) };
-        applyI18n();
         applyTheme(SETTINGS.theme);
-
-        // Обновляем sidebar и header avatar
         updateUserUI(profile);
 
         const dateFmt = (ts) => {
@@ -543,7 +528,7 @@ async function loadProfile() {
             ${!profile.trialUsed ? `<button class="btn secondary pill" style="margin-top:8px" onclick="activateTrial()">${tr('btn_trial')} ${profile.trialDays} ${tr('days_word')}</button>` : ''}
             <button class="btn secondary pill" style="margin-top:8px" onclick="showPromoInput()">${tr('btn_activate_promo')}</button>
             <button class="btn secondary pill" style="margin-top:8px" onclick="openReferral()">${tr('btn_ref_link')}</button>
-            ${profile.isAdmin ? `<button class="btn danger pill" style="margin-top:8px" onclick="openAdminPanel()">${tr('btn_admin_panel')}</button>` : ''}
+            ${profile.isAdmin ? `<button class="btn danger pill" style="margin-top:8px" onclick="closeProfileModal(); openAdminPanel();">${tr('btn_admin_panel')}</button>` : ''}
         </div>`;
         container.innerHTML = html;
 
@@ -559,13 +544,11 @@ async function loadProfile() {
 }
 
 function updateUserUI(p) {
-    // Header avatar
     const ha = document.getElementById('header-avatar');
     if (ha) {
-        if (p.photoUrl) ha.innerHTML = `<img src="${escapeHtml(p.photoUrl)}" style="width:100%;height:100%;object-fit:cover;">`;
+        if (p.photoUrl) ha.innerHTML = `<img src="${escapeHtml(p.photoUrl)}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
         else ha.textContent = (p.firstName || 'U').charAt(0).toUpperCase();
     }
-    // Sidebar
     const sa = document.getElementById('sidebar-avatar');
     if (sa) {
         if (p.photoUrl) sa.innerHTML = `<img src="${escapeHtml(p.photoUrl)}">`;
@@ -578,6 +561,7 @@ function updateUserUI(p) {
 }
 
 function openPremiumFromProfile() {
+    closeProfileModal();
     goToTab('steam');
     tg.showAlert(tr('open_bot'));
 }
@@ -597,7 +581,7 @@ function showPromoInput() {
     if (!code) return;
     apiCall('/api/use-promo', { code }).then(result => {
         tg.showAlert(`${tr('promo_activated')}: ${result.message}`);
-        if (document.getElementById('panel-profile').classList.contains('active')) loadProfile();
+        if (document.getElementById('profile-modal').style.display === 'flex') loadProfile();
     }).catch(e => tg.showAlert(tr('err_prefix') + e.message));
 }
 
@@ -624,24 +608,39 @@ function openBotLink() {
     tg.openTelegramLink('https://t.me/rustplusplusss_bot');
 }
 
-function loadSettingsToUI() {
-    document.getElementById('set-notifications').checked = !!SETTINGS.notifications;
-    document.getElementById('set-watch-notifications').checked = !!SETTINGS.watchNotifications;
-    document.getElementById('set-haptic').checked = !!SETTINGS.haptic;
-    updateSegActive();
-}
-
 // ==================== SIDEBAR ====================
 function toggleSidebar() {
     const sb = document.getElementById('profile-sidebar');
     if (!sb) return;
     sb.classList.toggle('open');
     if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
+    set('set-notifications', SETTINGS.notifications);
+    set('set-watch-notifications', SETTINGS.watchNotifications);
+    set('set-haptic', SETTINGS.haptic);
+    updateSegActive();
 }
 
-// ==================== SUPPORT ====================
+// ==================== SUPPORT MODAL ====================
 let currentTicket = null;
 let pollInterval = null;
+
+function openSupportFromSidebar() {
+    toggleSidebar();
+    document.getElementById('support-modal').style.display = 'flex';
+    loadSupport();
+}
+
+function openSupportFromFloat() {
+    document.getElementById('support-modal').style.display = 'flex';
+    loadSupport();
+    if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+}
+
+function closeSupportModal() {
+    if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+    document.getElementById('support-modal').style.display = 'none';
+}
 
 async function loadSupport() {
     try {
@@ -696,12 +695,6 @@ async function createTicket() {
     } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
-function closeUserChat() {
-    if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
-    document.getElementById('support-chat').style.display = 'none';
-    document.getElementById('support-start').style.display = 'block';
-}
-
 async function closeMyTicket() {
     const confirmed = await new Promise(res => tg.showConfirm(tr('confirm_close_ticket'), res));
     if (!confirmed) return;
@@ -709,7 +702,8 @@ async function closeMyTicket() {
         await apiCall('/api/support/close-my-ticket');
         tg.showAlert(tr('ticket_closed'));
         currentTicket = null;
-        closeUserChat();
+        document.getElementById('support-chat').style.display = 'none';
+        document.getElementById('support-start').style.display = 'block';
     } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
@@ -811,14 +805,12 @@ async function openAdminTicket(ticketId) {
     } catch (e) { tg.showAlert(tr('err_prefix') + e.message); }
 }
 
-// ВАЖНО: у админа роли визуально меняются — admin справа (как «мои»), user слева
 function renderAdminTicketMessages() {
     if (!currentAdminTicket) return;
     const c = document.getElementById('admin-ticket-messages');
     let html = '';
     currentAdminTicket.messages.forEach(msg => {
         const time = new Date(msg.timestamp).toLocaleTimeString(LANG === 'en' ? 'en-US' : 'ru-RU', { hour: '2-digit', minute: '2-digit' });
-        // Визуальный свап: admin → user (справа), user → admin (слева)
         const visualRole = msg.role === 'admin' ? 'user' : 'admin';
         html += `<div class="chat-msg ${visualRole}">${escapeHtml(msg.text)}<span class="chat-msg-time">${time}</span></div>`;
     });
@@ -1150,12 +1142,6 @@ async function adminSendBroadcast() {
     } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
 }
 
-// ==================== FLOAT CHAT ====================
-function openSupportFromFloat() {
-    goToTab('support');
-    if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-}
-
 // ==================== HELPERS ====================
 function escapeHtml(text) {
     if (!text) return '';
@@ -1169,25 +1155,19 @@ async function handleHashRoute() {
     const hash = location.hash || '';
     if (hash.startsWith('#ticket=')) {
         const ticketId = hash.replace('#ticket=', '');
-        goToTab('support');
-        // Определяем, админ это или юзер — по USER_DATA.isAdmin
-        // Дождёмся загрузки профиля если ещё нет
         if (!USER_DATA) {
             try { USER_DATA = await apiCall('/api/profile'); } catch (e) {}
         }
-        if (USER_DATA?.isAdmin && ticketId.startsWith('ticket_')) {
-            // Пробуем открыть как админский тикет
-            setTimeout(() => {
-                openAdminTicket(ticketId).catch(() => {
-                    // Если не получилось — юзерский чат
-                    loadSupport();
-                });
-            }, 300);
+        if (USER_DATA?.isAdmin) {
+            document.getElementById('admin-panel').style.display = 'flex';
+            setTimeout(() => openAdminTicket(ticketId).catch(() => {
+                document.getElementById('admin-panel').style.display = 'none';
+                openSupportFromFloat();
+            }), 300);
         } else {
-            // Юзерский чат — просто переключаемся, loadSupport подтянет
+            document.getElementById('support-modal').style.display = 'flex';
             loadSupport();
         }
-        // Чистим hash
         history.replaceState(null, '', location.pathname);
     }
 }
@@ -1199,7 +1179,6 @@ async function init() {
     SETTINGS.language = tgLang;
 
     applyTheme('dark');
-    applyI18n();
 
     try {
         const p = await apiCall('/api/profile');
@@ -1208,7 +1187,6 @@ async function init() {
             SETTINGS = { ...SETTINGS, ...p.settings };
             LANG = p.settings.language || LANG;
             applyTheme(SETTINGS.theme);
-            applyI18n();
         }
         updateUserUI(p);
         if (!p.isAdmin) {
@@ -1221,7 +1199,7 @@ async function init() {
 
     renderRaidItems();
     updateCraftInfo();
-    loadSettingsToUI();
+    updateSegActive();
 
     if (window.matchMedia) {
         window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
@@ -1229,7 +1207,6 @@ async function init() {
         });
     }
 
-    // Обработка hash после init
     await handleHashRoute();
 }
 
