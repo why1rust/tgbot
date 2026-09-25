@@ -1698,34 +1698,106 @@ async function openGiveawayModal(id) {
     }
     document.getElementById('giveaway-modal').style.display = 'flex';
 }
-    document.getElementById('giveaway-modal').style.display = 'flex';
-}
 function closeGiveawayModal() {
     document.getElementById('giveaway-modal').style.display = 'none';
     currentGiveawayId = null;
     currentGiveawayFull = null;
 }
 async function saveGiveaway() {
-    const title = document.getElementById('giveaway-title').value.trim();
+        const title = document.getElementById('giveaway-title').value.trim();
     const description = document.getElementById('giveaway-description').value.trim();
-    const prize = document.getElementById('giveaway-prize').value.trim();
     const condition = document.getElementById('giveaway-condition').value;
     const endsVal = document.getElementById('giveaway-ends').value;
     const endsAt = endsVal ? new Date(endsVal).getTime() : 0;
     const result = document.getElementById('giveaway-result');
+
+    // Собираем места
+    const places = [];
+    const rows = document.querySelectorAll('#giveaway-places-list .giveaway-place-row');
+    rows.forEach((row, i) => {
+        const prize = row.querySelector('.giveaway-place-prize').value.trim();
+        const count = parseInt(row.querySelector('.giveaway-place-count').value) || 1;
+        if (prize) places.push({ place: i + 1, prize, count: Math.max(1, count) });
+    });
+
     if (!title || !description) { result.innerHTML = '❌ Заполни название и описание'; result.classList.add('show'); return; }
+    if (places.length === 0) { result.innerHTML = '❌ Добавь хотя бы одно место с призом'; result.classList.add('show'); return; }
+
     result.innerHTML = '<span class="spinner"></span>Сохранение...';
     result.classList.add('show');
     try {
         if (currentGiveawayId) {
-            await apiCall('/api/admin/giveaways/update', { id: currentGiveawayId, title, description, prize, condition, endsAt });
+            await apiCall('/api/admin/giveaways/update', { id: currentGiveawayId, title, description, condition, endsAt, places });
         } else {
-            await apiCall('/api/admin/giveaways/create', { title, description, prize, condition, endsAt });
+            await apiCall('/api/admin/giveaways/create', { title, description, condition, endsAt, places });
         }
         result.innerHTML = '✅ Сохранено';
         if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         setTimeout(() => { closeGiveawayModal(); adminLoadGiveaways(); loadHomeGiveaways(); }, 800);
     } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
+}
+
+// ==================== GIVEAWAY PLACES ====================
+function renderGiveawayPlaces(places) {
+    const container = document.getElementById('giveaway-places-list');
+    if (!container) return;
+    container.innerHTML = '';
+    places.forEach((p) => addGiveawayPlace(p.prize || '', p.count || 1));
+    updatePlaceNumbers();
+    updateAddPlaceButton();
+}
+
+function addGiveawayPlace(prize = '', count = 1) {
+    const container = document.getElementById('giveaway-places-list');
+    if (!container) return;
+    const rows = container.querySelectorAll('.giveaway-place-row');
+    if (rows.length >= 10) { tg.showAlert('Максимум 10 мест'); return; }
+    const row = document.createElement('div');
+    row.className = 'giveaway-place-row';
+    row.innerHTML = `
+        <div class="giveaway-place-header">
+            <span class="giveaway-place-num">Место 1</span>
+            <button type="button" class="giveaway-place-remove" onclick="removeGiveawayPlace(this)">✕</button>
+        </div>
+        <input type="text" class="giveaway-place-prize" placeholder="Приз (например: Премиум 90 дней)" value="${escapeHtml(prize)}">
+        <input type="number" class="giveaway-place-count" placeholder="Кол-во победителей" value="${count}" min="1" max="100">
+    `;
+    container.appendChild(row);
+    updatePlaceNumbers();
+    updateAddPlaceButton();
+}
+
+function removeGiveawayPlace(btn) {
+    const row = btn.closest('.giveaway-place-row');
+    const container = document.getElementById('giveaway-places-list');
+    if (container.querySelectorAll('.giveaway-place-row').length <= 1) {
+        tg.showAlert('Должно быть хотя бы одно место');
+        return;
+    }
+    row.remove();
+    updatePlaceNumbers();
+    updateAddPlaceButton();
+}
+
+function updatePlaceNumbers() {
+    const rows = document.querySelectorAll('#giveaway-places-list .giveaway-place-row');
+    rows.forEach((row, i) => {
+        const num = row.querySelector('.giveaway-place-num');
+        if (num) num.textContent = `Место ${i + 1}`;
+    });
+}
+
+function updateAddPlaceButton() {
+    const btn = document.getElementById('giveaway-add-place');
+    if (!btn) return;
+    const count = document.querySelectorAll('#giveaway-places-list .giveaway-place-row').length;
+    if (count >= 10) {
+        btn.disabled = true;
+        btn.textContent = '⚠️ Максимум 10 мест';
+    } else {
+        btn.disabled = false;
+        btn.textContent = '➕ Добавить место';
+    }
 }
 async function adminDeleteGiveaway(id) {
     const confirmed = await new Promise(res => tg.showConfirm('Удалить розыгрыш?', res));
