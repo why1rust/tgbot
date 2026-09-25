@@ -795,7 +795,7 @@ select {
     border-bottom-left-radius: 4px;
 }
 .chat-msg.admin::before {
-    content: '🛡️ RUSTGUARD';
+    content: '👤 ' attr(data-sender);
     display: block;
     font-size: 9px; font-weight: 800;
     color: var(--accent-2);
@@ -844,7 +844,7 @@ select {
     border-bottom-left-radius: 4px;
 }
 .chat-msg.helper::before {
-    content: '🎧 HELPER';
+    content: '🎧 ' attr(data-sender);
     display: block;
     font-size: 9px; font-weight: 800;
     color: var(--helper);
