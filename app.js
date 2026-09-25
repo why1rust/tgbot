@@ -733,6 +733,7 @@ function renderUserCard(u) {
     let badges = '';
     if (u.premium) badges += '<span class="premium-badge">⭐ Премиум</span>';
     if (u.helper) badges += '<span class="helper-badge">🎧 Хелпер</span>';
+    if (u.banned) badges += '<span class="user-ban-badge">🚫 Забанен</span>';
     let exp = '';
     if (u.premiumExpires) { const d = new Date(u.premiumExpires); exp = ` · до ${d.toLocaleDateString('ru-RU')}`; }
     const bonus = u.bonusChecks || 0;
@@ -756,6 +757,10 @@ function renderUserCard(u) {
                 }
                 <button class="user-btn dm" onclick="openUserDmModal(${u.userId}, '${escapeHtml(u.firstName || '—')}')">📩 Написать</button>
                 <button class="user-btn bonus" onclick="openUserBonusModal(${u.userId}, '${escapeHtml(u.firstName || '—')}')">🎁 Бонус</button>
+                                ${u.banned
+                    ? `<button class="user-btn unban" onclick="openUserBanModal(${u.userId}, '${escapeHtml(u.firstName || '—')}', true)">✅ Разбанить</button>`
+                    : `<button class="user-btn ban" onclick="openUserBanModal(${u.userId}, '${escapeHtml(u.firstName || '—')}', false)">🚫 Забанить</button>`
+                }
             </div>
         </div>
     `;
