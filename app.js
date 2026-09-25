@@ -1417,8 +1417,9 @@ async function loadHomeGiveaways() {
     try {
         const data = await apiCall('/api/giveaways');
         const list = data.giveaways || [];
-        if (!list.length) {
-            c.innerHTML = '<div class="loading-block">Пока нет активных розыгрышей</div>';
+        const ended = data.endedGiveaways || [];
+        if (!list.length && !ended.length) {
+            c.innerHTML = '<div class="loading-block">Пока нет розыгрышей</div>';
             return;
         }
         let html = '';
@@ -1446,6 +1447,21 @@ async function loadHomeGiveaways() {
                 </div>
             </div>`;
         });
+        if (ended.length > 0) {
+            html += `<div style="margin-top:16px;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">🏆 Прошлые розыгрыши</div>`;
+            ended.forEach(g => {
+                const endDate = g.endsAt ? new Date(g.endsAt).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
+                html += `<div class="home-giveaway-item" style="opacity:0.75;">
+                    <div class="home-giveaway-title">🎁 ${escapeHtml(g.title)}</div>
+                    <div class="home-giveaway-meta">
+                        <span>🏆 ${escapeHtml(g.prize || '—')}</span>
+                        <span>👥 ${g.participantsCount || 0}</span>
+                        <span>📅 ${endDate}</span>
+                        ${g.winner ? `<span>👑 Победитель: <code>${g.winner}</code></span>` : '<span>❌ Нет победителя</span>'}
+                    </div>
+                </div>`;
+            });
+        }
         c.innerHTML = html;
     } catch (e) {
         c.innerHTML = `<div class="loading-block">❌ ${escapeHtml(e.message)}</div>`;
