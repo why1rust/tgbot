@@ -743,7 +743,8 @@ select {
     width: 38px; height: 38px; border-radius: 50%;
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     display: flex; align-items: center; justify-content: center;
-    font-size: 17px; flex-shrink: 0; color: #fff;
+        font-size: 17px; flex-shrink: 0; color: #fff;
+    overflow: hidden;
 }
 .chat-title { font-size: 14px; font-weight: 800; }
 .chat-subtitle { font-size: 11px; color: var(--muted); }
@@ -800,6 +801,40 @@ select {
     color: var(--accent-2);
     margin-bottom: 3px;
     letter-spacing: 0.8px;
+}
+
+/* Support — единый стиль для ответов поддержки в юзер-чате */
+.chat-msg.support {
+    align-self: flex-start;
+    background: var(--accent-soft);
+    border: 1px solid rgba(124, 92, 255, 0.3);
+    color: var(--text);
+    border-bottom-left-radius: 4px;
+}
+.chat-msg.support::before {
+    content: '🛡️ ' attr(data-sender);
+    display: block;
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--accent-2);
+    margin-bottom: 3px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+.chat-msg-row.support {
+    align-self: flex-start;
+}
+.chat-msg-avatar.support {
+    background: transparent;
+    padding: 0;
+    overflow: hidden;
+}
+.chat-msg-avatar.support img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
 }
 .chat-msg.helper {
     align-self: flex-start;
