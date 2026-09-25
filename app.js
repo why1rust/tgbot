@@ -1148,14 +1148,23 @@ function renderAdminTicketMessages() {
     const c = document.getElementById('admin-ticket-messages');
     let html = '';
     currentAdminTicket.messages.forEach(msg => {
-        const time = new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-        let visualRole;
-        if (msg.role === 'user') visualRole = 'admin';
-        else if (msg.role === 'admin') visualRole = 'user';
-        else if (msg.role === 'helper') visualRole = 'helper';
-        else visualRole = 'admin';
-        html += `<div class="chat-msg ${visualRole}">${escapeHtml(msg.text)}<span class="chat-msg-time">${time}</span></div>`;
-    });
+    const time = new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    let visualRole, senderLabel;
+    if (msg.role === 'user') {
+        visualRole = 'admin';
+        senderLabel = (currentAdminTicket.firstName || 'User').trim();
+    } else if (msg.role === 'admin') {
+        visualRole = 'user';
+        senderLabel = 'Rust Guard Support';
+    } else if (msg.role === 'helper') {
+        visualRole = 'helper';
+        senderLabel = msg.senderName || 'Helper';
+    } else {
+        visualRole = 'admin';
+        senderLabel = 'User';
+    }
+    html += `<div class="chat-msg ${visualRole}" data-sender="${escapeHtml(senderLabel)}">${escapeHtml(msg.text)}<span class="chat-msg-time">${time}</span></div>`;
+});
     if (currentAdminTicket.status === 'waiting') html += `<div class="chat-msg system">⏳ Ждём ответа</div>`;
     else if (currentAdminTicket.status === 'closed') html += `<div class="chat-msg system">✅ Тикет закрыт</div>`;
     c.innerHTML = html;
