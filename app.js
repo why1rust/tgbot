@@ -1426,12 +1426,17 @@ async function init() {
     updateCraftInfo();
     loadHome();
 
-    const hash = location.hash || '';
-    
-    // Открытие нужной вкладки по хэшу
-        if (hash.includes('#steam')) setTimeout(() => goToTab('steam'), 100);
-    else if (hash.includes('#watch')) setTimeout(() => goToTab('watch'), 100);
-    else if (hash.includes('#premium')) setTimeout(() => goToTab('steam'), 100);
+        const hash = location.hash || '';
+    const startParam = tg.initDataUnsafe?.start_param;
+
+    // Открытие нужной вкладки (hash для web_app, startapp для url)
+    if (hash.includes('#steam') || startParam === 'steam') {
+        setTimeout(() => goToTab('steam'), 150);
+    } else if (hash.includes('#watch') || startParam === 'watch') {
+        setTimeout(() => goToTab('watch'), 150);
+    } else if (hash.includes('#premium') || startParam === 'premium') {
+        setTimeout(() => goToTab('steam'), 150);
+    }
     if (hash.startsWith('#ticket=')) {
         const ticketId = hash.replace('#ticket=', '');
         if (USER_DATA?.isAdmin || USER_DATA?.isHelper) {
