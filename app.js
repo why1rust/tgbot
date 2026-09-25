@@ -1621,6 +1621,7 @@ async function adminLoadGiveaways() {
             const participants = (g.participants || []).length;
             const untilText = g.endsAt ? new Date(g.endsAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'Бессрочно';
             const isActive = g.status === 'active';
+            const winnerNameSafe = (g.winnerName || 'Победитель').replace(/['"\\<>]/g, '');
             html += `<div class="admin-giveaway-card ${isActive ? 'active' : 'ended'}">
                 <div class="admin-giveaway-head">
                     <div style="flex:1;min-width:0;">
@@ -1642,9 +1643,9 @@ async function adminLoadGiveaways() {
                     }
                     ${isActive ? `<button class="admin-btn delete wide" onclick="adminDeleteGiveaway('${g.id}')">🗑 Удалить</button>` : ''}
                     ${!isActive && g.winner ? `
-                                                <button class="admin-btn edit wide" onclick="openUserDmModal(${g.winner}, '${escapeHtml(g.winnerName || &quot;Победитель&quot;)}')">💬 Написать победителю</button>
-                                                <button class="admin-btn finish" onclick="openUserPremiumModal(${g.winner}, '${escapeHtml(g.winnerName || &quot;Победитель&quot;)}')">⭐ Премиум</button>
-                                                <button class="admin-btn edit" onclick="openUserBonusModal(${g.winner}, '${escapeHtml(g.winnerName || &quot;Победитель&quot;)}')">🎁 Бонусы</button>
+                                                                        <button class="admin-btn edit wide" onclick="openUserDmModal(${g.winner}, '${winnerNameSafe}')">💬 Написать победителю</button>
+                        <button class="admin-btn finish" onclick="openUserPremiumModal(${g.winner}, '${winnerNameSafe}')">⭐ Премиум</button>
+                        <button class="admin-btn edit" onclick="openUserBonusModal(${g.winner}, '${winnerNameSafe}')">🎁 Бонусы</button>
                     ` : ''}
                 </div>
         });
