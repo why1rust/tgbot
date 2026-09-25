@@ -1462,7 +1462,7 @@ async function loadHomeGiveaways() {
                         <span class="giveaway-stat">🏆 ${escapeHtml(g.prize || '—')}</span>
                         <span class="giveaway-stat">👥 ${g.participantsCount || 0}</span>
                         <span class="giveaway-stat">📅 ${endDate}</span>
-                        ${g.winner ? `<span class="giveaway-stat winner">👑 Победитель: ${g.winner}</span>` : '<span class="giveaway-stat">❌ Без победителя</span>'}
+                        ${g.winner ? `<span class="giveaway-stat winner">👑 Победитель: ${g.winnerName ? escapeHtml(g.winnerName) : g.winner}</span>` : '<span class="giveaway-stat">❌ Без победителя</span>'}
                     </div>
                 </div>`;
             });
@@ -1629,20 +1629,24 @@ async function adminLoadGiveaways() {
                             <span>🏆 ${escapeHtml(g.prize || '—')}</span>
                             <span>👥 ${participants}</span>
                             <span>⏰ ${untilText}</span>
-                            ${g.winner ? `<span>👑 ${g.winner}</span>` : ''}
+                            ${g.winner ? `<span>👑 ${g.winnerUsername ? '@' + g.winnerUsername : (g.winnerName ? g.winnerName : 'ID ' + g.winner)}</span>` : ''}
                         </div>
                     </div>
                     <div class="admin-giveaway-status ${isActive ? 'active' : 'ended'}">${isActive ? 'Активен' : 'Завершён'}</div>
                 </div>
                 <div class="admin-giveaway-actions-new">
-                    <button class="admin-btn edit" onclick="openGiveawayModal('${g.id}')">✏️ Редактировать</button>
-                    ${isActive
-                        ? `<button class="admin-btn finish" onclick="adminFinishGiveaway('${g.id}')">🏆 Завершить</button>`
-                        : `<button class="admin-btn delete" onclick="adminDeleteGiveaway('${g.id}')">🗑 Удалить</button>`
-                    }
-                    ${isActive ? `<button class="admin-btn delete wide" onclick="adminDeleteGiveaway('${g.id}')">🗑 Удалить</button>` : ''}
-                </div>
-            </div>`;
+    <button class="admin-btn edit" onclick="openGiveawayModal('${g.id}')">✏️ Редактировать</button>
+    ${isActive
+        ? `<button class="admin-btn finish" onclick="adminFinishGiveaway('${g.id}')">🏆 Завершить</button>`
+        : `<button class="admin-btn delete" onclick="adminDeleteGiveaway('${g.id}')">🗑 Удалить</button>`
+    }
+    ${isActive ? `<button class="admin-btn delete wide" onclick="adminDeleteGiveaway('${g.id}')">🗑 Удалить</button>` : ''}
+    ${!isActive && g.winner ? `
+        <button class="admin-btn edit wide" onclick="openUserDmModal(${g.winner}, '${escapeHtml(g.winnerName || 'Победитель')}')">💬 Написать победителю</button>
+        <button class="admin-btn finish" onclick="openUserPremiumModal(${g.winner}, '${escapeHtml(g.winnerName || 'Победитель')}')">⭐ Премиум</button>
+        <button class="admin-btn edit" onclick="openUserBonusModal(${g.winner}, '${escapeHtml(g.winnerName || 'Победитель')}')">🎁 Бонусы</button>
+    ` : ''}
+</div>
         });
         c.innerHTML = html;
     } catch (e) {
