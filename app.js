@@ -1666,7 +1666,6 @@ let currentGiveawayFull = null;
 async function openGiveawayModal(id) {
     currentGiveawayId = id || null;
     document.getElementById('giveaway-id').value = id || '';
-    document.getElementById('giveaway-title').textContent = id ? '✏️ Редактировать розыгрыш' : '🎁 Создать розыгрыш';
     document.getElementById('giveaway-modal-title').textContent = id ? '✏️ Редактировать розыгрыш' : '🎁 Создать розыгрыш';
     document.getElementById('giveaway-result').classList.remove('show');
 
@@ -1677,7 +1676,6 @@ async function openGiveawayModal(id) {
         currentGiveawayFull = g;
         document.getElementById('giveaway-title').value = g.title || '';
         document.getElementById('giveaway-description').value = g.description || '';
-        document.getElementById('giveaway-prize').value = g.prize || '';
         document.getElementById('giveaway-condition').value = g.condition || 'none';
         if (g.endsAt) {
             const d = new Date(g.endsAt);
@@ -1686,14 +1684,20 @@ async function openGiveawayModal(id) {
         } else {
             document.getElementById('giveaway-ends').value = '';
         }
+        const places = Array.isArray(g.places) && g.places.length > 0
+            ? g.places
+            : [{ place: 1, prize: g.prize || 'Приз', count: 1 }];
+        renderGiveawayPlaces(places);
     } else {
         currentGiveawayFull = null;
         document.getElementById('giveaway-title').value = '';
         document.getElementById('giveaway-description').value = '';
-        document.getElementById('giveaway-prize').value = '';
         document.getElementById('giveaway-condition').value = 'none';
         document.getElementById('giveaway-ends').value = '';
+        renderGiveawayPlaces([{ place: 1, prize: '', count: 1 }]);
     }
+    document.getElementById('giveaway-modal').style.display = 'flex';
+}
     document.getElementById('giveaway-modal').style.display = 'flex';
 }
 function closeGiveawayModal() {
