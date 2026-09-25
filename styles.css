@@ -2094,3 +2094,90 @@ select {
 .admin-btn.wide {
     grid-column: 1 / -1;
 }
+/* ==================== GIVEAWAY PLACES ==================== */
+.giveaway-place-row {
+    padding: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+.giveaway-place-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.giveaway-place-num {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--accent-2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.giveaway-place-remove {
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.08);
+    color: var(--red);
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+}
+.giveaway-place-remove:active {
+    transform: scale(0.9);
+}
+.giveaway-place-prize {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--input-border);
+    background: var(--input);
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    margin-bottom: 8px;
+}
+.giveaway-place-count {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--input-border);
+    background: var(--input);
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+}
+.giveaway-place-prize:focus,
+.giveaway-place-count:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.btn-mini-wide {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px dashed var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent-2);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+}
+.btn-mini-wide:active {
+    transform: scale(0.98);
+}
+.btn-mini-wide:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-style: solid;
+}
