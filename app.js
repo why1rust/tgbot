@@ -719,11 +719,11 @@ function renderTicketsList(tickets, container, context) {
 let currentAdminTicket = null;
 let adminTicketPoll = null;
 
-async function adminLoadDashboard() {
+async function adminLoadDashboard(force = false) {
     const c = document.getElementById('admin-stats-content');
-    c.innerHTML = '<div class="loading-block">⏳</div>';
+    c.innerHTML = '<div class="loading-block">⏳ Загрузка...</div>';
     try {
-        const s = await apiCall('/api/admin/stats');
+        const s = await apiCall('/api/admin/stats', force ? { force: true } : {});
         c.innerHTML = `
             <div class="admin-grid-3">
                 <div class="admin-stat-card"><div class="admin-stat-value">${s.totalUsers}</div><div class="admin-stat-label">Юзеров</div></div>
@@ -740,8 +740,18 @@ async function adminLoadDashboard() {
                 <div class="admin-stat-card"><div class="admin-stat-value">${s.totalWatched}</div><div class="admin-stat-label">В отслеж.</div></div>
                 <div class="admin-stat-card"><div class="admin-stat-value">${s.todayChecks}</div><div class="admin-stat-label">Проверок сегодня</div></div>
             </div>
+            <div style="text-align:center;margin-top:16px;">
+                <button class="btn secondary" style="max-width:280px;margin:0 auto;" onclick="adminLoadDashboard(true)">
+                    🔄 Обновить (макс. 1 раз в 5 мин)
+                </button>
+            </div>
         `;
-    } catch (e) { c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>`; }
+    } catch (e) { 
+        c.innerHTML = `<div class="result show">❌ ${escapeHtml(e.message)}</div>
+        <div style="text-align:center;margin-top:12px;">
+            <button class="btn secondary" style="max-width:280px;margin:0 auto;" onclick="adminLoadDashboard(true)">🔄 Попробовать снова</button>
+        </div>`;
+    }
 }
 
 // ==================== ADMIN: USERS ====================
