@@ -15,7 +15,7 @@ let PERMS = {};
 
 // ==================== API ====================
 async function apiCall(endpoint, data = {}) {
-    const res = await fetch(`${API_BASE}${endpoint}`, {
+    const res = await fetch(`${API_BASE}${endpoint}?t=${Date.now()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ initData: INIT_DATA, ...data })
