@@ -1634,19 +1634,19 @@ async function adminLoadGiveaways() {
                     </div>
                     <div class="admin-giveaway-status ${isActive ? 'active' : 'ended'}">${isActive ? 'Активен' : 'Завершён'}</div>
                 </div>
-                <div class="admin-giveaway-actions-new">
-    <button class="admin-btn edit" onclick="openGiveawayModal('${g.id}')">✏️ Редактировать</button>
-    ${isActive
-        ? `<button class="admin-btn finish" onclick="adminFinishGiveaway('${g.id}')">🏆 Завершить</button>`
-        : `<button class="admin-btn delete" onclick="adminDeleteGiveaway('${g.id}')">🗑 Удалить</button>`
-    }
-    ${isActive ? `<button class="admin-btn delete wide" onclick="adminDeleteGiveaway('${g.id}')">🗑 Удалить</button>` : ''}
-    ${!isActive && g.winner ? `
-        <button class="admin-btn edit wide" onclick="openUserDmModal(${g.winner}, '${escapeHtml(g.winnerName || 'Победитель')}')">💬 Написать победителю</button>
-        <button class="admin-btn finish" onclick="openUserPremiumModal(${g.winner}, '${escapeHtml(g.winnerName || 'Победитель')}')">⭐ Премиум</button>
-        <button class="admin-btn edit" onclick="openUserBonusModal(${g.winner}, '${escapeHtml(g.winnerName || 'Победитель')}')">🎁 Бонусы</button>
-    ` : ''}
-</div>
+                                <div class="admin-giveaway-actions-new">
+                    <button class="admin-btn edit" onclick="openGiveawayModal('${g.id}')">✏️ Редактировать</button>
+                    ${isActive
+                        ? `<button class="admin-btn finish" onclick="adminFinishGiveaway('${g.id}')">🏆 Завершить</button>`
+                        : `<button class="admin-btn delete" onclick="adminDeleteGiveaway('${g.id}')">🗑 Удалить</button>`
+                    }
+                    ${isActive ? `<button class="admin-btn delete wide" onclick="adminDeleteGiveaway('${g.id}')">🗑 Удалить</button>` : ''}
+                    ${!isActive && g.winner ? `
+                                                <button class="admin-btn edit wide" onclick="openUserDmModal(${g.winner}, '${escapeHtml(g.winnerName || &quot;Победитель&quot;)}')">💬 Написать победителю</button>
+                                                <button class="admin-btn finish" onclick="openUserPremiumModal(${g.winner}, '${escapeHtml(g.winnerName || &quot;Победитель&quot;)}')">⭐ Премиум</button>
+                                                <button class="admin-btn edit" onclick="openUserBonusModal(${g.winner}, '${escapeHtml(g.winnerName || &quot;Победитель&quot;)}')">🎁 Бонусы</button>
+                    ` : ''}
+                </div>
         });
         c.innerHTML = html;
     } catch (e) {
