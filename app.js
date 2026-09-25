@@ -654,7 +654,13 @@ async function openHelperTicket(ticketId) {
         currentAdminTicket = data.ticket;
         document.getElementById('admin-ticket-name').textContent = currentAdminTicket.firstName || 'User';
         document.getElementById('admin-ticket-sub').textContent = (currentAdminTicket.username ? '@' + currentAdminTicket.username + ' · ' : '') + 'ID: ' + currentAdminTicket.userId;
-        document.getElementById('admin-ticket-avatar').textContent = '👤';
+        const avEl = document.getElementById('admin-ticket-avatar');
+if (currentAdminTicket.photoUrl) {
+    avEl.innerHTML = `<img src="${escapeHtml(currentAdminTicket.photoUrl)}" onerror="this.parentNode.textContent='👤';">`;
+} else {
+    const initials = (currentAdminTicket.firstName || 'U').charAt(0).toUpperCase();
+    avEl.textContent = initials;
+}
         renderAdminTicketMessages();
         document.getElementById('admin-ticket-chat').style.display = 'flex';
         if (adminTicketPoll) clearInterval(adminTicketPoll);
@@ -685,8 +691,12 @@ function renderTicketsList(tickets, container, context) {
         const nameLine = username ? `${firstName} · ${username}` : firstName;
         const preview = (t.lastMessage || '').replace(/\s+/g, ' ').trim().substring(0, 60) || '—';
         const handler = context === 'helper' ? 'openHelperTicket' : 'openAdminTicket';
+        const initials = firstName.charAt(0).toUpperCase();
+        const avatarHtml = t.photoUrl
+            ? `<div class="ticket-icon" style="overflow:hidden;padding:0;"><img src="${escapeHtml(t.photoUrl)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.textContent='${initials}';"></div>`
+            : `<div class="ticket-icon">${isUnread ? '🔴' : initials}</div>`;
         html += `<div class="ticket-item ${isUnread ? 'unread' : ''}" onclick="${handler}('${t.id}')">
-            <div class="ticket-icon">${isUnread ? '🔴' : '💬'}</div>
+            ${avatarHtml}
             <div class="ticket-info">
                 <div class="ticket-name">${escapeHtml(nameLine)}</div>
                 <div class="ticket-preview">${escapeHtml(preview)}</div>
@@ -1103,7 +1113,13 @@ async function openAdminTicket(ticketId) {
         currentAdminTicket = data.ticket;
         document.getElementById('admin-ticket-name').textContent = currentAdminTicket.firstName || 'User';
         document.getElementById('admin-ticket-sub').textContent = (currentAdminTicket.username ? '@' + currentAdminTicket.username + ' · ' : '') + 'ID: ' + currentAdminTicket.userId;
-        document.getElementById('admin-ticket-avatar').textContent = '👤';
+        const avEl = document.getElementById('admin-ticket-avatar');
+if (currentAdminTicket.photoUrl) {
+    avEl.innerHTML = `<img src="${escapeHtml(currentAdminTicket.photoUrl)}" onerror="this.parentNode.textContent='👤';">`;
+} else {
+    const initials = (currentAdminTicket.firstName || 'U').charAt(0).toUpperCase();
+    avEl.textContent = initials;
+}
         renderAdminTicketMessages();
         document.getElementById('admin-ticket-chat').style.display = 'flex';
         if (adminTicketPoll) clearInterval(adminTicketPoll);
