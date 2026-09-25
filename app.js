@@ -1419,45 +1419,50 @@ async function loadHomeGiveaways() {
         const list = data.giveaways || [];
         const ended = data.endedGiveaways || [];
         if (!list.length && !ended.length) {
-            c.innerHTML = '<div class="loading-block">Пока нет розыгрышей</div>';
+            c.innerHTML = '<div class="loading-block">Пока нет розыгрышей 🎁</div>';
             return;
         }
         let html = '';
         list.forEach(g => {
-            const untilText = g.endsAt ? new Date(g.endsAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Бессрочно';
-            const condText = g.condition === 'premium' ? '⭐ Только премиум' : g.condition === 'channel' ? '📢 Подписка на канал' : '🆓 Без условий';
-            html += `<div class="home-giveaway-item">
-                <div class="home-giveaway-head">
-                    <div style="flex:1;min-width:0;">
-                        <div class="home-giveaway-title">🎁 ${escapeHtml(g.title)}</div>
-                        <div class="home-giveaway-desc">${escapeHtml(g.description || '')}</div>
+            const untilText = g.endsAt ? new Date(g.endsAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'Бессрочно';
+            const condClass = g.condition === 'premium' ? 'condition-premium' : g.condition === 'channel' ? 'condition-channel' : '';
+            const condText = g.condition === 'premium' ? '⭐ Премиум' : g.condition === 'channel' ? '📢 Канал' : '🆓 Открыт';
+            html += `<div class="giveaway-card">
+                <div class="giveaway-header">
+                    <div class="giveaway-emoji">🎁</div>
+                    <div class="giveaway-title-wrap">
+                        <div class="giveaway-title-new">${escapeHtml(g.title)}</div>
+                        <div class="giveaway-desc-new">${escapeHtml(g.description || '')}</div>
                     </div>
                 </div>
-                <div class="home-giveaway-meta">
-                    <span>🏆 ${escapeHtml(g.prize || '—')}</span>
-                    <span>${condText}</span>
-                    <span>👥 ${g.participantsCount || 0}</span>
-                    <span>⏰ ${untilText}</span>
+                <div class="giveaway-prize-badge">🏆 ${escapeHtml(g.prize || 'Приз')}</div>
+                <div class="giveaway-stats">
+                    <span class="giveaway-stat ${condClass}">${condText}</span>
+                    <span class="giveaway-stat">👥 ${g.participantsCount || 0}</span>
+                    <span class="giveaway-stat">⏰ ${untilText}</span>
                 </div>
-                <div class="home-giveaway-actions">
-                    ${g.joined
-                        ? `<button class="btn secondary" onclick="leaveGiveaway('${g.id}')">❌ Выйти</button>`
-                        : `<button class="btn primary" onclick="joinGiveaway('${g.id}')">✅ Участвовать</button>`
-                    }
-                </div>
+                <button class="giveaway-btn ${g.joined ? 'leave' : 'join'}" onclick="${g.joined ? `leaveGiveaway('${g.id}')` : `joinGiveaway('${g.id}')`}">
+                    ${g.joined ? '❌ Выйти из розыгрыша' : '✅ Участвовать'}
+                </button>
             </div>`;
         });
         if (ended.length > 0) {
-            html += `<div style="margin-top:16px;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">🏆 Прошлые розыгрыши</div>`;
+            html += `<div style="margin-top:24px;margin-bottom:12px;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;">🏆 Прошлые победители</div>`;
             ended.forEach(g => {
                 const endDate = g.endsAt ? new Date(g.endsAt).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
-                html += `<div class="home-giveaway-item" style="opacity:0.75;">
-                    <div class="home-giveaway-title">🎁 ${escapeHtml(g.title)}</div>
-                    <div class="home-giveaway-meta">
-                        <span>🏆 ${escapeHtml(g.prize || '—')}</span>
-                        <span>👥 ${g.participantsCount || 0}</span>
-                        <span>📅 ${endDate}</span>
-                        ${g.winner ? `<span>👑 Победитель: <code>${g.winner}</code></span>` : '<span>❌ Нет победителя</span>'}
+                html += `<div class="giveaway-card ended">
+                    <div class="giveaway-header">
+                        <div class="giveaway-emoji">🏆</div>
+                        <div class="giveaway-title-wrap">
+                            <div class="giveaway-title-new">${escapeHtml(g.title)}</div>
+                            <div class="giveaway-desc-new">${escapeHtml(g.description || '')}</div>
+                        </div>
+                    </div>
+                    <div class="giveaway-stats">
+                        <span class="giveaway-stat">🏆 ${escapeHtml(g.prize || '—')}</span>
+                        <span class="giveaway-stat">👥 ${g.participantsCount || 0}</span>
+                        <span class="giveaway-stat">📅 ${endDate}</span>
+                        ${g.winner ? `<span class="giveaway-stat winner">👑 Победитель: ${g.winner}</span>` : '<span class="giveaway-stat">❌ Без победителя</span>'}
                     </div>
                 </div>`;
             });
