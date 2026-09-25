@@ -1607,27 +1607,35 @@ async function adminLoadGiveaways() {
     try {
         const data = await apiCall('/api/admin/giveaways/list');
         const list = data.giveaways || [];
-        if (!list.length) { c.innerHTML = '<div class="loading-block">Розыгрышей нет</div>'; return; }
+        if (!list.length) {
+            c.innerHTML = '<div class="loading-block">Розыгрышей нет. Создай первый! 🎁</div>';
+            return;
+        }
         let html = '';
         list.forEach(g => {
             const participants = (g.participants || []).length;
-            const untilText = g.endsAt ? new Date(g.endsAt).toLocaleString('ru-RU') : 'Бессрочно';
-            html += `<div class="admin-giveaway-item">
+            const untilText = g.endsAt ? new Date(g.endsAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'Бессрочно';
+            const isActive = g.status === 'active';
+            html += `<div class="admin-giveaway-card ${isActive ? 'active' : 'ended'}">
                 <div class="admin-giveaway-head">
-                    <div>
-                        <div class="admin-giveaway-title">🎁 ${escapeHtml(g.title)}</div>
-                        <div class="admin-giveaway-status ${g.status}">${g.status === 'active' ? 'Активен' : 'Завершён'}</div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="admin-giveaway-title-new">🎁 ${escapeHtml(g.title)}</div>
+                        <div class="admin-giveaway-info">
+                            <span>🏆 ${escapeHtml(g.prize || '—')}</span>
+                            <span>👥 ${participants}</span>
+                            <span>⏰ ${untilText}</span>
+                            ${g.winner ? `<span>👑 ${g.winner}</span>` : ''}
+                        </div>
                     </div>
+                    <div class="admin-giveaway-status ${isActive ? 'active' : 'ended'}">${isActive ? 'Активен' : 'Завершён'}</div>
                 </div>
-                <div class="admin-giveaway-meta">
-    🏆 ${escapeHtml(g.prize || '—')}<br>
-    👥 Участников: <b>${participants}</b><br>
-    ⏰ ${untilText}${g.status === 'ended' && g.winner ? `<br>👑 Победитель: <code>${g.winner}</code>` : ''}
-</div>
-                <div class="admin-giveaway-actions">
-                    <button onclick="openGiveawayModal('${g.id}')">✏️ Редакт.</button>
-                    ${g.status === 'active' ? `<button class="finish" onclick="adminFinishGiveaway('${g.id}')">🏆 Завершить</button>` : ''}
-                    <button class="danger" onclick="adminDeleteGiveaway('${g.id}')">🗑 Удалить</button>
+                <div class="admin-giveaway-actions-new">
+                    <button class="admin-btn edit" onclick="openGiveawayModal('${g.id}')">✏️ Редактировать</button>
+                    ${isActive
+                        ? `<button class="admin-btn finish" onclick="adminFinishGiveaway('${g.id}')">🏆 Завершить</button>`
+                        : `<button class="admin-btn delete" onclick="adminDeleteGiveaway('${g.id}')">🗑 Удалить</button>`
+                    }
+                    ${isActive ? `<button class="admin-btn delete wide" onclick="adminDeleteGiveaway('${g.id}')">🗑 Удалить</button>` : ''}
                 </div>
             </div>`;
         });
