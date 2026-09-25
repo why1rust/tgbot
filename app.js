@@ -179,7 +179,7 @@ function renderSteamProfile(d) {
                 <div class="player-avatar ${isOnline ? 'online' : ''}" style="${avatarSrc ? 'display:none' : ''}">${initials}</div>
                 <div class="player-info">
                     <h3>${escapeHtml(d.name)}</h3>
-                    <span class="player-status ${isOnline ? 'online' : 'offline'}">Steam ${escapeHtml(d.state)}</span>
+<span class="player-status ${isOnline ? 'online' : 'offline'}">${d.inRust ? '🎮 <b>Играет в Rust</b>' : d.inGame ? `🎮 Играет в ${escapeHtml(d.gameName || 'игре')}` : isOnline ? '🟢 Steam Online' : d.lastLogoff ? `💤 Был онлайн ${timeAgo(d.lastLogoff * 1000)}` : '💤 Оффлайн'}</span>
                 </div>
                 ${hasBan ? `<div class="vac-badge">⚠ BAN</div>` : `<div class="no-vac-badge">✓ OK</div>`}
             </div>
@@ -1397,6 +1397,18 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+function timeAgo(timestamp) {
+    const diff = Date.now() - timestamp;
+    const min = Math.floor(diff / 60000);
+    const hr = Math.floor(diff / 3600000);
+    const day = Math.floor(diff / 86400000);
+    if (min < 1) return 'только что';
+    if (min < 60) return `${min} мин. назад`;
+    if (hr < 24) return `${hr} ч. назад`;
+    if (day < 7) return `${day} дн. назад`;
+    return new Date(timestamp).toLocaleDateString('ru-RU');
 }
 
 // ==================== INIT ====================
