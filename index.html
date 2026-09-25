@@ -61,7 +61,7 @@
                     <img src="logo.png" alt="Rust Guard" class="home-logo" onerror="this.style.display='none';">
                     <div class="hero-kicker">WELCOME TO</div>
                     <h1 class="hero-title">Rust Guard</h1>
-                    <p class="hero-desc">Проверка игроков Rust в один клик: анализ Steam, отслеживание, калькуляторы и розыгрыши.</p>
+                    <p class="hero-desc">Проверка игроков Rust в один клик: анализ Steam, отслеживание и калькуляторы рейда и крафта.</p>
                 </div>
 
                 <div class="home-stats" id="home-stats">
@@ -79,12 +79,13 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-head">
-                        <h3>🎁 Активные розыгрыши</h3>
-                        <button class="btn-mini" onclick="loadHomeGiveaways()">🔄</button>
+                                <div class="card channel-card">
+                    <div class="channel-icon">📢</div>
+                    <div class="channel-info">
+                        <div class="channel-title">Rust Guard | Новости</div>
+                        <div class="channel-desc">Обновления бота, акции, анонсы и розыгрыши премиума среди подписчиков.</div>
                     </div>
-                    <div id="home-giveaways" class="loading-block">⏳ Загрузка...</div>
+                    <a class="channel-btn" href="https://t.me/rustguard_official" target="_blank">📢 Подписаться на канал</a>
                 </div>
 
                 <div class="card">
@@ -211,7 +212,6 @@
                     <button class="admin-pill" data-atab="helpers">🎧 Хелперы</button>
                     <button class="admin-pill" data-atab="perms">🛡️ Права</button>
                     <button class="admin-pill" data-atab="promos">🎟 Промо</button>
-                    <button class="admin-pill" data-atab="giveaways">🎁 Розыгрыши</button>
                     <button class="admin-pill" data-atab="reviews">💬 Отзывы</button>
                     <button class="admin-pill" data-atab="tickets">🎫 Тикеты</button>
                     <button class="admin-pill" data-atab="broadcast">📢 Рассылка</button>
@@ -376,17 +376,6 @@
                                     <span></span>
                                 </label>
                             </div>
-
-                            <div class="perm-row">
-                                <div class="perm-info">
-                                    <div class="perm-name">🎁 Управлять розыгрышами</div>
-                                    <div class="perm-desc">Может создавать и редактировать розыгрыши</div>
-                                </div>
-                                <label class="switch">
-                                    <input type="checkbox" data-perm="manage_giveaways">
-                                    <span></span>
-                                </label>
-                            </div>
                         </div>
 
                         <div class="admin-buttons-row" style="margin-top:20px;">
@@ -423,11 +412,6 @@
                     </div>
                     <h4 style="margin-top:20px;">Список промокодов</h4>
                     <div id="admin-promos-list" class="loading-block">⏳ Загрузка...</div>
-                </div>
-
-                <div class="admin-content" id="atab-giveaways">
-                    <button class="btn primary" onclick="openGiveawayModal()">➕ Создать розыгрыш</button>
-                    <div id="admin-giveaways-list" class="loading-block" style="margin-top:16px;">⏳ Загрузка...</div>
                 </div>
 
                 <div class="admin-content" id="atab-reviews">
@@ -784,39 +768,7 @@
                 <div id="user-ban-result" class="result"></div>
             </div>
         </div>
-
-        <!-- GIVEAWAY create/edit modal -->
-        <div id="giveaway-modal" class="modal-screen" style="display:none;">
-            <div class="modal-center-box">
-                <div class="modal-head">
-                    <div class="modal-title" id="giveaway-modal-title">🎁 Создать розыгрыш</div>
-                    <button class="modal-close" onclick="closeGiveawayModal()">✕</button>
-                </div>
-                <input type="hidden" id="giveaway-id">
-                <div class="admin-field"><label>Название</label><input type="text" id="giveaway-title" placeholder="Розыгрыш премиума"></div>
-                <div class="admin-field"><label>Описание</label><textarea id="giveaway-description" rows="3" placeholder="Условия участия..."></textarea></div>
-                                <div class="admin-field">
-                    <label>Призовые места</label>
-                    <div id="giveaway-places-list"></div>
-                    <button type="button" class="btn-mini-wide" id="giveaway-add-place" onclick="addGiveawayPlace()" style="margin-top:8px;">➕ Добавить место</button>
-                </div>
-                <div class="admin-field">
-                    <label>Условие</label>
-                    <select id="giveaway-condition">
-                        <option value="none">Без условий</option>
-                        <option value="premium">Только премиум</option>
-                        <option value="channel">Подписка на канал</option>
-                    </select>
-                </div>
-                <div class="admin-field"><label>Дата окончания (пусто = бессрочно)</label><input type="datetime-local" id="giveaway-ends"></div>
-                <div class="admin-buttons-row">
-                    <button class="btn primary" onclick="saveGiveaway()">💾 Сохранить</button>
-                    <button class="btn secondary" onclick="closeGiveawayModal()">Отмена</button>
-                </div>
-                <div id="giveaway-result" class="result"></div>
-            </div>
-        </div>
-
+        
         <!-- REVIEW add modal -->
         <div id="review-modal" class="modal-screen" style="display:none;">
             <div class="modal-center-box">
