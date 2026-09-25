@@ -1646,8 +1646,9 @@ async function adminLoadGiveaways() {
                                                                         <button class="admin-btn edit wide" onclick="openUserDmModal(${g.winner}, '${winnerNameSafe}')">💬 Написать победителю</button>
                         <button class="admin-btn finish" onclick="openUserPremiumModal(${g.winner}, '${winnerNameSafe}')">⭐ Премиум</button>
                         <button class="admin-btn edit" onclick="openUserBonusModal(${g.winner}, '${winnerNameSafe}')">🎁 Бонусы</button>
-                    ` : ''}
+                                        ` : ''}
                 </div>
+            </div>`;
         });
         c.innerHTML = html;
     } catch (e) {
