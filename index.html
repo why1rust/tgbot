@@ -795,7 +795,11 @@
                 <input type="hidden" id="giveaway-id">
                 <div class="admin-field"><label>Название</label><input type="text" id="giveaway-title" placeholder="Розыгрыш премиума"></div>
                 <div class="admin-field"><label>Описание</label><textarea id="giveaway-description" rows="3" placeholder="Условия участия..."></textarea></div>
-                <div class="admin-field"><label>Приз</label><input type="text" id="giveaway-prize" placeholder="Премиум на 30 дней"></div>
+                                <div class="admin-field">
+                    <label>Призовые места</label>
+                    <div id="giveaway-places-list"></div>
+                    <button type="button" class="btn-mini-wide" id="giveaway-add-place" onclick="addGiveawayPlace()" style="margin-top:8px;">➕ Добавить место</button>
+                </div>
                 <div class="admin-field">
                     <label>Условие</label>
                     <select id="giveaway-condition">
