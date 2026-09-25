@@ -41,17 +41,6 @@ async function setTheme(theme) {
     try { await apiCall('/api/settings', { settings: { theme } }); } catch (e) {}
     if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
 }
-async function setLanguage(lang) {
-    SETTINGS.language = lang;
-    LANG = lang;
-    try { await apiCall('/api/settings', { settings: { language: lang } }); } catch (e) {}
-    document.querySelectorAll('#lang-seg button').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
-    if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-    if (LAST_ANALYZED) {
-        const el = document.getElementById('steam-result');
-        if (el && el.innerHTML) el.innerHTML = renderSteamProfile(LAST_ANALYZED);
-    }
-}
 async function setSetting(key, value) {
     SETTINGS[key] = value;
     try { await apiCall('/api/settings', { settings: { [key]: value } }); } catch (e) {}
@@ -59,7 +48,6 @@ async function setSetting(key, value) {
 }
 function updateSegActive() {
     document.querySelectorAll('#theme-seg button').forEach(b => b.classList.toggle('active', b.dataset.theme === SETTINGS.theme));
-    document.querySelectorAll('#lang-seg button').forEach(b => b.classList.toggle('active', b.dataset.lang === SETTINGS.language));
 }
 
 // ==================== TABS ====================
