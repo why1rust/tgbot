@@ -600,11 +600,19 @@ function renderSupportMessages() {
     let html = '';
     currentTicket.messages.forEach(msg => {
         const time = new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-        html += `<div class="chat-msg ${msg.role}">${escapeHtml(msg.text)}<span class="chat-msg-time">${time}</span></div>`;
+
+        if (msg.role === 'user') {
+            html += `<div class="chat-msg user">${escapeHtml(msg.text)}<span class="chat-msg-time">${time}</span></div>`;
+        } else {
+            html += `<div class="chat-msg-row support">
+                <div class="chat-msg-avatar support"><img src="logo.png" alt="RG" onerror="this.parentNode.textContent='🛡️';"></div>
+                <div class="chat-msg support" data-sender="Rust Guard Support">${escapeHtml(msg.text)}<span class="chat-msg-time">${time}</span></div>
+            </div>`;
+        }
     });
     if (currentTicket.status === 'waiting') html += `<div class="chat-msg system">⏳ Ожидаем ответа</div>`;
     c.innerHTML = html;
-    c.scrollTop = c.scrollHeight;
+    requestAnimationFrame(() => { c.scrollTop = c.scrollHeight; });
 }
 async function sendSupportMessage() {
     const input = document.getElementById('support-input');
