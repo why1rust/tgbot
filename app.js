@@ -1427,6 +1427,11 @@ async function init() {
     loadHome();
 
     const hash = location.hash || '';
+    
+    // Открытие нужной вкладки по хэшу
+        if (hash.includes('#steam')) setTimeout(() => goToTab('steam'), 100);
+    else if (hash.includes('#watch')) setTimeout(() => goToTab('watch'), 100);
+    else if (hash.includes('#premium')) setTimeout(() => goToTab('steam'), 100);
     if (hash.startsWith('#ticket=')) {
         const ticketId = hash.replace('#ticket=', '');
         if (USER_DATA?.isAdmin || USER_DATA?.isHelper) {
