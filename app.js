@@ -74,12 +74,11 @@ document.querySelectorAll('.tab').forEach(tab => {
 async function analyzeSteam() {
     const input = document.getElementById('steam-input').value.trim();
     const resultDiv = document.getElementById('steam-result');
-    const match = input.match(/\d{17}/);
-    if (!match) { resultDiv.innerHTML = '❌ Введи SteamID (17 цифр)'; resultDiv.classList.add('show'); return; }
+        if (!input || input.length < 2) { resultDiv.innerHTML = '❌ Введи SteamID или ссылку'; resultDiv.classList.add('show'); return; }
     resultDiv.innerHTML = '<span class="spinner"></span>Анализирую...';
     resultDiv.classList.add('show');
     try {
-        const data = await apiCall('/api/steam', { steamId: match[0] });
+                const data = await apiCall('/api/steam', { steamId: input });
         if (data.error) { resultDiv.innerHTML = `❌ ${escapeHtml(data.error)}`; return; }
         LAST_ANALYZED = data;
         resultDiv.innerHTML = renderSteamProfile(data);
