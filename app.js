@@ -351,11 +351,11 @@ function renderSteamProfile(d) {
                 <div class="stat-box"><div class="stat-icon red">!</div><div class="stat-value">${totalBans}</div><div class="stat-label">банов</div></div>
             </div>
         </div>
-        <div class="risk-card">
+                ${d.premium && d.trustFactor ? renderTrustFactor(d.trustFactor) : `<div class="risk-card">
             <div class="risk-head"><div><h3>Риск читерства</h3><p>Анализ VAC, часов и активности</p></div><div class="risk-value"><div class="risk-percent ${riskClass}">${d.riskScore}%</div><div class="risk-level ${riskClass}">${escapeHtml(d.riskLevel)}</div></div></div>
             <div class="risk-bar"><div class="risk-indicator" style="left: ${d.riskScore}%"></div></div>
             <div class="risk-labels"><span>Низкий</span><span>Высокий</span></div>
-        </div>
+        </div>`}
         ${d.premium && d.activityGraph ? renderActivityStats(d.activityGraph) : ''}
                 ${d.premium && d.friendsOnline ? renderFriendsOnline(d.friendsOnline) : ''}
                         ${d.premium && d.topGames ? renderTopGames(d.topGames) : ''}
