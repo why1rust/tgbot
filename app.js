@@ -114,6 +114,46 @@ function renderActivityStats(graph) {
     `;
 }
 
+function renderFriendsOnline(fo) {
+    if (!fo || !fo.list || fo.list.length === 0) return '';
+    
+    let html = `
+        <div class="activity-graph-card">
+            <div class="activity-graph-header">
+                <div>
+                    <h3>👥 Друзья онлайн</h3>
+                    <p>${fo.onlineNow} из ${fo.total} в сети · ${fo.inRustNow} в Rust</p>
+                </div>
+            </div>
+            <div class="activity-list" style="margin-top:12px;">
+    `;
+    
+    fo.list.forEach(f => {
+        const initials = (f.name || 'U').charAt(0).toUpperCase();
+        const avatarHtml = f.avatar
+            ? `<div class="friend-avatar"><img src="${escapeHtml(f.avatar)}" onerror="this.parentNode.textContent='${initials}';"></div>`
+            : `<div class="friend-avatar">${initials}</div>`;
+        const statusIcon = f.inRust ? '🎮' : '🟢';
+        const statusText = f.inRust ? '<b style="color:var(--green);">В Rust</b>' : (f.game ? escapeHtml(f.game) : 'В сети');
+        
+        html += `
+            <div class="activity-item" style="cursor:default;">
+                ${avatarHtml}
+                <div class="activity-content">
+                    <h4>${statusIcon} ${escapeHtml(f.name)}</h4>
+                    <p>${statusText}</p>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += `
+            </div>
+        </div>
+    `;
+    return html;
+}
+
 function renderComparison(player, comparison) {
     if (!comparison || !comparison.friendsTotal) return '';
     const friendsCount = comparison.friendsTotal;
@@ -183,6 +223,7 @@ function renderSteamProfile(d) {
             <div class="risk-labels"><span>Низкий</span><span>Высокий</span></div>
         </div>
         ${d.premium && d.activityGraph ? renderActivityStats(d.activityGraph) : ''}
+                ${d.premium && d.friendsOnline ? renderFriendsOnline(d.friendsOnline) : ''}
         ${d.premium && d.comparison ? renderComparison(d, d.comparison) : ''}
         <div class="section-title-mini">Активность</div>
         <div class="activity-list">
