@@ -154,6 +154,54 @@ function renderFriendsOnline(fo) {
     return html;
 }
 
+function renderDailyBonus(db) {
+    if (!db) return '';
+    
+    const canClaim = db.canClaim;
+    const streak = db.streak || 0;
+    const nextStreak = db.nextStreak || 1;
+    
+    let btnText = '📅 Забрать бонус';
+    let btnClass = 'btn primary';
+    let btnDisabled = '';
+    
+    if (!canClaim) {
+        btnText = `✅ Получено (streak: ${streak})`;
+        btnClass = 'btn secondary';
+        btnDisabled = 'disabled';
+    }
+    
+    return `
+        <div class="card" style="background:linear-gradient(135deg,rgba(251,191,36,.08),rgba(251,191,36,.02));border-color:rgba(251,191,36,.3);">
+            <div class="card-head">
+                <h3>📅 Ежедневный бонус</h3>
+                <span style="font-size:12px;color:var(--muted);">Streak: <b style="color:var(--yellow);">${streak}</b> 🔥</span>
+            </div>
+            <p style="font-size:13px;color:var(--text-2);margin:0 0 14px;">
+                ${canClaim ? 'Забери <b>+1 проверку</b> за вход сегодня!' : 'Возвращайся завтра за новой проверкой!'}
+                ${nextStreak === 7 ? '<br><b style="color:var(--yellow);">🎁 Завтра 7-дневный streak → +6 проверок!</b>' : ''}
+                ${nextStreak === 30 ? '<br><b style="color:var(--yellow);">🎁 Завтра 30-дневный streak → +21 проверка!</b>' : ''}
+            </p>
+            <button class="${btnClass}" ${btnDisabled} onclick="claimDailyBonus()">${btnText}</button>
+            <div id="daily-bonus-result" class="result"></div>
+        </div>
+    `;
+}
+
+async function claimDailyBonus() {
+    const result = document.getElementById('daily-bonus-result');
+    result.innerHTML = '<span class="spinner"></span>Получаем...';
+    result.classList.add('show');
+    try {
+        const data = await apiCall('/api/daily-bonus', {});
+        result.innerHTML = `✅ ${data.bonusText}`;
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        setTimeout(() => loadProfile(), 1500);
+    } catch (e) {
+        result.innerHTML = `❌ ${escapeHtml(e.message)}`;
+    }
+}
+
 function renderTopGames(topGames) {
     if (!topGames || topGames.length === 0) return '';
     
@@ -515,6 +563,9 @@ async function loadProfile() {
                 <div class="stat-profile-box"><div class="stat-profile-value">${profile.referral.count}</div><div class="stat-profile-label">Рефералов</div></div>
             </div>
         `;
+                    if (profile.dailyBonus) {
+                html += renderDailyBonus(profile.dailyBonus);
+            }
         if (profile.discount) {
             const { date, time } = dateFmt(profile.discount.expiresAt);
             html += `<div class="premium-status active" style="background:linear-gradient(135deg,rgba(34,211,238,.1),rgba(34,211,238,.03));border-color:rgba(34,211,238,.35);">
