@@ -185,6 +185,54 @@
                     </div>
                     <div id="watchlist-result" class="result"></div>
                 </div>
+                
+                                <div class="card">
+                    <div class="card-head">
+                        <h3>🔔 Уведомления</h3>
+                    </div>
+                    <div class="perm-list" id="watch-notify-settings">
+                        <div class="perm-row">
+                            <div class="perm-info">
+                                <div class="perm-name">🎮 Заход в Rust</div>
+                                <div class="perm-desc">Уведомление когда игрок запускает Rust</div>
+                            </div>
+                            <label class="switch small">
+                                <input type="checkbox" id="wn-gamejoin" onchange="saveWatchSettings()">
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="perm-row">
+                            <div class="perm-info">
+                                <div class="perm-name">💤 Выход из Rust</div>
+                                <div class="perm-desc">Уведомление когда выходит + время сессии</div>
+                            </div>
+                            <label class="switch small">
+                                <input type="checkbox" id="wn-gameleave" onchange="saveWatchSettings()">
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="perm-row">
+                            <div class="perm-info">
+                                <div class="perm-name">😴 AFK</div>
+                                <div class="perm-desc">Уведомление когда игрок отошёл (AFK)</div>
+                            </div>
+                            <label class="switch small">
+                                <input type="checkbox" id="wn-afk" onchange="saveWatchSettings()">
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="perm-row">
+                            <div class="perm-info">
+                                <div class="perm-name">🔄 Смена игры</div>
+                                <div class="perm-desc">Уведомление при смене игры (не Rust)</div>
+                            </div>
+                            <label class="switch small">
+                                <input type="checkbox" id="wn-gamechange" onchange="saveWatchSettings()">
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- HELPERS (для хелперов) -->
