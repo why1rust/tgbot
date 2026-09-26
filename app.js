@@ -154,6 +154,44 @@ function renderFriendsOnline(fo) {
     return html;
 }
 
+function renderTopGames(topGames) {
+    if (!topGames || topGames.length === 0) return '';
+    
+    const medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
+    
+    let html = `
+        <div class="activity-graph-card">
+            <div class="activity-graph-header">
+                <div>
+                    <h3>🎮 Топ-5 игр</h3>
+                    <p>По времени в Steam</p>
+                </div>
+            </div>
+            <div class="activity-list" style="margin-top:12px;">
+    `;
+    
+    topGames.forEach((g, i) => {
+        const medal = medals[i] || '🎮';
+        const hours = g.hours.toLocaleString('ru-RU');
+        const isRust = g.appid === 252490;
+        html += `
+            <div class="activity-item" style="cursor:default;">
+                <div class="activity-icon ${isRust ? 'vac' : 'friend'}" style="font-size:16px;">${medal}</div>
+                <div class="activity-content">
+                    <h4>${escapeHtml(g.name)}</h4>
+                    <p>${hours} ч${isRust ? ' · <span style="color:var(--green);">Rust</span>' : ''}</p>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += `
+            </div>
+        </div>
+    `;
+    return html;
+}
+
 function renderComparison(player, comparison) {
     if (!comparison || !comparison.friendsTotal) return '';
     const friendsCount = comparison.friendsTotal;
@@ -224,6 +262,7 @@ function renderSteamProfile(d) {
         </div>
         ${d.premium && d.activityGraph ? renderActivityStats(d.activityGraph) : ''}
                 ${d.premium && d.friendsOnline ? renderFriendsOnline(d.friendsOnline) : ''}
+                        ${d.premium && d.topGames ? renderTopGames(d.topGames) : ''}
         ${d.premium && d.comparison ? renderComparison(d, d.comparison) : ''}
         <div class="section-title-mini">Активность</div>
         <div class="activity-list">
