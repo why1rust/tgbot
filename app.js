@@ -114,6 +114,54 @@ function renderActivityStats(graph) {
     `;
 }
 
+function renderTrustFactor(tf) {
+    if (!tf) return '';
+    
+    const score = tf.score || 0;
+    const level = tf.level || 'Unknown';
+    const emoji = tf.emoji || '❓';
+    const cls = tf.cls || 'low';
+    const factors = tf.factors || [];
+    
+    const filled = Math.round((score / 100) * 20);
+    const bar = '█'.repeat(filled) + '░'.repeat(20 - filled);
+    
+    let html = `
+        <div class="trust-card">
+            <div class="trust-head">
+                <div>
+                    <h3>💎 Trust Factor</h3>
+                    <p>Индекс доверия аккаунта</p>
+                </div>
+                <div class="trust-value">
+                    <div class="trust-score ${cls}">${emoji} ${score}<span style="font-size:14px;opacity:0.6;">/100</span></div>
+                    <div class="trust-level ${cls}">${level}</div>
+                </div>
+            </div>
+            <div class="trust-bar">
+                <div class="trust-bar-fill ${cls}" style="width:${score}%"></div>
+            </div>
+            <div class="trust-bar-text" style="font-family:monospace;font-size:11px;color:var(--muted);text-align:center;margin-top:6px;">${bar}</div>
+    `;
+    
+    if (factors.length > 0) {
+        html += `<div class="section-title-mini" style="margin-top:14px;">📋 Факторы</div>`;
+        factors.forEach(f => {
+            const icon = f.ok ? '✅' : '❌';
+            const color = f.ok ? 'var(--green)' : 'var(--red)';
+            html += `
+                <div class="trust-factor-row">
+                    <div>${icon} ${escapeHtml(f.text)}</div>
+                    <div style="color:${color};font-weight:800;">${f.delta}</div>
+                </div>
+            `;
+        });
+    }
+    
+    html += `</div>`;
+    return html;
+}
+
 function renderFriendsOnline(fo) {
     if (!fo || !fo.list || fo.list.length === 0) return '';
     
