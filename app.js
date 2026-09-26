@@ -427,6 +427,8 @@ async function loadWatchSettings() {
         set('wn-gameleave', s.notifyGameLeave ?? true);
         set('wn-afk', s.notifyAfk ?? false);
         set('wn-gamechange', s.notifyGameChange ?? false);
+                set('wn-steam-online', s.notifySteamOnline ?? false);
+        set('wn-steam-offline', s.notifySteamOffline ?? false);
     } catch (e) { console.warn('loadWatchSettings failed', e); }
 }
 
@@ -436,6 +438,8 @@ async function saveWatchSettings() {
         notifyGameLeave: document.getElementById('wn-gameleave')?.checked ?? true,
         notifyAfk: document.getElementById('wn-afk')?.checked ?? false,
         notifyGameChange: document.getElementById('wn-gamechange')?.checked ?? false,
+                notifySteamOnline: document.getElementById('wn-steam-online')?.checked ?? false,
+        notifySteamOffline: document.getElementById('wn-steam-offline')?.checked ?? false,
     };
     try {
         await apiCall('/api/watch-settings', { settings });
