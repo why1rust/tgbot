@@ -322,14 +322,47 @@ async function loadWatchlist() {
     result.classList.add('show');
     try {
         const list = await apiCall('/api/watch-list');
-        if (!list?.length) { result.innerHTML = '📊 Список пуст'; return; }
+        if (!list?.length) { result.innerHTML = '📊 Список пуст'; loadWatchSettings(); return; }
         let html = `<strong>Отслеживается: ${list.length}</strong><br><br>`;
         list.forEach((w, i) => {
             html += `<div style="padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;"><strong>${i+1}. ${escapeHtml(w.name)}</strong><br><small style="color:var(--muted);">${w.steamId}</small><br><small style="color:var(--muted);">VAC: ${w.lastVacBans} · Game: ${w.lastGameBans}</small><br><button class="btn secondary" style="margin-top:8px;padding:8px;font-size:12px;" onclick="removeFromWatchlist('${w.steamId}')">🗑 Удалить</button></div>`;
         });
         result.innerHTML = html;
+        loadWatchSettings();
     } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
 }
+
+async function loadWatchSettings() {
+    try {
+        const res = await fetch(`${API_BASE}/api/watch-settings-load?t=${Date.now()}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ initData: INIT_DATA })
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const s = data.settings || {};
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
+        set('wn-gamejoin', s.notifyGameJoin ?? true);
+        set('wn-gameleave', s.notifyGameLeave ?? true);
+        set('wn-afk', s.notifyAfk ?? false);
+        set('wn-gamechange', s.notifyGameChange ?? false);
+    } catch (e) { console.warn('loadWatchSettings failed', e); }
+}
+
+async function saveWatchSettings() {
+    const settings = {
+        notifyGameJoin: document.getElementById('wn-gamejoin')?.checked ?? true,
+        notifyGameLeave: document.getElementById('wn-gameleave')?.checked ?? true,
+        notifyAfk: document.getElementById('wn-afk')?.checked ?? false,
+        notifyGameChange: document.getElementById('wn-gamechange')?.checked ?? false,
+    };
+    try {
+        await apiCall('/api/watch-settings', { settings });
+        if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+    } catch (e) { tg.showAlert('Ошибка сохранения: ' + e.message); }
+}
+
 async function removeFromWatchlist(steamId) {
     try {
         await apiCall('/api/watch-remove', { steamId });
