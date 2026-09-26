@@ -235,6 +235,48 @@ function renderDailyBonus(db) {
     `;
 }
 
+function renderActivityProgress(ap) {
+    if (!ap) return '';
+    
+    const total = ap.total || 0;
+    
+    let html = `
+        <div class="card" style="background:linear-gradient(135deg,rgba(168,85,247,.08),rgba(168,85,247,.02));border-color:rgba(168,85,247,.3);">
+            <div class="card-head">
+                <h3>🎯 Активность</h3>
+                <span style="font-size:12px;color:var(--muted);">Проверок: <b style="color:var(--accent-2);">${total}</b></span>
+            </div>
+    `;
+    
+    if (ap.next) {
+        html += `
+            <p style="font-size:13px;color:var(--text-2);margin:0 0 10px;">
+                🎁 Следующая награда: <b>${escapeHtml(ap.next.label)}</b>
+            </p>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px;">
+                <span>${total} / ${ap.next.threshold}</span>
+                <span>осталось ${ap.next.left}</span>
+            </div>
+            <div class="trust-bar">
+                <div class="trust-bar-fill" style="width:${ap.next.progress}%;background:linear-gradient(90deg,#a855f7,#7c5cff);"></div>
+            </div>
+        `;
+    } else {
+        html += `<p style="font-size:13px;color:var(--green);margin:0;">✅ Все награды получены!</p>`;
+    }
+    
+    if (ap.claimed && ap.claimed.length > 0) {
+        html += `<div class="section-title-mini" style="margin-top:12px;">🏆 Получено</div>`;
+        ap.claimed.forEach(th => {
+            html += `<div class="trust-factor-row"><div>✅ ${th} проверок</div><div style="color:var(--green);font-weight:800;">✓</div></div>`;
+        });
+    }
+    
+    html += `</div>`;
+    return html;
+}
+
+
 async function claimDailyBonus() {
     const result = document.getElementById('daily-bonus-result');
     result.innerHTML = '<span class="spinner"></span>Получаем...';
@@ -612,6 +654,9 @@ async function loadProfile() {
         `;
                     if (profile.dailyBonus) {
                 html += renderDailyBonus(profile.dailyBonus);
+            }
+                    if (profile.activityProgress) {
+                html += renderActivityProgress(profile.activityProgress);
             }
         if (profile.discount) {
             const { date, time } = dateFmt(profile.discount.expiresAt);
