@@ -276,6 +276,53 @@ function renderActivityProgress(ap) {
     return html;
 }
 
+function renderReferralLevels(rl) {
+    if (!rl) return '';
+    
+    const total = rl.total || 0;
+    
+    let html = `
+        <div class="card" style="background:linear-gradient(135deg,rgba(251,191,36,.08),rgba(251,191,36,.02));border-color:rgba(251,191,36,.3);">
+            <div class="card-head">
+                <h3>🏆 Уровни рефералов</h3>
+                <span style="font-size:12px;color:var(--muted);">Приглашено: <b style="color:var(--yellow);">${total}</b></span>
+            </div>
+    `;
+    
+    if (rl.next) {
+        html += `
+            <p style="font-size:13px;color:var(--text-2);margin:0 0 10px;">
+                🎁 Следующий уровень: <b>${escapeHtml(rl.next.label)}</b>
+            </p>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px;">
+                <span>${total} / ${rl.next.count}</span>
+                <span>осталось ${rl.next.left}</span>
+            </div>
+            <div class="trust-bar">
+                <div class="trust-bar-fill" style="width:${rl.next.progress}%;background:linear-gradient(90deg,#fbbf24,#f97316);"></div>
+            </div>
+        `;
+    } else {
+        html += `<p style="font-size:13px;color:var(--green);margin:0;">✅ Все уровни достигнуты!</p>`;
+    }
+    
+    if (rl.levels && rl.levels.length > 0) {
+        html += `<div class="section-title-mini" style="margin-top:12px;">📊 Уровни</div>`;
+        rl.levels.forEach(lvl => {
+            const icon = lvl.claimed ? '🏆' : (lvl.reached ? '✅' : '🔒');
+            const color = lvl.claimed ? 'var(--yellow)' : (lvl.reached ? 'var(--green)' : 'var(--muted)');
+            html += `
+                <div class="trust-factor-row">
+                    <div>${icon} ${lvl.count} рефералов</div>
+                    <div style="color:${color};font-weight:800;">${lvl.claimed ? '✓ Получено' : (lvl.reached ? '✓ Готово' : '—')}</div>
+                </div>
+            `;
+        });
+    }
+    
+    html += `</div>`;
+    return html;
+}
 
 async function claimDailyBonus() {
     const result = document.getElementById('daily-bonus-result');
@@ -657,6 +704,9 @@ async function loadProfile() {
             }
                     if (profile.activityProgress) {
                 html += renderActivityProgress(profile.activityProgress);
+            }
+                    if (profile.referralLevels) {
+                html += renderReferralLevels(profile.referralLevels);
             }
         if (profile.discount) {
             const { date, time } = dateFmt(profile.discount.expiresAt);
