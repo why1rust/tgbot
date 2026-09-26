@@ -355,6 +355,65 @@ body {
 }
 .risk-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--muted); }
 
+
+/* ============ TRUST FACTOR ============ */
+.trust-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-card);
+}
+.trust-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+.trust-head h3 { margin: 0 0 4px; font-size: 15px; font-weight: 800; }
+.trust-head p { margin: 0; font-size: 12px; color: var(--muted); }
+.trust-value { text-align: right; }
+.trust-score { font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+.trust-score.excellent { color: #a855f7; }
+.trust-score.high { color: var(--green); }
+.trust-score.medium { color: var(--yellow); }
+.trust-score.low { color: var(--orange); }
+.trust-score.critical { color: var(--red); }
+.trust-level { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.trust-level.excellent { color: #a855f7; }
+.trust-level.high { color: var(--green); }
+.trust-level.medium { color: var(--yellow); }
+.trust-level.low { color: var(--orange); }
+.trust-level.critical { color: var(--red); }
+.trust-bar {
+    height: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+}
+.trust-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.trust-bar-fill.excellent { background: linear-gradient(90deg, #22c55e, #a855f7); }
+.trust-bar-fill.high { background: linear-gradient(90deg, #22c55e, #84cc16); }
+.trust-bar-fill.medium { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+.trust-bar-fill.low { background: linear-gradient(90deg, #f97316, #ef4444); }
+.trust-bar-fill.critical { background: linear-gradient(90deg, #ef4444, #991b1b); }
+.trust-factor-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
 /* ACTIVITY STATS */
 .activity-graph-card {
     background: var(--card);
