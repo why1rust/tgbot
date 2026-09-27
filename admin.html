@@ -53,6 +53,7 @@
                 <div class="search-bar">
                     <input type="text" id="user-search" placeholder="ID, @username или имя..." onkeypress="if(event.key==='Enter') searchUsers()">
                     <button onclick="searchUsers()">🔍 Поиск</button>
+                                        <button onclick="exportUsersCSV()" style="background:linear-gradient(135deg,#22c55e,#16a34a);">📥 CSV</button>
                 </div>
                 <div id="users-table" class="table-wrap">
                     <div class="loading">Загрузка...</div>
