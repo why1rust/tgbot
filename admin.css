@@ -464,3 +464,7 @@ tr:hover td { background: #1c1c25; }
     color: #7a7a8e;
     font-weight: 600;
 }
+.chart-container canvas {
+    max-height: 280px;
+    width: 100% !important;
+}
