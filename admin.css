@@ -365,3 +365,102 @@ tr:hover td { background: #1c1c25; }
     color: #fff;
     box-shadow: 0 4px 14px rgba(124, 92, 255, 0.3);
 }
+/* ============ TICKETS LIST ============ */
+.ticket-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: #16161d;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.ticket-item:hover {
+    background: #1c1c25;
+    border-color: rgba(124, 92, 255, 0.3);
+}
+.ticket-item.unread {
+    border-color: rgba(239, 68, 68, 0.4);
+    background: rgba(239, 68, 68, 0.04);
+}
+.ticket-item.unread .ticket-icon {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.ticket-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(124, 92, 255, 0.12);
+    color: #a855f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    font-weight: 800;
+    overflow: hidden;
+}
+.ticket-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ticket-info {
+    flex: 1;
+    min-width: 0;
+}
+.ticket-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ticket-preview {
+    font-size: 13px;
+    color: #7a7a8e;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ticket-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+}
+.ticket-status {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.ticket-status.waiting {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+.ticket-status.admin_connected {
+    background: rgba(124, 92, 255, 0.15);
+    color: #a855f7;
+}
+.ticket-status.closed {
+    background: rgba(122, 122, 142, 0.15);
+    color: #7a7a8e;
+}
+.ticket-date {
+    font-size: 11px;
+    color: #7a7a8e;
+    font-weight: 600;
+}
