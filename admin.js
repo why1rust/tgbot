@@ -136,8 +136,112 @@ async function loadDashboard() {
             <div class="stat-card"><div class="value">${s.totalHelpers || 0}</div><div class="label">🎧 Хелперов</div></div>
             <div class="stat-card"><div class="value" style="color:#ef4444;">${s.totalBans || 0}</div><div class="label">🚫 Банов</div></div>
         `;
+                
+        // Рисуем графики
+        renderCharts();
     } catch (e) {
         grid.innerHTML = `<div class="loading" style="color:#ef4444;">❌ ${e.message}</div>`;
+    }
+}
+
+// ==================== CHARTS ====================
+let usersChart = null;
+let revenueChart = null;
+
+async function renderCharts() {
+    try {
+        const data = await apiCall('/stats-history', { days: 30 });
+        const history = data.history || [];
+        
+        if (history.length === 0) {
+            console.warn('renderCharts: пустая история');
+            return;
+        }
+        
+        const labels = history.map(h => {
+            const [y, m, d] = h.date.split('-');
+            return `${d}.${m}`;
+        });
+        const usersData = history.map(h => h.totalUsers);
+        const revenueData = history.map(h => h.totalRevenue);
+        
+        // Users chart
+        const usersCtx = document.getElementById('users-chart');
+        if (usersChart) { usersChart.destroy(); usersChart = null; }
+        if (usersCtx) {
+            usersChart = new Chart(usersCtx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Пользователей',
+                        data: usersData,
+                        borderColor: '#7c5cff',
+                        backgroundColor: 'rgba(124, 92, 255, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#7c5cff',
+                        pointBorderColor: '#0e0e12',
+                        pointBorderWidth: 2,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.04)' },
+                            ticks: { color: '#7a7a8e', font: { size: 10 } },
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.04)' },
+                            ticks: { color: '#7a7a8e', font: { size: 10 } },
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+        }
+        
+        // Revenue chart
+        const revenueCtx = document.getElementById('revenue-chart');
+        if (revenueChart) { revenueChart.destroy(); revenueChart = null; }
+        if (revenueCtx) {
+            revenueChart = new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Stars',
+                        data: revenueData,
+                        backgroundColor: 'rgba(251, 191, 36, 0.6)',
+                        borderColor: '#fbbf24',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#7a7a8e', font: { size: 10 } },
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.04)' },
+                            ticks: { color: '#7a7a8e', font: { size: 10 } },
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+        }
+    } catch (e) {
+        console.error('renderCharts error:', e.message);
     }
 }
 
