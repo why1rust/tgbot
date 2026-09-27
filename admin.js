@@ -116,7 +116,6 @@ function loadTab(tab) {
     if (tab === 'purchases') loadPurchases();
     if (tab === 'promos') loadPromos();
     if (tab === 'reviews') loadReviews();
-    if (tab === 'tickets') loadTickets();
 }
 
 // ==================== DASHBOARD ====================
