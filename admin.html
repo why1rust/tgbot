@@ -55,6 +55,12 @@
                     <button onclick="searchUsers()">🔍 Поиск</button>
                                         <button onclick="exportUsersCSV()" style="background:linear-gradient(135deg,#22c55e,#16a34a);">📥 CSV</button>
                 </div>
+                                    <div class="filter-row" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+                        <button class="filter-btn active" data-filter="all" onclick="filterUsers('all')">Все</button>
+                        <button class="filter-btn" data-filter="premium" onclick="filterUsers('premium')">⭐ Премиум</button>
+                        <button class="filter-btn" data-filter="helper" onclick="filterUsers('helper')">🎧 Хелперы</button>
+                        <button class="filter-btn" data-filter="banned" onclick="filterUsers('banned')">🚫 Забанены</button>
+                    </div>
                 <div id="users-table" class="table-wrap">
                     <div class="loading">Загрузка...</div>
                 </div>
