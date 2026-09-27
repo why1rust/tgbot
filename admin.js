@@ -5,6 +5,7 @@ const BOT_USERNAME = 'rustguard_official_bot';
 // ==================== STATE ====================
 let token = localStorage.getItem('admin_token') || null;
 let adminUser = JSON.parse(localStorage.getItem('admin_user') || 'null');
+let currentFilter = 'all';
 
 // ==================== AUTH ====================
 window.onTelegramAuth = async function(user) {
@@ -147,8 +148,17 @@ async function loadUsers(query = '') {
         const data = query
             ? await apiCall('/search-user', { query })
             : await apiCall('/users');
+        let users = data.users || data.results || [];
 
-        const users = data.users || data.results || [];
+        // Фильтр
+        if (currentFilter !== 'all') {
+            users = users.filter(u => {
+                if (currentFilter === 'premium') return u.premium;
+                if (currentFilter === 'helper') return u.helper;
+                if (currentFilter === 'banned') return u.banned;
+                return true;
+            });
+        }
 
         if (!users.length) {
             container.innerHTML = '<div class="loading">Нет юзеров</div>';
@@ -338,6 +348,15 @@ window.unbanUser = unbanUser;
 window.searchUsers = searchUsers;
 window.exportUsersCSV = exportUsersCSV;
 window.loadPurchases = loadPurchases;
+window.filterUsers = filterUsers;
+
+function filterUsers(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('[data-filter]').forEach(b => {
+        b.classList.toggle('active', b.dataset.filter === filter);
+    });
+    loadUsers();
+}
 
 async function exportUsersCSV() {
     try {
