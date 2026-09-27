@@ -65,6 +65,13 @@
                     <div class="loading">Загрузка...</div>
                 </div>
             </div>
+            
+                                <div class="filter-row" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+                        <button class="filter-btn active" data-filter="all" onclick="filterUsers('all')">Все</button>
+                        <button class="filter-btn" data-filter="premium" onclick="filterUsers('premium')">⭐ Премиум</button>
+                        <button class="filter-btn" data-filter="helper" onclick="filterUsers('helper')">🎧 Хелперы</button>
+                        <button class="filter-btn" data-filter="banned" onclick="filterUsers('banned')">🚫 Забанены</button>
+                    </div>
 
             <div id="tab-tickets" class="tab-content">
                 <h1>🎫 Тикеты</h1>
