@@ -764,10 +764,115 @@ function showRoleTabs(isAdmin, isHelper) {
     if (!isAdmin && document.getElementById('panel-admin').classList.contains('active')) goToTab('steam');
     if (!isHelper && !isAdmin && document.getElementById('panel-helpers').classList.contains('active')) goToTab('steam');
 }
-function openPremiumFromProfile() {
-    closeProfileModal();
-    goToTab('steam');
-    tg.showAlert('Открой бота → /start → «⭐ Купить премиум»');
+async function openPremiumTab() {
+    goToTab('premium');
+    renderPremiumPanel();
+}
+
+async function renderPremiumPanel() {
+    const container = document.getElementById('premium-panel-content');
+    if (!container) return;
+    
+    container.innerHTML = '<div class="loading-block">⏳ Загрузка...</div>';
+    
+    try {
+        const p = await apiCall('/api/profile');
+        const extraD = p.discount?.percent || 0;
+        const isPremium = p.premium;
+        const daysLeft = p.daysLeft || 0;
+        
+        let html = '';
+        
+        if (isPremium) {
+            html += `
+                <div class="card" style="background:linear-gradient(135deg,rgba(124,92,255,.15),rgba(168,85,247,.05));border-color:rgba(124,92,255,.4);">
+                    <div class="card-head">
+                        <h3>⭐ Премиум активен</h3>
+                    </div>
+                    <p style="font-size:14px;color:var(--text);margin:0 0 8px;">
+                        📅 Осталось: <b>${daysLeft} дней</b>
+                    </p>
+                    <p style="font-size:12px;color:var(--muted);margin:0;">
+                        Продлить можно в любой момент — дни добавятся к текущему сроку
+                    </p>
+                </div>
+            `;
+        }
+        
+        if (p.discount && p.discount.percent) {
+            html += `
+                <div class="card" style="background:linear-gradient(135deg,rgba(34,211,238,.1),rgba(34,211,238,.03));border-color:rgba(34,211,238,.35);">
+                    <div class="card-head">
+                        <h3>💰 Скидка ${p.discount.percent}%</h3>
+                    </div>
+                    <p style="font-size:13px;color:var(--text-2);margin:0;">
+                        Действует на следующую покупку премиума
+                    </p>
+                </div>
+            `;
+        }
+        
+        html += `<div class="card"><div class="card-head"><h3>💰 Выбери тариф</h3></div>`;
+        
+        const presets = [7, 14, 30, 90, 180, 365];
+        presets.forEach(d => {
+            const baseDisc = d >= 365 ? 40 : d >= 180 ? 30 : d >= 90 ? 25 : d >= 60 ? 20 : d >= 30 ? 15 : d >= 14 ? 10 : d >= 7 ? 5 : 0;
+            const totalDisc = Math.min(90, baseDisc + extraD);
+            const basePrice = Math.ceil(d * 2.5);
+            const finalPrice = Math.max(1, Math.ceil(basePrice * (1 - totalDisc / 100)));
+            
+            html += `
+                <button class="premium-preset-btn" onclick="createPremiumInvoice(${d})">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <div style="font-size:16px;font-weight:800;">${d} дней</div>
+                            ${totalDisc > 0 ? `<div style="font-size:11px;color:var(--green);font-weight:700;">Скидка ${totalDisc}%</div>` : ''}
+                        </div>
+                        <div style="text-align:right;">
+                            ${totalDisc > 0 ? `<div style="font-size:11px;color:var(--muted);text-decoration:line-through;">${basePrice} ⭐</div>` : ''}
+                            <div style="font-size:18px;font-weight:900;color:var(--accent-2);">${finalPrice} ⭐</div>
+                        </div>
+                    </div>
+                </button>
+            `;
+        });
+        
+        html += `
+            <div style="margin-top:16px;">
+                <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">Или своё количество дней (3-365)</label>
+                <input type="number" id="custom-premium-days" min="3" max="365" value="30" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--input-border);background:var(--input);color:var(--text);font-size:15px;box-sizing:border-box;">
+            </div>
+            <button class="btn primary" style="margin-top:8px;" onclick="createPremiumInvoiceFromInput()">🚀 Оплатить</button>
+        </div>`;
+        
+        container.innerHTML = html;
+    } catch (e) {
+        container.innerHTML = `<div class="card"><div class="result show">❌ ${escapeHtml(e.message)}</div></div>`;
+    }
+}
+
+async function createPremiumInvoice(days) {
+    try {
+        const data = await apiCall('/api/premium-invoice', { days });
+        if (data.error) throw new Error(data.error);
+        
+        tg.openInvoice(data.url, (status) => {
+            if (status === 'paid') {
+                tg.showAlert('✅ Оплата прошла! Премиум активирован.');
+                setTimeout(() => renderPremiumPanel(), 1500);
+            } else if (status === 'failed') {
+                tg.showAlert('❌ Ошибка оплаты');
+            }
+        });
+    } catch (e) {
+        tg.showAlert('Ошибка: ' + e.message);
+    }
+}
+
+function createPremiumInvoiceFromInput() {
+    const days = parseInt(document.getElementById('custom-premium-days')?.value) || 30;
+    if (days < 3 || days > 365) { tg.showAlert('Введи 3-365 дней'); return; }
+    createPremiumInvoice(days);
 }
 async function activateTrial() {
     const promo = prompt('Введи промокод для пробной:');
@@ -1745,7 +1850,7 @@ async function init() {
     } else if (hash.includes('#watch') || startParam === 'watch') {
         setTimeout(() => goToTab('watch'), 150);
     } else if (hash.includes('#premium') || startParam === 'premium') {
-        setTimeout(() => goToTab('steam'), 150);
+        setTimeout(() => openPremiumTab(), 150);
     }
     if (hash.startsWith('#ticket=')) {
         const ticketId = hash.replace('#ticket=', '');
