@@ -574,21 +574,27 @@ async function loadTickets() {
         }
         
         let html = '';
-        tickets.forEach(t => {
+                tickets.forEach(t => {
             const statusEmoji = t.status === 'waiting' ? '⏳' : '💬';
+            const statusText = t.status === 'waiting' ? 'Ожидает' : 'Диалог';
             const isUnread = t.status === 'waiting';
             const date = new Date(t.updatedAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
             const nameLine = t.username ? `${escapeHtml(t.firstName)} · @${escapeHtml(t.username)}` : escapeHtml(t.firstName);
-            
+
+            const initials = (t.firstName || 'U').charAt(0).toUpperCase();
+            const avatarHtml = t.photoUrl
+                ? `<div class="ticket-icon"><img src="${escapeHtml(t.photoUrl)}" onerror="this.parentNode.textContent='${initials}';"></div>`
+                : `<div class="ticket-icon">${initials}</div>`;
+
             html += `<div class="ticket-item ${isUnread ? 'unread' : ''}" onclick="openTicketChat('${t.id}')">
-                <div class="ticket-icon">${statusEmoji}</div>
+                ${avatarHtml}
                 <div class="ticket-info">
                     <div class="ticket-name">${nameLine}</div>
                     <div class="ticket-preview">${escapeHtml(t.lastMessage || '—')}</div>
                 </div>
-                <div style="text-align:right;flex-shrink:0;">
-                    <div class="ticket-status ${t.status}">${statusEmoji}</div>
-                    <div style="font-size:10px;color:#7a7a8e;margin-top:4px;">${date}</div>
+                <div class="ticket-meta">
+                    <div class="ticket-status ${t.status}">${statusEmoji} ${statusText}</div>
+                    <div class="ticket-date">${date}</div>
                 </div>
             </div>`;
         });
