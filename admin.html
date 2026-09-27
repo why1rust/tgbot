@@ -39,6 +39,7 @@
                 <button data-tab="logs">📜 Логи</button>
                 <button data-tab="purchases">💰 Покупки</button>
                 <button data-tab="broadcast">📨 Рассылка</button>
+                <button data-tab="promos">🎟 Промокоды</button>
             </nav>
             <button id="logout-btn" class="logout-btn">🚪 Выйти</button>
         </aside>
@@ -98,6 +99,46 @@
                     </div>
                     <div id="broadcast-preview" style="margin-top:16px;padding:16px;background:#0e0e12;border-radius:10px;display:none;font-size:14px;line-height:1.5;"></div>
                     <div id="broadcast-result" style="margin-top:12px;font-size:13px;"></div>
+                </div>
+            </div>
+                        <div id="tab-promos" class="tab-content">
+                <h1>🎟 Промокоды</h1>
+                <button class="btn primary" onclick="showPromoForm()" style="margin-bottom:16px;">➕ Создать промокод</button>
+
+                <div id="promo-form" style="display:none;background:#16161d;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:20px;margin-bottom:16px;max-width:600px;">
+                    <label style="display:block;font-size:12px;color:#7a7a8e;margin-bottom:6px;">Код</label>
+                    <input type="text" id="p-code" placeholder="RUST30" style="width:100%;padding:12px;background:#0e0e12;color:#fff;border:1px solid rgba(255,255,255,.08);border-radius:10px;margin-bottom:12px;box-sizing:border-box;font-family:inherit;">
+                    
+                    <label style="display:block;font-size:12px;color:#7a7a8e;margin-bottom:6px;">Тип</label>
+                    <select id="p-type" style="width:100%;padding:12px;background:#0e0e12;color:#fff;border:1px solid rgba(255,255,255,.08);border-radius:10px;margin-bottom:12px;box-sizing:border-box;font-family:inherit;">
+                        <option value="premium">⭐ Дни премиума</option>
+                        <option value="checks">🎮 Бонусные проверки</option>
+                        <option value="discount">💰 Скидка %</option>
+                    </select>
+                    
+                    <label style="display:block;font-size:12px;color:#7a7a8e;margin-bottom:6px;">Значение (30 / 10 / 50)</label>
+                    <input type="number" id="p-value" placeholder="30" style="width:100%;padding:12px;background:#0e0e12;color:#fff;border:1px solid rgba(255,255,255,.08);border-radius:10px;margin-bottom:12px;box-sizing:border-box;font-family:inherit;">
+                    
+                    <label style="display:block;font-size:12px;color:#7a7a8e;margin-bottom:6px;">Лимит использований (пусто = безлимит)</label>
+                    <input type="number" id="p-maxuses" placeholder="100" style="width:100%;padding:12px;background:#0e0e12;color:#fff;border:1px solid rgba(255,255,255,.08);border-radius:10px;margin-bottom:12px;box-sizing:border-box;font-family:inherit;">
+                    
+                    <label style="display:block;font-size:12px;color:#7a7a8e;margin-bottom:6px;">Срок действия в днях (пусто = бессрочно)</label>
+                    <input type="number" id="p-validdays" placeholder="30" style="width:100%;padding:12px;background:#0e0e12;color:#fff;border:1px solid rgba(255,255,255,.08);border-radius:10px;margin-bottom:12px;box-sizing:border-box;font-family:inherit;">
+                    
+                    <div class="admin-checkbox" style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:10px;background:#0e0e12;border-radius:10px;">
+                        <input type="checkbox" id="p-onlynew" style="width:auto;">
+                        <label for="p-onlynew" style="font-size:13px;color:#b8b8c8;">🆕 Только для новых</label>
+                    </div>
+                    
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn primary" onclick="createPromo()">Создать</button>
+                        <button class="btn" onclick="hidePromoForm()">Отмена</button>
+                    </div>
+                    <div id="promo-result" style="margin-top:12px;font-size:13px;"></div>
+                </div>
+
+                <div id="promos-table" class="table-wrap">
+                    <div class="loading">Загрузка...</div>
                 </div>
             </div>
         </main>
