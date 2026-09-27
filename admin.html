@@ -38,6 +38,7 @@
                 <button data-tab="tickets">🎫 Тикеты</button>
                 <button data-tab="logs">📜 Логи</button>
                 <button data-tab="purchases">💰 Покупки</button>
+                <button data-tab="broadcast">📨 Рассылка</button>
             </nav>
             <button id="logout-btn" class="logout-btn">🚪 Выйти</button>
         </aside>
@@ -84,6 +85,19 @@
                 <h1>💰 Покупки</h1>
                 <div id="purchases-table" class="table-wrap">
                     <div class="loading">Скоро...</div>
+                </div>
+            </div>
+                        <div id="tab-broadcast" class="tab-content">
+                <h1>📨 Рассылка</h1>
+                <div style="background:#16161d;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:20px;max-width:800px;">
+                    <label style="display:block;font-size:12px;color:#7a7a8e;margin-bottom:6px;">Текст (HTML разрешён)</label>
+                    <textarea id="broadcast-text" rows="8" style="width:100%;padding:12px;background:#0e0e12;color:#fff;border:1px solid rgba(255,255,255,.08);border-radius:10px;font-family:inherit;font-size:14px;box-sizing:border-box;resize:vertical;"></textarea>
+                    <div style="display:flex;gap:8px;margin-top:12px;">
+                        <button class="btn primary" onclick="sendBroadcast()">🚀 Отправить всем</button>
+                        <button class="btn" onclick="previewBroadcast()">👁️ Превью</button>
+                    </div>
+                    <div id="broadcast-preview" style="margin-top:16px;padding:16px;background:#0e0e12;border-radius:10px;display:none;font-size:14px;line-height:1.5;"></div>
+                    <div id="broadcast-result" style="margin-top:12px;font-size:13px;"></div>
                 </div>
             </div>
         </main>
