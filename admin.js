@@ -292,7 +292,6 @@ window.revokePremium = revokePremium;
 window.banUser = banUser;
 window.unbanUser = unbanUser;
 window.searchUsers = searchUsers;
-
 window.exportUsersCSV = exportUsersCSV;
 
 async function exportUsersCSV() {
