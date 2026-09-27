@@ -343,3 +343,25 @@ tr:hover td { background: #1c1c25; }
     color: #fff;
     box-shadow: 0 4px 14px rgba(124, 92, 255, 0.3);
 }
+.filter-btn {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #16161d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #b8b8c8;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.filter-btn:hover {
+    border-color: #7c5cff;
+    color: #fff;
+}
+.filter-btn.active {
+    background: linear-gradient(135deg, #7c5cff, #a855f7);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(124, 92, 255, 0.3);
+}
