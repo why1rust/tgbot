@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rust Guard Admin</title>
+    <script src="https://telegram.org/js/telegram-widget.js?22"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <!-- LOGIN -->
+    <div id="login-screen" class="screen">
+        <div class="login-box">
+            <h1>🛡️ Rust Guard Admin</h1>
+            <p>Войди через Telegram для доступа</p>
+            <div id="tg-login-widget">
+                <script async src="https://telegram.org/js/telegram-widget.js?22"
+                        data-telegram-login="rustguard_official_bot"
+                        data-size="large"
+                        data-onauth="onTelegramAuth(user)"
+                        data-request-access="write"></script>
+            </div>
+            <div id="login-error" class="login-error" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="admin-screen" class="screen" style="display:none;">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🛡️ Rust Guard</h2>
+                <p id="admin-name">Admin</p>
+            </div>
+            <nav class="sidebar-nav">
+                <button data-tab="dashboard" class="active">📊 Дашборд</button>
+                <button data-tab="users">👥 Юзеры</button>
+                <button data-tab="tickets">🎫 Тикеты</button>
+                <button data-tab="logs">📜 Логи</button>
+                <button data-tab="purchases">💰 Покупки</button>
+            </nav>
+            <button id="logout-btn" class="logout-btn">🚪 Выйти</button>
+        </aside>
+
+        <main class="content">
+            <div id="tab-dashboard" class="tab-content active">
+                <h1>📊 Дашборд</h1>
+                <div class="stats-grid" id="stats-grid">Загрузка...</div>
+            </div>
+
+            <div id="tab-users" class="tab-content">
+                <h1>👥 Юзеры</h1>
+                <div class="search-bar">
+                    <input type="text" id="user-search" placeholder="ID, @username или имя..." onkeypress="if(event.key==='Enter') searchUsers()">
+                    <button onclick="searchUsers()">🔍 Поиск</button>
+                </div>
+                <div id="users-table" class="table-wrap">
+                    <div class="loading">Загрузка...</div>
+                </div>
+            </div>
+
+            <div id="tab-tickets" class="tab-content">
+                <h1>🎫 Тикеты</h1>
+                <div id="tickets-table" class="table-wrap">
+                    <div class="loading">Загрузка...</div>
+                </div>
+            </div>
+
+            <div id="tab-logs" class="tab-content">
+                <h1>📜 Логи</h1>
+                <div id="logs-table" class="table-wrap">
+                    <div class="loading">Загрузка...</div>
+                </div>
+            </div>
+
+            <div id="tab-purchases" class="tab-content">
+                <h1>💰 Покупки</h1>
+                <div id="purchases-table" class="table-wrap">
+                    <div class="loading">Скоро...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
