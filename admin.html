@@ -41,6 +41,7 @@
                 <button data-tab="broadcast">📨 Рассылка</button>
                 <button data-tab="promos">🎟 Промокоды</button>
                 <button data-tab="reviews">💬 Отзывы</button>
+                <button data-tab="tickets">🎫 Тикеты</button>
             </nav>
             <button id="logout-btn" class="logout-btn">🚪 Выйти</button>
         </aside>
@@ -146,6 +147,34 @@
                 <h1>💬 Отзывы</h1>
                 <div id="reviews-list">
                     <div class="loading">Загрузка...</div>
+                </div>
+            </div>
+                        <div id="tab-tickets" class="tab-content">
+                <h1>🎫 Тикеты</h1>
+                <div id="tickets-list" class="table-wrap">
+                    <div class="loading">Загрузка...</div>
+                </div>
+            </div>
+
+            <!-- TICKET CHAT MODAL -->
+            <div id="ticket-chat-modal" style="display:none;position:fixed;inset:0;z-index:1080;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);padding:16px;">
+                <div style="width:100%;max-width:720px;margin:0 auto;background:#0e0e12;border:1px solid rgba(255,255,255,.08);border-radius:16px;height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden;">
+                    <!-- Header -->
+                    <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);">
+                        <button onclick="closeTicketChat()" style="width:38px;height:38px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#16161d;color:#fff;font-size:18px;cursor:pointer;">‹</button>
+                        <div style="flex:1;min-width:0;">
+                            <div id="ticket-chat-name" style="font-size:15px;font-weight:800;">User</div>
+                            <div id="ticket-chat-sub" style="font-size:11px;color:#7a7a8e;">ID: —</div>
+                        </div>
+                        <button onclick="closeCurrentTicket()" style="padding:8px 14px;border-radius:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;">Закрыть тикет</button>
+                    </div>
+                    <!-- Messages -->
+                    <div id="ticket-chat-messages" style="flex:1;overflow-y:auto;padding:14px;background:#16161d;display:flex;flex-direction:column;gap:10px;"></div>
+                    <!-- Input -->
+                    <div style="display:flex;gap:8px;padding:12px;border-top:1px solid rgba(255,255,255,.06);background:#0e0e12;">
+                        <textarea id="ticket-chat-input" rows="1" placeholder="Ответить..." style="flex:1;padding:11px 14px;background:#16161d;color:#fff;border:1px solid rgba(255,255,255,.08);border-radius:11px;font-family:inherit;font-size:14px;resize:none;outline:none;"></textarea>
+                        <button onclick="sendTicketReply()" style="width:44px;height:44px;border:none;border-radius:11px;background:linear-gradient(135deg,#7c5cff,#a855f7);color:#fff;font-size:16px;cursor:pointer;">➤</button>
+                    </div>
                 </div>
             </div>
         </main>
