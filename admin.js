@@ -349,6 +349,8 @@ window.searchUsers = searchUsers;
 window.exportUsersCSV = exportUsersCSV;
 window.loadPurchases = loadPurchases;
 window.filterUsers = filterUsers;
+window.sendBroadcast = sendBroadcast;
+window.previewBroadcast = previewBroadcast;
 
 function filterUsers(filter) {
     currentFilter = filter;
@@ -373,3 +375,29 @@ async function exportUsersCSV() {
     } catch (e) { alert('Ошибка: ' + e.message); }
 }
 window.onTelegramAuth = window.onTelegramAuth;
+
+
+async function sendBroadcast() {
+    const text = document.getElementById('broadcast-text').value.trim();
+    const result = document.getElementById('broadcast-result');
+    if (!text) { alert('Введи текст'); return; }
+    
+    const confirmed = confirm('Отправить всем юзерам?');
+    if (!confirmed) return;
+    
+    result.innerHTML = '<span class="spinner"></span>Отправка...';
+    try {
+        const data = await apiCall('/broadcast', { text });
+        result.innerHTML = `<span style="color:#22c55e;">✅ Запущено для ${data.total} юзеров</span>`;
+    } catch (e) {
+        result.innerHTML = `<span style="color:#ef4444;">❌ ${e.message}</span>`;
+    }
+}
+
+function previewBroadcast() {
+    const text = document.getElementById('broadcast-text').value.trim();
+    const p = document.getElementById('broadcast-preview');
+    if (!text) { alert('Введи текст'); return; }
+    p.innerHTML = text;
+    p.style.display = 'block';
+}
