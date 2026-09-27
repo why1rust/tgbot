@@ -275,6 +275,50 @@ async function loadLogs() {
     }
 }
 
+// ==================== PURCHASES ====================
+async function loadPurchases() {
+    const container = document.getElementById('purchases-table');
+    container.innerHTML = '<div class="loading"><span class="spinner"></span>Загрузка...</div>';
+    
+    try {
+        const data = await apiCall('/purchases');
+        const list = data.purchases || [];
+        
+        if (!list.length) {
+            container.innerHTML = '<div class="loading">Покупок нет</div>';
+            return;
+        }
+        
+        let total = 0;
+        list.forEach(p => total += p.totalSpent);
+        
+        let html = `<div style="padding:16px;background:#1c1c25;font-size:14px;display:flex;gap:20px;align-items:center;">
+            <div>💰 Всего заработано: <b style="color:#fbbf24;font-size:18px;">${total} Stars</b></div>
+            <div>👥 Покупателей: <b>${list.length}</b></div>
+        </div>
+        <table><thead><tr>
+            <th>ID</th><th>@username</th><th>Покупок</th><th>Потрачено (⭐)</th><th>Последняя покупка</th>
+        </tr></thead><tbody>`;
+        
+        list.forEach(p => {
+            const lastDate = p.lastPurchaseAt
+                ? new Date(p.lastPurchaseAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                : '—';
+            html += `<tr>
+                <td><code>${p.userId}</code></td>
+                <td>${p.username ? '@' + escapeHtml(p.username) : '—'}</td>
+                <td>${p.purchasesCount}</td>
+                <td><b style="color:#fbbf24;">${p.totalSpent}</b></td>
+                <td>${lastDate} (${p.lastDays}д)</td>
+            </tr>`;
+        });
+        
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    } catch (e) {
+        container.innerHTML = `<div class="loading" style="color:#ef4444;">❌ ${e.message}</div>`;
+    }
+}
 // ==================== HELPERS ====================
 function escapeHtml(text) {
     if (!text) return '';
@@ -293,6 +337,7 @@ window.banUser = banUser;
 window.unbanUser = unbanUser;
 window.searchUsers = searchUsers;
 window.exportUsersCSV = exportUsersCSV;
+window.loadPurchases = loadPurchases;
 
 async function exportUsersCSV() {
     try {
