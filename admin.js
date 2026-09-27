@@ -116,6 +116,7 @@ function loadTab(tab) {
     if (tab === 'purchases') loadPurchases();
     if (tab === 'promos') loadPromos();
     if (tab === 'reviews') loadReviews();
+    if (tab === 'tickets') loadTickets();
 }
 
 // ==================== DASHBOARD ====================
@@ -358,6 +359,10 @@ window.hidePromoForm = hidePromoForm;
 window.createPromo = createPromo;
 window.deletePromo = deletePromo;
 window.deleteReview = deleteReview;
+window.openTicketChat = openTicketChat;
+window.closeTicketChat = closeTicketChat;
+window.sendTicketReply = sendTicketReply;
+window.closeCurrentTicket = closeCurrentTicket;
 
 function filterUsers(filter) {
     currentFilter = filter;
@@ -549,5 +554,138 @@ async function deleteReview(userId, timestamp) {
     try {
         await apiCall('/delete-review', { userId, timestamp });
         loadReviews();
+    } catch (e) { alert('Ошибка: ' + e.message); }
+}
+
+// ==================== TICKETS ====================
+let currentTicket = null;
+let ticketPollInterval = null;
+
+async function loadTickets() {
+    const c = document.getElementById('tickets-list');
+    c.innerHTML = '<div class="loading"><span class="spinner"></span>Загрузка...</div>';
+    
+    try {
+        const data = await apiCall('/tickets');
+        const tickets = data.tickets || [];
+        
+        if (!tickets.length) {
+            c.innerHTML = '<div class="loading">Открытых тикетов нет</div>';
+            return;
+        }
+        
+        let html = '';
+        tickets.forEach(t => {
+            const statusEmoji = t.status === 'waiting' ? '⏳' : '💬';
+            const isUnread = t.status === 'waiting';
+            const date = new Date(t.updatedAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+            const nameLine = t.username ? `${escapeHtml(t.firstName)} · @${escapeHtml(t.username)}` : escapeHtml(t.firstName);
+            
+            html += `<div class="ticket-item ${isUnread ? 'unread' : ''}" onclick="openTicketChat('${t.id}')">
+                <div class="ticket-icon">${statusEmoji}</div>
+                <div class="ticket-info">
+                    <div class="ticket-name">${nameLine}</div>
+                    <div class="ticket-preview">${escapeHtml(t.lastMessage || '—')}</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div class="ticket-status ${t.status}">${statusEmoji}</div>
+                    <div style="font-size:10px;color:#7a7a8e;margin-top:4px;">${date}</div>
+                </div>
+            </div>`;
+        });
+        c.innerHTML = html;
+    } catch (e) {
+        c.innerHTML = `<div class="loading" style="color:#ef4444;">❌ ${e.message}</div>`;
+    }
+}
+
+async function openTicketChat(ticketId) {
+    try {
+        const data = await apiCall('/ticket', { ticketId });
+        currentTicket = data.ticket;
+        document.getElementById('ticket-chat-name').textContent = currentTicket.firstName || 'User';
+        document.getElementById('ticket-chat-sub').textContent =
+            (currentTicket.username ? '@' + currentTicket.username + ' · ' : '') + 'ID: ' + currentTicket.userId;
+        renderTicketMessages();
+        document.getElementById('ticket-chat-modal').style.display = 'block';
+        
+        if (ticketPollInterval) clearInterval(ticketPollInterval);
+        ticketPollInterval = setInterval(async () => {
+            try {
+                const fresh = await apiCall('/ticket', { ticketId });
+                if (fresh.ticket && fresh.ticket.messages.length !== currentTicket.messages.length) {
+                    currentTicket = fresh.ticket;
+                    renderTicketMessages();
+                }
+            } catch (e) {}
+        }, 5000);
+    } catch (e) { alert('Ошибка: ' + e.message); }
+}
+
+function closeTicketChat() {
+    if (ticketPollInterval) { clearInterval(ticketPollInterval); ticketPollInterval = null; }
+    document.getElementById('ticket-chat-modal').style.display = 'none';
+    currentTicket = null;
+    loadTickets();
+}
+
+function renderTicketMessages() {
+    if (!currentTicket) return;
+    const c = document.getElementById('ticket-chat-messages');
+    let html = '';
+    
+    currentTicket.messages.forEach(msg => {
+        const time = new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        const isUser = msg.role === 'user';
+        const isAdmin = msg.role === 'admin' || msg.role === 'helper';
+        
+        if (isUser) {
+            html += `<div style="align-self:flex-start;max-width:80%;">
+                <div style="font-size:10px;color:#7a7a8e;margin-bottom:4px;">👤 ${escapeHtml(currentTicket.firstName)}</div>
+                <div style="background:#16161d;border:1px solid rgba(255,255,255,.06);padding:10px 14px;border-radius:14px;border-bottom-left-radius:4px;font-size:14px;line-height:1.4;word-wrap:break-word;">${escapeHtml(msg.text)}<div style="font-size:10px;color:#7a7a8e;text-align:right;margin-top:4px;">${time}</div></div>
+            </div>`;
+        } else if (isAdmin) {
+            html += `<div style="align-self:flex-end;max-width:80%;">
+                <div style="font-size:10px;color:#a855f7;margin-bottom:4px;text-align:right;">🛡️ Админ</div>
+                <div style="background:linear-gradient(135deg,#7c5cff,#a855f7);padding:10px 14px;border-radius:14px;border-bottom-right-radius:4px;font-size:14px;line-height:1.4;color:#fff;word-wrap:break-word;">${escapeHtml(msg.text)}<div style="font-size:10px;opacity:.7;text-align:right;margin-top:4px;">${time}</div></div>
+            </div>`;
+        }
+    });
+    
+    if (currentTicket.status === 'waiting') {
+        html += `<div style="align-self:center;padding:6px 12px;background:#16161d;border-radius:10px;font-size:11px;color:#7a7a8e;">⏳ Ждём ответа юзера</div>`;
+    } else if (currentTicket.status === 'closed') {
+        html += `<div style="align-self:center;padding:6px 12px;background:#16161d;border-radius:10px;font-size:11px;color:#7a7a8e;">✅ Тикет закрыт</div>`;
+    }
+    
+    c.innerHTML = html;
+    c.scrollTop = c.scrollHeight;
+}
+
+async function sendTicketReply() {
+    if (!currentTicket) return;
+    const input = document.getElementById('ticket-chat-input');
+    const message = input.value.trim();
+    if (!message) return;
+    
+    input.value = '';
+    currentTicket.messages.push({ role: 'admin', text: message, timestamp: Date.now() });
+    renderTicketMessages();
+    
+    try {
+        const data = await apiCall('/ticket-reply', { ticketId: currentTicket.id, message });
+        currentTicket = data.ticket;
+        renderTicketMessages();
+    } catch (e) {
+        alert('Ошибка: ' + e.message);
+    }
+}
+
+async function closeCurrentTicket() {
+    if (!currentTicket) return;
+    if (!confirm('Закрыть этот тикет?')) return;
+    try {
+        await apiCall('/ticket-close', { ticketId: currentTicket.id });
+        closeTicketChat();
     } catch (e) { alert('Ошибка: ' + e.message); }
 }
