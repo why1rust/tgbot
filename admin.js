@@ -114,6 +114,7 @@ function loadTab(tab) {
     if (tab === 'logs') loadLogs();
     if (tab === 'tickets') loadTickets();
     if (tab === 'purchases') loadPurchases();
+    if (tab === 'promos') loadPromos();
 }
 
 // ==================== DASHBOARD ====================
@@ -351,6 +352,10 @@ window.loadPurchases = loadPurchases;
 window.filterUsers = filterUsers;
 window.sendBroadcast = sendBroadcast;
 window.previewBroadcast = previewBroadcast;
+window.showPromoForm = showPromoForm;
+window.hidePromoForm = hidePromoForm;
+window.createPromo = createPromo;
+window.deletePromo = deletePromo;
 
 function filterUsers(filter) {
     currentFilter = filter;
@@ -400,4 +405,99 @@ function previewBroadcast() {
     if (!text) { alert('Введи текст'); return; }
     p.innerHTML = text;
     p.style.display = 'block';
+}
+
+// ==================== PROMOS ====================
+async function loadPromos() {
+    const c = document.getElementById('promos-table');
+    c.innerHTML = '<div class="loading"><span class="spinner"></span>Загрузка...</div>';
+    
+    try {
+        const data = await apiCall('/promo-list');
+        const list = data.promos || [];
+        
+        if (!list.length) {
+            c.innerHTML = '<div class="loading">Промокодов нет</div>';
+            return;
+        }
+        
+        let html = `<table><thead><tr>
+            <th>Код</th><th>Тип</th><th>Значение</th><th>Использовано</th><th>Срок</th><th>Действия</th>
+        </tr></thead><tbody>`;
+        
+        list.forEach(p => {
+            let typeText = '', valText = '';
+            if (p.type === 'premium') { typeText = '⭐ Премиум'; valText = p.days + ' дней'; }
+            else if (p.type === 'checks') { typeText = '🎮 Проверки'; valText = '+' + p.checks; }
+            else if (p.type === 'discount') { typeText = '💰 Скидка'; valText = p.percent + '%'; }
+            
+            const uses = p.maxUses ? `${p.uses}/${p.maxUses}` : `${p.uses}`;
+            let expText = '∞';
+            if (p.expiresAt) {
+                if (p.expiresAt < Date.now()) expText = '<span style="color:#ef4444;">Истёк</span>';
+                else expText = new Date(p.expiresAt).toLocaleDateString('ru-RU');
+            }
+            
+            html += `<tr>
+                <td><code>${escapeHtml(p.code)}</code></td>
+                <td>${typeText}</td>
+                <td>${valText}</td>
+                <td>${uses}</td>
+                <td>${expText}</td>
+                <td><button class="btn btn-mini danger" onclick="deletePromo('${escapeHtml(p.code)}')">🗑</button></td>
+            </tr>`;
+        });
+        
+        html += '</tbody></table>';
+        c.innerHTML = html;
+    } catch (e) {
+        c.innerHTML = `<div class="loading" style="color:#ef4444;">❌ ${e.message}</div>`;
+    }
+}
+
+function showPromoForm() {
+    document.getElementById('promo-form').style.display = 'block';
+}
+
+function hidePromoForm() {
+    document.getElementById('promo-form').style.display = 'none';
+    document.getElementById('promo-result').innerHTML = '';
+}
+
+async function createPromo() {
+    const code = document.getElementById('p-code').value.trim().toUpperCase();
+    const type = document.getElementById('p-type').value;
+    const value = parseInt(document.getElementById('p-value').value);
+    const maxUses = document.getElementById('p-maxuses').value ? parseInt(document.getElementById('p-maxuses').value) : null;
+    const validDays = document.getElementById('p-validdays').value ? parseInt(document.getElementById('p-validdays').value) : null;
+    const onlyNew = document.getElementById('p-onlynew').checked;
+    
+    if (!code || !value) { alert('Заполни Код и Значение'); return; }
+    
+    const body = { code, type, maxUses, validDays, onlyNew };
+    if (type === 'premium') body.days = value;
+    if (type === 'checks') body.checks = value;
+    if (type === 'discount') body.percent = value;
+    
+    const result = document.getElementById('promo-result');
+    result.innerHTML = '<span class="spinner"></span>Создание...';
+    
+    try {
+        await apiCall('/create-promo', body);
+        result.innerHTML = '<span style="color:#22c55e;">✅ Промокод создан!</span>';
+        setTimeout(() => {
+            hidePromoForm();
+            loadPromos();
+        }, 1000);
+    } catch (e) {
+        result.innerHTML = `<span style="color:#ef4444;">❌ ${e.message}</span>`;
+    }
+}
+
+async function deletePromo(code) {
+    if (!confirm('Удалить промокод ' + code + '?')) return;
+    try {
+        await apiCall('/delete-promo', { code });
+        loadPromos();
+    } catch (e) { alert('Ошибка: ' + e.message); }
 }
