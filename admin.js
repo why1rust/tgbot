@@ -115,6 +115,7 @@ function loadTab(tab) {
     if (tab === 'tickets') loadTickets();
     if (tab === 'purchases') loadPurchases();
     if (tab === 'promos') loadPromos();
+    if (tab === 'reviews') loadReviews();
 }
 
 // ==================== DASHBOARD ====================
@@ -356,6 +357,7 @@ window.showPromoForm = showPromoForm;
 window.hidePromoForm = hidePromoForm;
 window.createPromo = createPromo;
 window.deletePromo = deletePromo;
+window.deleteReview = deleteReview;
 
 function filterUsers(filter) {
     currentFilter = filter;
@@ -499,5 +501,53 @@ async function deletePromo(code) {
     try {
         await apiCall('/delete-promo', { code });
         loadPromos();
+    } catch (e) { alert('Ошибка: ' + e.message); }
+}
+
+// ==================== REVIEWS ====================
+async function loadReviews() {
+    const c = document.getElementById('reviews-list');
+    c.innerHTML = '<div class="loading"><span class="spinner"></span>Загрузка...</div>';
+    
+    try {
+        const data = await apiCall('/reviews');
+        const list = data.reviews || [];
+        
+        if (!list.length) {
+            c.innerHTML = '<div class="loading">Отзывов нет</div>';
+            return;
+        }
+        
+        let html = '';
+        list.forEach(r => {
+            const stars = '★'.repeat(r.rating || 5) + '☆'.repeat(5 - (r.rating || 5));
+            const date = new Date(r.timestamp).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            html += `
+                <div style="background:#16161d;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start;">
+                    <div style="flex:1;min-width:0;">
+                        <div style="font-weight:700;margin-bottom:4px;font-size:14px;">
+                            ${escapeHtml(r.firstName || 'User')}
+                            ${r.username ? ' · @' + escapeHtml(r.username) : ''}
+                            <code style="color:#7a7a8e;font-size:11px;margin-left:6px;">${r.userId}</code>
+                        </div>
+                        <div style="color:#fbbf24;font-size:14px;margin-bottom:6px;letter-spacing:2px;">${stars}</div>
+                        <div style="font-size:13px;color:#b8b8c8;line-height:1.5;word-break:break-word;">${escapeHtml(r.text)}</div>
+                        <div style="font-size:11px;color:#7a7a8e;margin-top:8px;">${date}</div>
+                    </div>
+                    <button class="btn btn-mini danger" onclick="deleteReview(${r.userId}, ${r.timestamp})">🗑</button>
+                </div>
+            `;
+        });
+        c.innerHTML = html;
+    } catch (e) {
+        c.innerHTML = `<div class="loading" style="color:#ef4444;">❌ ${e.message}</div>`;
+    }
+}
+
+async function deleteReview(userId, timestamp) {
+    if (!confirm('Удалить этот отзыв?')) return;
+    try {
+        await apiCall('/delete-review', { userId, timestamp });
+        loadReviews();
     } catch (e) { alert('Ошибка: ' + e.message); }
 }
