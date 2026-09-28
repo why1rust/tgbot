@@ -358,38 +358,148 @@ async function unbanUser(userId) {
 }
 
 // ==================== LOGS ====================
-async function loadLogs() {
-    const container = document.getElementById('logs-table');
-    container.innerHTML = '<div class="loading"><span class="spinner"></span>Загрузка...</div>';
+// ==================== LOGS ====================
+const LOG_ACTION_META = {
+    give_premium:    { icon: '⭐', label: 'Премиум выдан',    cls: 'premium' },
+    revoke_premium:  { icon: '❌', label: 'Премиум забран',   cls: 'ban' },
+    ban_user:        { icon: '🚫', label: 'Юзер забанен',     cls: 'ban' },
+    unban_user:      { icon: '✅', label: 'Юзер разбанен',    cls: 'unban' },
+    send_dm:         { icon: '📩', label: 'ЛС отправлено',    cls: 'dm' },
+    give_bonus:      { icon: '🎁', label: 'Бонус выдан',      cls: 'bonus' },
+    create_promo:    { icon: '🎟', label: 'Промокод создан',  cls: 'promo' },
+    delete_promo:    { icon: '🗑', label: 'Промокод удалён',  cls: 'promo' },
+    edit_promo:      { icon: '✏️', label: 'Промокод изменён', cls: 'promo' },
+    broadcast:       { icon: '📢', label: 'Рассылка',         cls: 'broadcast' },
+    add_helper:      { icon: '🎧', label: 'Хелпер назначен',  cls: 'helper' },
+    remove_helper:   { icon: '❌', label: 'Хелпер снят',      cls: 'helper' },
+    delete_review:   { icon: '💬', label: 'Отзыв удалён',     cls: 'promo' },
+    edit_perms:      { icon: '🛡️', label: 'Права изменены',   cls: '' },
+};
 
+let currentLogs = [];
+let logsSearchQuery = '';
+let logsFilterAction = '';
+
+async function loadLogs() {
+    const c = document.getElementById('logs-table');
+    c.innerHTML = '<div class="loading"><span class="spinner"></span>Загрузка...</div>';
+    
     try {
         const data = await apiCall('/logs');
-        const logs = data.logs || [];
-
-        if (!logs.length) {
-            container.innerHTML = '<div class="loading">Логов нет</div>';
-            return;
-        }
-
-        let html = `<table>
-            <thead><tr><th>Время</th><th>Admin</th><th>Action</th><th>Details</th></tr></thead><tbody>`;
-
-        logs.slice(0, 100).forEach(l => {
-            const time = new Date(l.t).toLocaleString('ru-RU');
-            html += `<tr>
-                <td>${time}</td>
-                <td><code>${l.adminId}</code></td>
-                <td>${escapeHtml(l.action)}</td>
-                <td>${escapeHtml(l.details || '—')}</td>
-            </tr>`;
-        });
-
-        html += '</tbody></table>';
-        container.innerHTML = html;
+        currentLogs = data.logs || [];
+        renderLogs();
     } catch (e) {
-        container.innerHTML = `<div class="loading" style="color:#ef4444;">❌ ${e.message}</div>`;
+        c.innerHTML = `<div class="loading" style="color:#ef4444;">❌ ${e.message}</div>`;
     }
 }
+
+function renderLogs() {
+    const c = document.getElementById('logs-table');
+    
+    let filtered = currentLogs;
+    
+    if (logsFilterAction) {
+        filtered = filtered.filter(l => l.action === logsFilterAction);
+    }
+    
+    if (logsSearchQuery) {
+        const q = logsSearchQuery.toLowerCase();
+        filtered = filtered.filter(l => {
+            const admin = (l.adminName || '') + ' ' + (l.adminUsername || '') + ' ' + l.adminId;
+            const details = (l.details || '') + ' ' + (l.action || '');
+            return admin.toLowerCase().includes(q) || details.toLowerCase().includes(q);
+        });
+    }
+    
+    let html = `
+        <div class="logs-toolbar">
+            <input type="text" id="logs-search" placeholder="🔍 Поиск по админу, действию, деталям..." value="${escapeHtml(logsSearchQuery)}" oninput="onLogsSearch(this.value)">
+            <select class="logs-filter" onchange="onLogsFilter(this.value)">
+                <option value="">Все действия</option>
+                <option value="give_premium" ${logsFilterAction === 'give_premium' ? 'selected' : ''}>⭐ Премиум выдан</option>
+                <option value="revoke_premium" ${logsFilterAction === 'revoke_premium' ? 'selected' : ''}>❌ Премиум забран</option>
+                <option value="ban_user" ${logsFilterAction === 'ban_user' ? 'selected' : ''}>🚫 Баны</option>
+                <option value="unban_user" ${logsFilterAction === 'unban_user' ? 'selected' : ''}>✅ Разбаны</option>
+                <option value="send_dm" ${logsFilterAction === 'send_dm' ? 'selected' : ''}>📩 ЛС</option>
+                <option value="give_bonus" ${logsFilterAction === 'give_bonus' ? 'selected' : ''}>🎁 Бонусы</option>
+                <option value="create_promo" ${logsFilterAction === 'create_promo' ? 'selected' : ''}>🎟 Промокоды</option>
+                <option value="broadcast" ${logsFilterAction === 'broadcast' ? 'selected' : ''}>📢 Рассылки</option>
+                <option value="add_helper" ${logsFilterAction === 'add_helper' ? 'selected' : ''}>🎧 Хелперы</option>
+                <option value="delete_review" ${logsFilterAction === 'delete_review' ? 'selected' : ''}>💬 Отзывы</option>
+            </select>
+            <button class="filter-btn" onclick="loadLogs()">🔄 Обновить</button>
+            <span style="font-size:12px;color:#7a7a8e;">Найдено: <b style="color:#a855f7;">${filtered.length}</b></span>
+        </div>
+    `;
+    
+    if (!filtered.length) {
+        html += '<div class="loading">Логов не найдено</div>';
+        c.innerHTML = html;
+        return;
+    }
+    
+    html += '<div class="logs-list">';
+    filtered.slice(0, 100).forEach(l => {
+        const meta = LOG_ACTION_META[l.action] || { icon: '📌', label: l.action, cls: '' };
+        const date = new Date(l.t);
+        const time = date.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+        const ago = timeAgo(l.t);
+        
+        let adminDisplay = '';
+        if (l.adminName && l.adminUsername) {
+            adminDisplay = `${escapeHtml(l.adminName)} · @${escapeHtml(l.adminUsername)}`;
+        } else if (l.adminName) {
+            adminDisplay = escapeHtml(l.adminName);
+        } else if (l.adminUsername) {
+            adminDisplay = '@' + escapeHtml(l.adminUsername);
+        } else {
+            adminDisplay = `<code>${l.adminId}</code>`;
+        }
+        
+        html += `<div class="log-row">
+            <div class="log-icon ${meta.cls}">${meta.icon}</div>
+            <div class="log-body">
+                <div class="log-action">${escapeHtml(meta.label)}</div>
+                <div class="log-details">${escapeHtml(l.details || '—')}</div>
+            </div>
+            <div class="log-meta">
+                <div class="log-admin">${adminDisplay}</div>
+                <div class="log-time" title="${time}">${ago}</div>
+            </div>
+        </div>`;
+    });
+    html += '</div>';
+    
+    c.innerHTML = html;
+}
+
+let logsSearchTimeout = null;
+function onLogsSearch(value) {
+    logsSearchQuery = value;
+    if (logsSearchTimeout) clearTimeout(logsSearchTimeout);
+    logsSearchTimeout = setTimeout(() => renderLogs(), 250);
+}
+
+function onLogsFilter(value) {
+    logsFilterAction = value;
+    renderLogs();
+}
+
+function timeAgo(timestamp) {
+    const diff = Date.now() - timestamp;
+    const sec = Math.floor(diff / 1000);
+    const min = Math.floor(diff / 60000);
+    const hr = Math.floor(diff / 3600000);
+    const day = Math.floor(diff / 86400000);
+    if (sec < 60) return 'только что';
+    if (min < 60) return `${min} мин назад`;
+    if (hr < 24) return `${hr} ч назад`;
+    if (day < 7) return `${day} дн назад`;
+    return new Date(timestamp).toLocaleDateString('ru-RU');
+}
+
+window.onLogsSearch = onLogsSearch;
+window.onLogsFilter = onLogsFilter;
 
 // ==================== PURCHASES ====================
 async function loadPurchases() {
