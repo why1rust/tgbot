@@ -116,6 +116,7 @@ function loadTab(tab) {
     if (tab === 'purchases') loadPurchases();
     if (tab === 'promos') loadPromos();
     if (tab === 'reviews') loadReviews();
+    if (tab === 'metrics') loadKvMetrics();
 }
 
 // ==================== DASHBOARD ====================
@@ -552,7 +553,54 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+// ==================== KV METRICS ====================
+async function loadKvMetrics() {
+    const grid = document.getElementById('metrics-grid');
+    if (!grid) return;
+    grid.innerHTML = '<div class="loading"><span class="spinner"></span>Загрузка...</div>';
 
+    try {
+        const data = await apiCall('/kv-metrics');
+
+        const color = (val, limit) => {
+            const pct = val / limit;
+            if (pct >= 1) return '#ef4444';
+            if (pct >= 0.7) return '#fbbf24';
+            return '#22c55e';
+        };
+
+        const storageMb = (data.storage / (1024 * 1024)).toFixed(2);
+
+        grid.innerHTML = `
+            <div class="stat-card">
+                <div class="value" style="color:${color(data.reads, 100000)}">${data.reads.toLocaleString('ru-RU')}</div>
+                <div class="label">📖 Reads / 100k</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" style="color:${color(data.writes, 1000)}">${data.writes.toLocaleString('ru-RU')}</div>
+                <div class="label">✍️ Writes / 1k</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" style="color:${color(data.lists, 1000)}">${data.lists.toLocaleString('ru-RU')}</div>
+                <div class="label">📋 Lists / 1k</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" style="color:${color(data.deletes, 1000)}">${data.deletes.toLocaleString('ru-RU')}</div>
+                <div class="label">🗑 Deletes / 1k</div>
+            </div>
+            <div class="stat-card">
+                <div class="value purple">${storageMb} MB</div>
+                <div class="label">💾 Storage / 1 GB</div>
+            </div>
+        `;
+    } catch (e) {
+        grid.innerHTML = `<div class="loading" style="color:#ef4444;">❌ ${e.message}</div>`;
+    }
+}
+
+window.loadKvMetrics = loadKvMetrics;
+
+document.addEventListener('DOMContentLoaded', init);
 // ==================== INIT ====================
 document.addEventListener('DOMContentLoaded', init);
 
