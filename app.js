@@ -582,16 +582,23 @@ function calculateCraft() {
 async function addToWatchlist() {
     const input = document.getElementById('watch-input').value.trim();
     const result = document.getElementById('watch-result');
-    const match = input.match(/\d{17}/);
-    if (!match) { result.innerHTML = '❌ Введи SteamID'; result.classList.add('show'); return; }
+    if (!input || input.length < 2) {
+        result.innerHTML = '❌ Введи SteamID или ссылку на профиль';
+        result.classList.add('show');
+        return;
+    }
     result.innerHTML = '<span class="spinner"></span>Добавляю...';
     result.classList.add('show');
     try {
-        const data = await apiCall('/api/watch-add', { steamId: match[0] });
+        // Отправляем сырой input — сервер сам разберёт (ID, ссылку, vanity)
+        const data = await apiCall('/api/watch-add', { steamId: input });
         result.innerHTML = `✅ <strong>${escapeHtml(data.name)}</strong> добавлен`;
         document.getElementById('watch-input').value = '';
         if (SETTINGS.haptic && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-    } catch (e) { result.innerHTML = `❌ ${escapeHtml(e.message)}`; }
+        loadWatchlist();
+    } catch (e) {
+        result.innerHTML = `❌ ${escapeHtml(e.message)}`;
+    }
 }
 async function loadWatchlist() {
     const result = document.getElementById('watchlist-result');
