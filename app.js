@@ -21,6 +21,19 @@ async function apiCall(endpoint, data = {}) {
         body: JSON.stringify({ initData: INIT_DATA, ...data })
     });
     const json = await res.json();
+
+    // === Rate limit (429) ===
+    if (res.status === 429) {
+        tg.showAlert('⏳ Слишком много запросов. Подожди минуту.');
+        throw new Error(json.error || 'Rate limited');
+    }
+
+    // === Бан (403) ===
+    if (res.status === 403 && json.banned) {
+        tg.showAlert('🚫 Ты забанен в Rust Guard');
+        throw new Error(json.error || 'Banned');
+    }
+
     if (!res.ok) throw new Error(json.error || 'API Error');
     return json;
 }
